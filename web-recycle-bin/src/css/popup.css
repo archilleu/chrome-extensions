@@ -1,3 +1,29 @@
 #item-list {
   width: 450px;
 }
+
+.item {
+  margin: 1px 0;
+  padding: 2px 5px 0 0;
+}
+.item:hover {
+  background-color: #dcdcd8;
+}
+
+.item > img {
+  margin-right: 1px;
+}
+
+.item > a > span {
+  color: #272822;
+  font-family: "微软雅黑";
+  display: inline-block;
+  width: 390px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 17px;
+}
+.item > span {
+  float: right;
+}

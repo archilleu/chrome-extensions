@@ -1,13 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
   const bg = chrome.extension.getBackgroundPage();
 
-  const pageSize = 2;
-  let curPage = 0;
-  const closedCount = bg.getClosedTabsCount();
-  const closedTotalPage = Math.ceil(closedCount/pageSize) - 1;
+  let curPage = 1;
+  const home = 1
+  const pageSize = 15;
+  const pageCount = bg.getClosedTabsCount();
+  const totalPage = Math.ceil(pageCount/pageSize);
 
-  bindToolbarEvent();
-  showClosedTabs();
+  main();
+
+  function main() {
+    bindToolbarEvent();
+
+    if(0 == totalPage)
+      return;
+
+    reload();
+  }
 
   function bindToolbarEvent() {
     document.getElementById("next").addEventListener("click", onNext, false);
@@ -22,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function closedSortedTabs() {
-    const start = curPage * pageSize;
+    const start = (curPage-1) * pageSize;
     const end = start + pageSize;
     const tabs = bg.getSortedClosedTabs({start:start, end});
     let tabsInfo = [];
@@ -77,8 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = this.getElementsByTagName("a")[0].href;
     const option = {
       index: parseInt(this.dataset.index),
-      url: url,
-      active: false
+      url: url
     }
 
     chrome.tabs.create(option);
@@ -123,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function onNext() {
-    if(curPage == closedTotalPage)
+    if(curPage == totalPage)
       return;
 
     curPage += 1;
@@ -131,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function onUp() {
-    if(0 == curPage)
+    if(home == curPage)
       return;
 
     curPage -= 1;
@@ -147,11 +155,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function onClear() {
     bg.clearClosedTabs();
-    reload();
+    window.close();
   }
 
   function reload() {
+    updateToolbar();
     removeAllItems();
     showClosedTabs();
+  }
+
+  function updateToolbar() {
+    if(home == curPage) {
+      hideUpButton();
+    } else {
+      showUpButton();
+    }
+
+    if(curPage == totalPage) {
+      hideNextButton();
+    } else {
+      showNextButton();
+    }
+
+    return;
+  }
+
+  function showNextButton() {
+    document.getElementById("next").style.display = "inline";
+  }
+
+  function showUpButton() {
+    document.getElementById("up").style.display = "inline";
+  }
+
+  function hideNextButton() {
+    document.getElementById("next").style.display = "none";
+  }
+
+  function hideUpButton() {
+    document.getElementById("up").style.display = "none";
   }
 });

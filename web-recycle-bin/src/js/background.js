@@ -59,7 +59,7 @@ function openedTabData(tab) {
     index : tab.index,
     title : tab.title,
     url : tab.url,
-    favIconUrl : tab.favIconUrl
+    favIconUrl : undefined==tab.favIconUrl ? "../images/default.png" : tab.favIconUrl
   }
 
   return data;
@@ -68,7 +68,7 @@ function openedTabData(tab) {
 function saveClosedTab(id) {
   if(!checkIsCompleteTab(id))
     return;
-    
+
   appendToClosedTab(id);
 }
 
@@ -94,6 +94,31 @@ function appendToClosedTab(id) {
 function getClosedTabs() {
   const data = get(CLOSEDTABS);
   return data;
+}
+
+function getClosedTabsCount() {
+  return getClosedTabs().length;
+}
+
+function clearClosedTabs() {
+  saveClosedTabs([]);
+}
+
+function getSortedClosedTabs(option) {
+    const tabs = getClosedTabs();
+    tabs.sort(function(left, right){
+      if(left.time>right.time) return -1;
+      if(left.time<right.time) return 1;
+      return 0;
+    });
+
+    if(0 == tabs.length)
+      return tabs;
+
+    if(undefined==option) option = {};
+    if(undefined==option.start) option.start = 0;
+    if(undefined==option.end) option.end = tabs.length;
+    return tabs.slice(option.start, option.end);
 }
 
 function saveClosedTabs(data) {

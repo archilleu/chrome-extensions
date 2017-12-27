@@ -1,3 +1,5 @@
+let gSleepTime = 0;
+
 $(function(){
   init(function(data) {
     test(data);
@@ -19,6 +21,7 @@ $(function(){
     testCheckUrl(data);
     testSaveTab(data);
     testClosedTab(data);
+    testSortedClosedTab(data);
   }
 
   function testOptTabs() {
@@ -72,6 +75,12 @@ $(function(){
     if(left.index != right.index) return false;
     if(left.title != right.title) return false;
     if(left.url != right.url) return false;
+    if(undefined == left.favIconUrl) {
+      left.favIconUrl= "../images/default.png";
+    }
+    if(undefined == right.favIconUrl) {
+      right.favIconUrl= "../images/default.png";
+    }
     if(left.favIconUrl != right.favIconUrl) return false;
 
     return true;
@@ -117,6 +126,67 @@ $(function(){
 
   function testStorageEmpty() {
     console.assert(localStorage.length == 0, "storage not empty");
+  }
+
+  function testSortedClosedTab(data) {
+    initStorage();
+
+    const dataBaidu = data.urlBaidu;
+    const dataBing = data.urlBing;
+    const dataUrl1 = data.url1;
+    const dataUrl2 = data.url2;
+    const size = data.urlSortedSize;
+
+    saveTab(dataBaidu);
+    saveTab(dataBing);
+    saveTab(dataUrl1);
+    saveTab(dataUrl2);
+
+    gSleepTime += 100*size;
+
+    saveClosedTab(dataBaidu.id);
+    setTimeoutInterval(function(){
+      saveClosedTab(dataBing.id);
+      setTimeoutInterval(function() {
+        saveClosedTab(dataUrl1.id);
+        setTimeoutInterval(function() {
+          saveClosedTab(dataUrl2.id);
+          setTimeoutInterval(function() {
+            let tabs = getSortedClosedTabs();
+            console.assert(tabs.length==size, "getSortedClosedTabs length != 1");
+
+            tabs = getSortedClosedTabs({start:0, end:1});
+            console.assert(tabs.length==1, "getSortedClosedTabs length != 1");
+            console.assert(compTab(getClosedTab(tabs[0].name), dataUrl2));
+
+            tabs = getSortedClosedTabs({start:1});
+            console.assert(tabs.length==3, "getSortedClosedTabs length != 1");
+            console.assert(compTab(getClosedTab(tabs[0].name), dataUrl1));
+            console.assert(compTab(getClosedTab(tabs[1].name), dataBing));
+            console.assert(compTab(getClosedTab(tabs[2].name), dataBaidu));
+
+            tabs = getSortedClosedTabs({start:3, end:4});
+            console.assert(tabs.length==1, "g.idetSortedClosedTabs length != 1");
+            console.assert(compTab(getClosedTab(tabs[0].name), dataBaidu));
+
+            tabs = getSortedClosedTabs({start:4, end:5});
+            console.assert(tabs.length==0, "getSortedClosedTabs length != 1");
+            tabs = getSortedClosedTabs({start:6, end:8});
+            console.assert(tabs.length==0, "getSortedClosedTabs length != 1");
+
+            clearTabs();
+          });
+        });
+      })
+    });
+
+  }
+
+  function setTimeoutInterval(callback, interval) {
+    if(undefined == interval)
+      interval = 100;
+
+    setTimeout(callback, interval);
   }
 
 });

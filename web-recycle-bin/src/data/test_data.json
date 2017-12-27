@@ -67,6 +67,7 @@
         "width": 1920,
         "windowId": 1
     },
+    "urlSortedSize":4,
     "urlBaidu": {
         "active": true,
         "audible": false,
@@ -106,6 +107,48 @@
         "selected": true,
         "status": "complete",
         "title": "微软 Bing 搜索 - 国内版",
+        "url": "https://cn.bing.com/",
+        "width": 1920,
+        "windowId": 1
+    },
+    "url1": {
+        "active": true,
+        "audible": false,
+        "autoDiscardable": true,
+        "discarded": false,
+        "height": 949,
+        "highlighted": true,
+        "id": -201,
+        "incognito": false,
+        "index": 20,
+        "mutedInfo": {
+            "muted": false
+        },
+        "pinned": false,
+        "selected": true,
+        "status": "complete",
+        "title": "微软 Bing 搜索 - 国内版1",
+        "url": "https://cn.bing.com/",
+        "width": 1920,
+        "windowId": 1
+    },
+    "url2": {
+        "active": true,
+        "audible": false,
+        "autoDiscardable": true,
+        "discarded": false,
+        "height": 949,
+        "highlighted": true,
+        "id": -202,
+        "incognito": false,
+        "index": 20,
+        "mutedInfo": {
+            "muted": false
+        },
+        "pinned": false,
+        "selected": true,
+        "status": "complete",
+        "title": "微软 Bing 搜索 - 国内版2",
         "url": "https://cn.bing.com/",
         "width": 1920,
         "windowId": 1

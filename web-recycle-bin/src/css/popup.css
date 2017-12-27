@@ -1,24 +1,29 @@
+* {
+  font-family: "微软雅黑";
+}
+
 #item-list {
   width: 450px;
+  max-height: 350px;
 }
 
 .item {
   margin: 1px 0;
-  padding: 2px 5px 0 0;
+  padding: 2px 5px 0 4px;
+  border-radius: 4px;
 }
 .item:hover {
   background-color: #dcdcd8;
 }
 
 .item > img {
-  margin-right: 1px;
+  margin-right: 4px;
 }
 
 .item > a > span {
   color: #272822;
-  font-family: "微软雅黑";
   display: inline-block;
-  width: 390px;
+  width: 380px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

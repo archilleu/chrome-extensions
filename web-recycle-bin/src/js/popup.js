@@ -1,22 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
   const bg = chrome.extension.getBackgroundPage();
 
-  // main();
+  const pageSize = 2;
+  let curPage = 0;
+  const closedCount = bg.getClosedTabsCount();
+  const closedTotalPage = Math.ceil(closedCount/pageSize) - 1;
 
-  function main() {
+  bindToolbarEvent();
+  showClosedTabs();
+
+  function bindToolbarEvent() {
+    document.getElementById("next").addEventListener("click", onNext, false);
+    document.getElementById("up").addEventListener("click", onUp, false);
+    document.getElementById("clear").addEventListener("click", onClear, false);
+  }
+
+  function showClosedTabs() {
     const tabs = closedSortedTabs();
     const html = closedHtml(tabs);
     appendToList(html);
   };
 
   function closedSortedTabs() {
-    const tabs = bg.getClosedTabs();
-    tabs.sort(function(left, right){
-      if(left.time>right.time) return -1;
-      if(left.time<right.time) return 1;
-      return 0;
-    });
-
+    const start = curPage * pageSize;
+    const end = start + pageSize;
+    const tabs = bg.getSortedClosedTabs({start:start, end});
     let tabsInfo = [];
     for(let i=0; i<tabs.length; i++) {
       let tabData = bg.getClosedTab(tabs[i].name);
@@ -61,8 +69,25 @@ document.addEventListener('DOMContentLoaded', () => {
     div.setAttribute("class", "item");
     div.dataset.id = tab.id;
     div.dataset.index = tab.index;
-    div.addEventListener("click", function(){ alert(0)}, false);
+    div.addEventListener("click", openTab, false);
     return div;
+  }
+
+  function openTab() {
+    const url = this.getElementsByTagName("a")[0].href;
+    const option = {
+      index: parseInt(this.dataset.index),
+      url: url,
+      active: false
+    }
+
+    chrome.tabs.create(option);
+    bg.removeClosedTab(this.dataset.id);
+    removeItem(this);
+  }
+
+  function removeItem(div) {
+    div.parentNode.removeChild(div);
   }
 
   function createFavicon(tab, size) {
@@ -97,4 +122,36 @@ document.addEventListener('DOMContentLoaded', () => {
     list.appendChild(html);
   }
 
+  function onNext() {
+    if(curPage == closedTotalPage)
+      return;
+
+    curPage += 1;
+    reload();
+  }
+
+  function onUp() {
+    if(0 == curPage)
+      return;
+
+    curPage -= 1;
+    reload();
+  }
+
+  function removeAllItems() {
+    let list = document.getElementById("item-list");
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    }
+  }
+
+  function onClear() {
+    bg.clearClosedTabs();
+    reload();
+  }
+
+  function reload() {
+    removeAllItems();
+    showClosedTabs();
+  }
 });

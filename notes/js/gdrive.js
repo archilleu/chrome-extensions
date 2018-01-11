@@ -51,7 +51,27 @@ function GDrive() {
 
 }
 
-//Authorization
+//auth
+GDrive.prototype.checkAuth = function(callback) {
+  try {
+    chrome.identity.getAuthToken({
+      interactive: false
+    }, function(token) {
+      if (chrome.runtime.lastError) {
+        callback && callback(false);
+        return;
+      }
+
+      if (token) {
+        callback && callback(true);
+      }
+    }.bind(this));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+//auth
 GDrive.prototype.auth = function(callback) {
   try {
     chrome.identity.getAuthToken({

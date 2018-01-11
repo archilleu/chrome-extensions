@@ -71,7 +71,7 @@ $(function() {
           }
         }
 
-        if(null == curFile) {
+        if (null == curFile) {
           console.error("create file success");
         }
 
@@ -82,25 +82,27 @@ $(function() {
             return;
           }
 
-          gdrive.getFileContent({fileId:curFile.id}, function(result){
+          gdrive.getFileContent({
+            fileId: curFile.id
+          }, function(result) {
             if (null != result.message) {
               console.log(result.message);
               return;
             }
 
-            if(sendData != result.data) {
+            if (sendData != result.data) {
               console.error("data error");
               return;
             }
 
-            gdrive.deleteFile(curFile.id, function(){
-              if(null != result.message) {
+            gdrive.deleteFile(curFile.id, function() {
+              if (null != result.message) {
                 console.log(result.message)
                 return;
               }
             });
-            gdrive.deleteFile(parentId.id, function(){
-              if(null != result.message) {
+            gdrive.deleteFile(parentId.id, function() {
+              if (null != result.message) {
                 console.log(result.message)
                 return;
               }

@@ -51,24 +51,29 @@ function GDrive() {
 
 }
 
-//auth
-GDrive.prototype.checkAuth = function(callback) {
+//init
+GDrive.prototype.init = function(callback) {
   try {
     chrome.identity.getAuthToken({
       interactive: false
     }, function(token) {
       if (chrome.runtime.lastError) {
-        callback && callback(false);
+        callback && callback(chrome.runtime.lastError);
         return;
       }
 
       if (token) {
-        callback && callback(true);
+        callback && callback("success");
       }
     }.bind(this));
   } catch (e) {
     console.error(e);
   }
+}
+
+//auth
+GDrive.prototype.checkAuth = function(callback) {
+  return (null==this.accessToken?false:true);
 }
 
 //auth

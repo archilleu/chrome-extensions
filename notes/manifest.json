@@ -30,6 +30,6 @@
     "https://*.googleapis.com/"
   ],
   "background": {
-    "scripts":["js/background.js"]
+    "scripts":["js/jquery.min.js", "js/gdrive.js", "js/background.js"]
   }
 }

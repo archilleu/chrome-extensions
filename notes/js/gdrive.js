@@ -73,7 +73,7 @@ GDrive.prototype.init = function(callback) {
 
 //auth
 GDrive.prototype.checkAuth = function(callback) {
-  return (null==this.accessToken?false:true);
+  return (null == this.accessToken ? false : true);
 }
 
 //auth

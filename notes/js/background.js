@@ -2,10 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
   this.gdrive = new GDrive();
 
   this.gdrive.init(function(result) {
-      console.log(result);
+    console.log(result);
   });
   chrome.browserAction.onClicked.addListener(() => {
-    if(this.gdrive.checkAuth()) {
+    if (this.gdrive.checkAuth()) {
       gotoMainWindow();
     } else {
       gotoLogin();

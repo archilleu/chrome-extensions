@@ -4,12 +4,62 @@
 <head>
   <title>notes</title>
   <meta charset="utf-8">
-
-  <!-- <link href="css/popup.css" rel="stylesheet"> -->
+  <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="css/window.css" rel="stylesheet">
 </head>
 
 <body>
-  <div id="item-list"></div>
+
+  <div class="wrapper">
+    <div class="row">
+      <div class="note-left">
+        <div class="row titlebar">
+          <h1>便签</h1>
+          <div class="btn-note btn-create">
+            <div class=""><span><i class="icon-create"></i></span></div>
+          </div>
+          <div class="btn-note btn-refresh">
+            <div class=""><span><i class="icon-refresh"></i></span></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="note-left-col1">
+            <div class="search-box">
+              <div class="search-bar">
+                <div class="text-field-view">
+                  <input type="text" class="search-input" name="text-field" placeholder="搜索全部便签">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note-left-col2">
+        </div>
+      </div>
+    </div>
+    <div class="note-right">
+      <div class="row titlebar">
+        <div class="btn-note btn-insertImage">
+          <div class=""><span><i class="icon-insertImage"></i></span></div>
+        </div>
+        <div class="btn-note btn-moveNote">
+          <div class=""><span><i class="icon-moveNote"></i></span></div>
+        </div>
+        <div class="btn-note btn-delete">
+          <div class=""><span><i class="icon-delete"></i></span></div>
+        </div>
+        <div class="btn-note btn-share">
+          <div class=""><span><i class="immersive-icon icon-share"></i></span></div>
+        </div>
+      </div>
+      <div class="row">
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+
 </body>
 <!--
     - JavaScript and HTML must be in separate files: see our Content Security
@@ -18,7 +68,8 @@
     - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
   -->
 <script src="js/jquery.min.js"></script>
-<script src="js/gdrive.js"></script>
-<script src="js/app.js"></script>
+<!-- <script src="js/bootstrap.min.js"></script>
+<script src="js/bloading.js"></script> -->
+<script src="js/window.js"></script>
 
 </html>

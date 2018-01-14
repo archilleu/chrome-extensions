@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Microsoft Yahei", 微软雅黑, STHeiti, 华文细黑, sans-serif, "Apple Color Emoji";
   font-size: 16px;
 }
 
@@ -177,16 +177,6 @@ html, body {
   border-right: 1px solid #dcd6ca;
 }
 
-.wrapper .note-left-col2 {
-  position: absolute;
-  width: 60%;
-  left: 40%;
-  top: 62px;
-  bottom: 0;
-  transition: width .2s ease-out;
-  border-right: 1px solid #dcd6ca;
-}
-
 .wrapper .search-box {
   position: relative;
   height: 49px;
@@ -206,7 +196,6 @@ html, body {
   z-index: 2;
 }
 
-.wrapper .search-box .text-field-view {}
 
 .wrapper .search-box .search-icon {
   background: url(../images/all_icons.png) -61px -220px no-repeat;
@@ -234,7 +223,7 @@ html, body {
 
 .wrapper .search-box .search-clear {
   position: absolute;
-  right: 5px;
+  right: 2px;
   top: 3px;
   width: 20px;
   height: 20px;
@@ -249,6 +238,11 @@ html, body {
   top: 49px;
   bottom: 50px;
   border-bottom: 1px solid #dcd6ca;
+}
+
+.folder-container .on {
+  background: #f1ece1;
+  box-shadow: 0 1px 4px rgba(0,0,0,.03) inset;
 }
 
 .folder-container .folder-icon {
@@ -286,7 +280,6 @@ html, body {
 }
 
 .folder-item .files-sum {
-  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Microsoft Yahei", 微软雅黑, STHeiti, 华文细黑, sans-serif, "Apple Color Emoji";
   float: right;
   color: #b8a692;
   min-width: 30px;
@@ -317,5 +310,209 @@ html, body {
   top: 62px;
   right: 0;
   bottom: 0;
-  transition: left .2s ease-out;
+  transition: width .2s ease-out;
+  border-right: 1px solid #dcd6ca;
+}
+
+.note-left-col2 .note-list {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 50px;
+}
+
+
+.note-list .note-item {
+  height: 50px;
+  border-bottom: 1px #e4dad1 solid;
+  background: #fbf7ed;
+  position: relative;
+}
+
+.note-list .note-item.on {
+  background: #f1ece1;
+  box-shadow: 0 1px 4px rgba(0,0,0,.03) inset;
+}
+
+.note-left .note-item:hover {
+  background: #f1ece1;
+  box-shadow: 0 1px 4px rgba(0,0,0,.03) inset;
+}
+
+.note-item .item-status {
+  height: 24px;
+  line-height: 20px;
+  padding-left: 10px;
+  padding-top: 4px;
+}
+
+.note-item .item-status .fav {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  float: right;
+  background: url(../images/all_icons.png) -786px -40px no-repeat;
+  cursor: pointer;
+}
+
+.note-item .item-status .image-note{
+  width: 20px;
+  height: 20px;
+  /* display: none; */
+  float: right;
+  margin-right: 2px;
+  background: url(../images/all_icons.png) no-repeat -131px -220px;
+}
+
+.note-item .item-status .time {
+  float: left;
+  height: 20px;
+  margin-right: 6px;
+  color: #b9a691;
+  font-size: 12px;
+}
+
+.note-item .note-title {
+  line-height: 20px;
+  height: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: default;
+  font-size: 14px;
+  color: #635753;
+}
+.note-item .note-title span{
+  font-size: inherit;
+}
+
+.edit-wrapper {
+  max-width: 1080px;
+  position: absolute;
+  top: 62px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.edit-wrapper .edit-status {
+  position: relative;
+  height: 50px;
+  padding: 0 14px 0 0;
+  font-size: 13px;
+  color: #b9a691;
+  background: #fbf7ed;
+  border-bottom: 1px solid #e3dcd1;
+  cursor: default;
+}
+.edit-status .edge {
+  float: left;
+  border-right: 1px solid #e8e2d7;
+  height: 50px;
+  background: #f4f0e5;
+  width: 24px;
+  border-bottom: 1px solid #e8e2d7;
+}
+.edit-status .edit-mode {
+  float: left;
+  margin-left: 20px;
+  height: 24px;
+  line-height: 22px;
+  border: 1px solid #e4dad1;
+  border-radius: 2px;
+  padding-left: 10px;
+  padding-right: 27px;
+  margin-top: 13px;
+  font-size: 12px;
+  position: relative;
+  cursor: pointer;
+}
+.status-bar .status-bar {
+  float: right;
+}
+.status-bar .favorite {
+  cursor: pointer;
+  float: right;
+  margin-top: 13px;
+  background: url(../images/all_icons.png) -786px -39px no-repeat;
+  width: 24px;
+  height: 24px;
+}
+.status-bar .split-line {
+  height: 12px;
+  float: right;
+  width: 1px;
+  background: #e7ded0;
+  margin: 18px 10px 0 10px
+}
+.status-bar .counter {
+  float: right;
+  height: 24px;
+  line-height: 24px;
+  margin-top: 13px;
+  font-size: 13px;
+}
+.status-bar .time {
+  float: right;
+  height: 24px;
+  line-height: 24px;
+  margin-top: 13px;
+  font-size: 13px;
+}
+.status-bar .folder {
+  float: right;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 2px;
+  padding-left: 29px;
+  margin-top: 13px;
+  position: relative;
+  font-size: 12px;
+  overflow: hidden;
+}
+.status-bar .folder span{
+  font-size: 12px;
+  line-height: 24px;
+}
+
+.status-bar .folder i{
+  position: absolute;
+  height: 24px;
+  width: 24px;
+  left: 0;
+  top: 0;
+  background: url(../images/all_icons.png) -715px -39px no-repeat;
+}
+
+.edit-wrapper .edit-main {
+  position: absolute;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url(../images/grid.png);
+}
+
+.edit-main>i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  border-right: 1px solid #e8e2d7;
+  height: 100%;
+  background: url(../images/edge.png) repeat
+}
+
+.edit-main .edit-area {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  bottom: 0;
+  right: 0;
+}
+
+pre {
+  margin: 0;
 }

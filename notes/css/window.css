@@ -196,7 +196,6 @@ html, body {
   z-index: 2;
 }
 
-
 .wrapper .search-box .search-icon {
   background: url(../images/all_icons.png) -61px -220px no-repeat;
   width: 20px;
@@ -242,7 +241,7 @@ html, body {
 
 .folder-container .on {
   background: #f1ece1;
-  box-shadow: 0 1px 4px rgba(0,0,0,.03) inset;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .03) inset;
 }
 
 .folder-container .folder-icon {
@@ -322,7 +321,6 @@ html, body {
   bottom: 50px;
 }
 
-
 .note-list .note-item {
   height: 50px;
   border-bottom: 1px #e4dad1 solid;
@@ -332,12 +330,12 @@ html, body {
 
 .note-list .note-item.on {
   background: #f1ece1;
-  box-shadow: 0 1px 4px rgba(0,0,0,.03) inset;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .03) inset;
 }
 
 .note-left .note-item:hover {
   background: #f1ece1;
-  box-shadow: 0 1px 4px rgba(0,0,0,.03) inset;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .03) inset;
 }
 
 .note-item .item-status {
@@ -356,7 +354,7 @@ html, body {
   cursor: pointer;
 }
 
-.note-item .item-status .image-note{
+.note-item .item-status .image-note {
   width: 20px;
   height: 20px;
   /* display: none; */
@@ -385,7 +383,8 @@ html, body {
   font-size: 14px;
   color: #635753;
 }
-.note-item .note-title span{
+
+.note-item .note-title span {
   font-size: inherit;
 }
 
@@ -397,6 +396,7 @@ html, body {
   left: 0;
   right: 0;
 }
+
 .edit-wrapper .edit-status {
   position: relative;
   height: 50px;
@@ -407,14 +407,16 @@ html, body {
   border-bottom: 1px solid #e3dcd1;
   cursor: default;
 }
+
 .edit-status .edge {
   float: left;
   border-right: 1px solid #e8e2d7;
   height: 50px;
   background: #f4f0e5;
-  width: 24px;
+  width: 25px;
   border-bottom: 1px solid #e8e2d7;
 }
+
 .edit-status .edit-mode {
   float: left;
   margin-left: 20px;
@@ -429,9 +431,11 @@ html, body {
   position: relative;
   cursor: pointer;
 }
+
 .status-bar .status-bar {
   float: right;
 }
+
 .status-bar .favorite {
   cursor: pointer;
   float: right;
@@ -440,6 +444,7 @@ html, body {
   width: 24px;
   height: 24px;
 }
+
 .status-bar .split-line {
   height: 12px;
   float: right;
@@ -447,6 +452,7 @@ html, body {
   background: #e7ded0;
   margin: 18px 10px 0 10px
 }
+
 .status-bar .counter {
   float: right;
   height: 24px;
@@ -454,6 +460,7 @@ html, body {
   margin-top: 13px;
   font-size: 13px;
 }
+
 .status-bar .time {
   float: right;
   height: 24px;
@@ -461,6 +468,7 @@ html, body {
   margin-top: 13px;
   font-size: 13px;
 }
+
 .status-bar .folder {
   float: right;
   height: 24px;
@@ -472,12 +480,13 @@ html, body {
   font-size: 12px;
   overflow: hidden;
 }
-.status-bar .folder span{
+
+.status-bar .folder span {
   font-size: 12px;
   line-height: 24px;
 }
 
-.status-bar .folder i{
+.status-bar .folder i {
   position: absolute;
   height: 24px;
   width: 24px;
@@ -499,7 +508,7 @@ html, body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 24px;
+  width: 25px;
   border-right: 1px solid #e8e2d7;
   height: 100%;
   background: url(../images/edge.png) repeat
@@ -508,11 +517,79 @@ html, body {
 .edit-main .edit-area {
   position: absolute;
   top: 0;
-  left: 24px;
+  left: 0;
   bottom: 0;
   right: 0;
 }
 
-pre {
+.edit-main .note-editor {
+  position: relative;
+  margin-left: 50px;
+  margin-right: 30px;
+  padding-bottom: 100px;
+}
+
+.edit-main .codeMirror {
+  position: relative;
+}
+
+.edit-main .codeMirror-scroll {
+  position: relative;
+  bottom: 0;
+}
+
+.edit-main .codeMirror-sizer {
+  margin-left: 0px;
+  margin-bottom: -17px;
+  border-right-width: 13px;
+  min-height: 50px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+}
+
+@-webkit-keyframes blink {	/*透明度由0到1*/
+	0%{
+		opacity:0;				/*透明度为0*/
+	}
+	100%{
+		opacity:1;				/*透明度为1*/
+	}
+}
+
+.codeMirror-cursor {
+	-webkit-animation: blink 1s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.codeMirror-cursor {
+  visibility: visible;
+  left: 0px;
+  top: 100px;
+  height: 20px;
+  margin-top: 15px;
+  position: absolute;
+  border-left: 1px solid #000;
+  border-right: none;
+  width: 0;
+}
+
+.codeMirror-lines {
+  padding: 0;
+}
+.codeMirror-measure-length {
+  position: absolute;
+  z-index: -10;
+}
+.codeMirror-measure-text {
+  position: absolute;
+  z-index: -10;
+}
+
+.codeMirror-code {
+  outline: 0;
+}
+
+.codeMirror-line {
   margin: 0;
+  line-height: 50px;
+  font-size: 17px;
 }

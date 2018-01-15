@@ -14,16 +14,15 @@ $(function() {
       }, xpos);
       $(".codeMirror-cursor").css(pos);
 
-      createInput(this, xpos);
-
+      prepreaInput(this, xpos);
 
       $("#codeMirror-measure-text").focus();
       let left = parseInt($(".codeMirror-cursor").css("left"));
       $("#codeMirror-measure-text").keyup(function(){
         const inputText = $("#codeMirror-measure-text").val();
         readjustInputCursor(left, inputText);
-        $("#inputTmp").text(inputText);
-      });
+        $(this).find(".edit-cursor").text(inputText);
+      }.bind(this));
 
   })
 
@@ -43,7 +42,7 @@ $(function() {
 
   function calculateElementsubXPos(element) {
     $measure = $("#codeMirror-measure-length");
-    const text = element.firstElementChild.textContent;
+    const text = $(element).find(".edit-cursor").text();
     let subTextcursorPos = [];
     subTextcursorPos.push(0);
     for(let i=1; i<=text.length; i++) {
@@ -72,16 +71,15 @@ $(function() {
     };
   }
 
-  function createInput(element, xpos) {
+  function prepreaInput(element, xpos) {
     $this = $(element);
-    $oldSpan = $this.find("span");
-    spanText = $oldSpan.text();
-    $oldSpan.text(spanText.substr(0, xpos.idx));
-
-    const spanInfo = $("<span id='inputTmp'></span>");
-    const spanSuffix = $("<span>"+spanText.substr(xpos.idx)+"</span>");
-    $this.append(spanInfo);
-    $this.append(spanSuffix);
+    $prefix = $($this.find(".edit-prefix"));
+    $current = $($this.find(".edit-cursor"));
+    $suffix = $($this.find(".edit-suffix"));
+    const text = $current.text();
+    $prefix.text(text.substr(0, xpos.idx));
+    $current.text("");
+    $suffix.text(text.substr(xpos.idx));
   }
 
   function readjustInputCursor(oldX, inputText) {

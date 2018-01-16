@@ -547,17 +547,20 @@ html, body {
   padding-bottom: 0px;
 }
 
-@-webkit-keyframes blink {	/*透明度由0到1*/
-	0%{
-		opacity:0;				/*透明度为0*/
-	}
-	100%{
-		opacity:1;				/*透明度为1*/
-	}
+@-webkit-keyframes blink {
+  /*透明度由0到1*/
+  0% {
+    opacity: 0;
+    /*透明度为0*/
+  }
+  100% {
+    opacity: 1;
+    /*透明度为1*/
+  }
 }
 
 .codeMirror-cursor {
-	-webkit-animation: blink 1s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  -webkit-animation: blink 1s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 .codeMirror-cursor {
@@ -575,10 +578,12 @@ html, body {
 .codeMirror-lines {
   padding: 0;
 }
+
 .codeMirror-measure-length {
   position: absolute;
   z-index: -10;
 }
+
 .codeMirror-measure-text {
   position: absolute;
   z-index: -10;

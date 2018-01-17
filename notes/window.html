@@ -5,7 +5,10 @@
   <title>notes</title>
   <meta charset="utf-8">
   <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="css/codemirror.css" rel="stylesheet">
   <link href="css/window.css" rel="stylesheet">
+  <link href="addon/scroll/simplescrollbars.css" rel="stylesheet">
+  <link href="addon/scroll/simplescrollbars.css" rel="stylesheet">
 </head>
 
 <body>
@@ -119,28 +122,6 @@
           <div class="edit-area">
             <div class="edge"></div>
             <div class="note-editor">
-              <div class="codeMirror">
-                <div class="codeMirror-scroll">
-                  <div class="codeMirror-sizer">
-                    <div class="codeMirror-lines">
-                      <div class="codeMirror-measure">
-                        <div class="codeMirror-measure-length">
-                          <pre class="codeMirror-line"> <span id="codeMirror-measure-length"></span></pre>
-                        </div>
-                        <div class="codeMirror-measure-text">
-                          <pre class="codeMirror-line"> <input type="text" name="tem-text" id="codeMirror-measure-text"></pre>
-                        </div>
-                        <div class="codeMirror-code">
-                          <div class="codeMirror-cursor"></div>
-                          <pre class="codeMirror-line"><span class="edit-prefix"></span><span class="edit-current">cciii</span><span class="edit-suffix"></span></pre>
-                          <pre class="codeMirror-line"><span class="edit-prefix"></span><span class="edit-current">aaiii</span><span class="edit-suffix"></span></pre>
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -156,8 +137,11 @@
     - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
   -->
 <script src="js/jquery.min.js"></script>
+<script src="js/codemirror.js"></script>
+<script src="js/editor.js"></script>
+<script src="addon/scroll/simplescrollbars.js"></script>
 <!-- <script src="js/bootstrap.min.js"></script>
 <script src="js/bloading.js"></script> -->
-<script src="js/window.js"></script>
+<!-- <script src="js/window.js"></script> -->
 
 </html>

@@ -525,76 +525,43 @@ html, body {
 .edit-main .note-editor {
   position: relative;
   margin-left: 50px;
-  margin-right: 30px;
-  padding-bottom: 100px;
+  /* margin-right: 30px; */
+  height: 100%;
 }
 
-.edit-main .codeMirror {
-  position: relative;
-}
+/* CodeMirror css 定制 */
 
-.edit-main .codeMirror-scroll {
-  position: relative;
-  bottom: 0;
-}
-
-.edit-main .codeMirror-sizer {
-  margin-left: 0px;
-  margin-bottom: -17px;
-  border-right-width: 13px;
-  min-height: 50px;
-  padding-right: 0px;
-  padding-bottom: 0px;
-}
-
-@-webkit-keyframes blink {
-  /*透明度由0到1*/
-  0% {
-    opacity: 0;
-    /*透明度为0*/
-  }
-  100% {
-    opacity: 1;
-    /*透明度为1*/
-  }
-}
-
-.codeMirror-cursor {
-  -webkit-animation: blink 1s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
-}
-
-.codeMirror-cursor {
-  visibility: visible;
-  left: 0px;
-  top: 100px;
-  height: 20px;
-  margin-top: 15px;
-  position: absolute;
-  border-left: 1px solid #000;
-  border-right: none;
-  width: 0;
-}
-
-.codeMirror-lines {
+.CodeMirror-lines {
   padding: 0;
 }
 
-.codeMirror-measure-length {
-  position: absolute;
-  z-index: -10;
-}
-
-.codeMirror-measure-text {
-  position: absolute;
-  z-index: -10;
-}
-
-.codeMirror-code {
-  outline: 0;
-}
-
-.codeMirror-line {
-  margin: 0;
+.note-editor .CodeMirror-line {
   line-height: 50px;
+  padding: 0;
+  font-family: Helvetica, "Microsoft Yahei", ST-Heiti, "Apple Color Emoji";
   font-size: 17px;
 }
+
+.CodeMirror {
+  background: url(../images/grid.png);
+  background-attachment: scroll;
+  color: #635752;
+  height: 100%;
+}
+
+.CodeMirror-cursor {
+  border-left: solid thin #000;
+  margin-top: 15px;
+}
+
+.CodeMirror-simplescroll-vertical {
+  background: none;
+}
+
+.CodeMirror-simplescroll-vertical div {
+  border-radius: 0;
+  background: 0;
+  border: 0;
+}
+
+/* CodeMirror css 定制 */

@@ -6,8 +6,6 @@ $(function() {
     initEditor();
   }
 
-  function bindBtnClickEvent() {}
-
   function addEditorArea() {
     $(".note-editor").append("<textarea id='note-editor' style='display: none;'></textarea>");
   }

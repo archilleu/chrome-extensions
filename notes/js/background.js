@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   this.gdrive.init(function(result) {
     console.log(result);
   });
+
   chrome.browserAction.onClicked.addListener(() => {
     if (this.gdrive.checkAuth()) {
       gotoMainWindow();

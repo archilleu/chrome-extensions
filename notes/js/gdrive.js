@@ -190,12 +190,13 @@ GDrive.prototype.deleteFolder = function(folderId, callback) {
 }
 
 //list
-GDrive.prototype.list = function(parentId, callback) {
+GDrive.prototype.list = function(parentId, callback, pageToken) {
   parentId = parentId ? parentId : 'root';
   const q = '\"' + parentId + '\"' + ' in parents';
   const parent = {
     corpora: "user",
-    q: q
+    q: q,
+    pageToken: pageToken
   }
   $.ajax({
     type: "GET",

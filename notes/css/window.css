@@ -305,6 +305,29 @@ html, body {
   cursor: default;
 }
 
+.bottom-menu {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-right: 1px solid #dcd6ca;
+  height: 50px;
+  box-shadow: rgba(0,0,0,.03) 0 -1px 6px;
+  z-index: 6;
+  border-top: 1px #e9dece solid;
+  background: #fbf7ed;
+}
+
+.bottom-menu .create-folder-btn {
+  float: left;
+  height: 20px;
+  margin-left: 16px;
+  width: 20px;
+  margin-top: 15px;
+  background: url(../images/all_icons.png) -169px -220px no-repeat;
+  cursor: pointer;
+}
+
 .note-left-col2 {
   position: absolute;
   left: 40%;

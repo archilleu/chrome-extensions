@@ -36,6 +36,9 @@ $(function() {
     this.listeners.push(listener);
   }
 
+  NoteFolderView.prototype.getCurrentSelectFolder = function() {
+    return this.$noteFolders.find(".on");
+  }
 
   function NoteFileView() {
     this.$noteFiles = $(".note-list");
@@ -57,6 +60,10 @@ $(function() {
     const $item = $(item);
     this.$noteFiles.append($item);
     $item.click(this.bindClick);
+  }
+
+  NoteFileView.prototype.emptyList = function() {
+    this.$noteFiles.empty();
   }
 
   NoteFileView.prototype.bindClick = function() {

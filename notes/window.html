@@ -14,16 +14,45 @@
 
 <body>
 
+  <!-- Modal -->
+  <div class="modal fade" id="create-folder" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel">标签类别名</h4>
+        </div>
+        <div class="modal-body">
+            <input class="form-control" type="text">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button id="create-folder-btn" type="button" class="btn btn-primary">创建</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="wrapper">
     <div class="row">
       <div class="note-left">
         <div class="row titlebar">
           <h1>便签</h1>
-          <div class="btn-note btn-create">
-            <div class=""><span><i class="icon-create"></i></span></div>
+          <div class="btn-note btn-create" id="create-note-btn">
+            <div class="">
+              <span>
+                <i class="icon-create"></i>
+              </span>
+            </div>
           </div>
           <div class="btn-note btn-refresh">
-            <div class=""><span><i class="icon-refresh"></i></span></div>
+            <div class="">
+              <span>
+                <i class="icon-refresh"></i>
+              </span>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -49,6 +78,9 @@
                 </div>
               </div> -->
             </div>
+            <div class="bottom-menu" data-toggle="modal" data-target="#create-folder">
+              <div class="create-folder-btn"></div>
+            </div>
           </div>
         </div>
         <div class="note-left-col2">
@@ -70,16 +102,32 @@
     <div class="note-right">
       <div class="row titlebar">
         <div class="btn-note btn-insertImage">
-          <div class=""><span><i class="icon-insertImage"></i></span></div>
+          <div class="">
+            <span>
+              <i class="icon-insertImage"></i>
+            </span>
+          </div>
         </div>
         <div class="btn-note btn-moveNote">
-          <div class=""><span><i class="icon-moveNote"></i></span></div>
+          <div class="">
+            <span>
+              <i class="icon-moveNote"></i>
+            </span>
+          </div>
         </div>
         <div class="btn-note btn-delete">
-          <div class=""><span><i class="icon-delete"></i></span></div>
+          <div class="">
+            <span>
+              <i class="icon-delete"></i>
+            </span>
+          </div>
         </div>
-        <div class="btn-note btn-share">
-          <div class=""><span><i class="immersive-icon icon-share"></i></span></div>
+        <div class="btn-note btn-share btn-logout">
+          <div class="">
+            <span>
+              <i class="immersive-icon icon-share"></i>
+            </span>
+          </div>
         </div>
       </div>
       <div class="row edit-wrapper">
@@ -93,7 +141,10 @@
             <span class="split-line"></span>
             <span class="time">今天 11:03 AM</span>
             <span class="split-line"></span>
-            <div class="folder"><span>全部便签</span><i></i></div>
+            <div class="folder">
+              <span>全部便签</span>
+              <i></i>
+            </div>
           </div>
         </div>
         <div class="edit-main">

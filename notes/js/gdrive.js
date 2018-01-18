@@ -4,6 +4,8 @@
  *            https://developer.chrome.com/apps/app_identity
  */
 
+ //Todo 更改调用为jquery方式
+
 function GDrive() {
   this.accessToken = null;
 
@@ -222,10 +224,11 @@ GDrive.prototype.list = function(parentId, callback, pageToken) {
 }
 
 //create file fileMetadata
-GDrive.prototype.createFileMetadata = function(parent, name, callback) {
+GDrive.prototype.createFileMetadata = function(meta, callback) {
   const metadata = {
-    name: name,
-    parents: parent ? [parent] : null
+    name: meta.name,
+    parents: meta.parent ? [meta.parent] : null,
+    description: meta.description
   }
   $.ajax({
     type: "POST",

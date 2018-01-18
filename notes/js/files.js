@@ -1,14 +1,14 @@
-$(function() {
+$(function () {
   function Files() {
     this.root = null;
     this.gdrive = chrome.extension.getBackgroundPage().gdrive;
 
-    this.__defineGetter__("ROOT", function() {
+    this.__defineGetter__("ROOT", function () {
       return "GNODE";
     })
   }
 
-  Files.prototype.init = function(callback) {
+  Files.prototype.init = function (callback) {
 
     this._checkHasRoot((result) => {
       if (null == result) {
@@ -35,7 +35,7 @@ $(function() {
 
   }
 
-  Files.prototype._checkHasRoot = function(callback) {
+  Files.prototype._checkHasRoot = function (callback) {
     this.gdrive.list(null, (result) => {
       if (null != result.message) {
         callback(null);
@@ -53,8 +53,8 @@ $(function() {
     });
   }
 
-  Files.prototype._createRoot = function(callback) {
-    this.gdrive.createFolder(null, this.ROOT, function(result) {
+  Files.prototype._createRoot = function (callback) {
+    this.gdrive.createFolder(null, this.ROOT, function (result) {
       if (null != result.message) {
         callback({
           message: result.message,
@@ -73,9 +73,9 @@ $(function() {
     })
   };
 
-  Files.prototype.listFolder = function(folderId, callback) {
+  Files.prototype.listFolder = function (folderId, callback) {
     if (null == folderId) folderId = this.root;
-    this.gdrive.list(folderId, function(result) {
+    this.gdrive.list(folderId, function (result) {
       if (null != result.message) {
         callback(result);
         return;
@@ -92,7 +92,7 @@ $(function() {
       }
 
       while (token) {
-        this.gdrive.list(folderId, function(result) {
+        this.gdrive.list(folderId, function (result) {
           if (null != result.message) {
             callback({
               message: null,
@@ -119,8 +119,8 @@ $(function() {
     });
   }
 
-  Files.prototype.listFiles = function(folderId, callback) {
-    this.gdrive.list(folderId, function(result) {
+  Files.prototype.listFiles = function (folderId, callback) {
+    this.gdrive.list(folderId, function (result) {
       if (null != result.message) {
         callback(result);
         return;
@@ -139,7 +139,7 @@ $(function() {
       }
 
       while (token) {
-        this.gdrive.list(folderId, function(result) {
+        this.gdrive.list(folderId, function (result) {
           if (null != result.message) {
             callback({
               message: null,
@@ -166,8 +166,64 @@ $(function() {
         data: data
       })
     });
-
   }
+
+  Files.prototype.createFolder = function (folderName, callback) {
+    this.gdrive.createFolder(this.root, folderName, (result) => {
+      if (null != result.message) {
+        callback({
+          message: result.message
+        })
+        return;
+      }
+
+      callback({
+        message: null,
+        data: {
+          id: result.data.id
+        }
+      })
+    });
+  }
+
+  Files.prototype.createFile = function (folderId, callback) {
+    let parent = [folderId];
+    if (folderId != this.root)
+      parent.push(this.root)
+
+    this.gdrive.createFileMetadata({
+      parent: parent,
+      name: new Date().toCustomStr(),
+      description: "新建便签"
+    }, (result) => {
+      if (null != result.message) {
+        callback({
+          message: result.message
+        })
+        return;
+      }
+
+      callback({
+        message: null,
+        data: {
+          id: result.data.id,
+          name: result.data.name,
+          description: result.data.description,
+          modifiedTime: result.data.modifiedTime || new Date()
+        }
+      })
+    });
+  }
+
+  Date.prototype.toCustomStr = function () {
+    var yyyy = this.getFullYear();
+    var mm = this.getMonth() < 9 ? "0" + (this.getMonth() + 1) : (this.getMonth() + 1); // getMonth() is zero-based
+    var dd = this.getDate() < 10 ? "0" + this.getDate() : this.getDate();
+    var hh = this.getHours() < 10 ? "0" + this.getHours() : this.getHours();
+    var min = this.getMinutes() < 10 ? "0" + this.getMinutes() : this.getMinutes();
+    var ss = this.getSeconds() < 10 ? "0" + this.getSeconds() : this.getSeconds();
+    return "".concat(yyyy).concat(mm).concat(dd).concat(hh).concat(min).concat(ss);
+  };
 
   window.files = new Files();
 });

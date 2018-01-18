@@ -1,22 +1,25 @@
-$(function() {
+$(function () {
   const files = window.files;
   const noteFolders = window.noteFolderView;
   const noteFiles = window.noteFileView;
 
   waitingDialog.show("loading...");
-  files.init(function(result) {
+  files.init(function (result) {
     if (null != result.message) {
       waitingDialog.show(result.message);
-      setTimeout(function() {
+      setTimeout(function () {
         waitingDialog.hide()
       }, 1000);
       return;
     }
 
-    getNoteFolders(function() {
+    getNoteFolders(function () {
       waitingDialog.hide();
     });
 
+    bindBtnClickEvent();
+
+    noteFolders.addListener(cleanNoteListPrev);
     noteFolders.addListener(getNoteList);
   })
 
@@ -38,6 +41,10 @@ $(function() {
     })
   }
 
+  function cleanNoteListPrev() {
+    noteFiles.emptyList();
+  }
+
   function getNoteList(folderId) {
     files.listFiles(folderId, result => {
       if (null != result.message) {
@@ -55,6 +62,49 @@ $(function() {
 
 
   function bindBtnClickEvent() {
+    $("#create-folder-btn").click(onCreateFolder);
+    $("#create-note-btn").click(onCreateNote);
+    $(".btn-logout").click(() => {
+
+    });
+  }
+
+  function onCreateFolder() {
+    const name = $("#create-folder input").val();
+    //Todo check repeat name
+
+    files.createFolder(name, (result) => {
+      waitingDialog.show("creating...");
+      if (null != result.message) {
+        waitingDialog.show(result.message)
+        setTimeout(function () {
+          waitingDialog.hide();
+        }, 1000)
+        return;
+      }
+
+      waitingDialog.hide();
+      noteFolders.add({
+        name: name,
+        id: result.data.id,
+        sum: 0
+      })
+    });
+
+    $("#create-folder").modal("hide");
+  }
+
+  function onCreateNote() {
+    const $currentFolder = noteFolders.getCurrentSelectFolder();
+    if(0 == $currentFolder.length)
+      return;
+
+    const folderId = $currentFolder[0].dataset.id;
+    files.createFile(folderId, (result)=>{
+      if(null != result.message) {
+        return;
+      }
+    });
 
   }
 })

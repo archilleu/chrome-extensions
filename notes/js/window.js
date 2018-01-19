@@ -1,19 +1,19 @@
-$(function () {
+$(function() {
   const files = window.files;
   const noteFolders = window.noteFolderView;
   const noteFiles = window.noteFileView;
 
   waitingDialog.show("loading...");
-  files.init(function (result) {
+  files.init(function(result) {
     if (null != result.message) {
       waitingDialog.show(result.message);
-      setTimeout(function () {
+      setTimeout(function() {
         waitingDialog.hide()
       }, 1000);
       return;
     }
 
-    getNoteFolders(function () {
+    getNoteFolders(function() {
       waitingDialog.hide();
     });
 
@@ -60,6 +60,8 @@ $(function () {
     });
   }
 
+  function getNoteContent(noteId) {}
+
 
   function bindBtnClickEvent() {
     $("#create-folder-btn").click(onCreateFolder);
@@ -77,7 +79,7 @@ $(function () {
       waitingDialog.show("creating...");
       if (null != result.message) {
         waitingDialog.show(result.message)
-        setTimeout(function () {
+        setTimeout(function() {
           waitingDialog.hide();
         }, 1000)
         return;
@@ -96,15 +98,14 @@ $(function () {
 
   function onCreateNote() {
     const $currentFolder = noteFolders.getCurrentSelectFolder();
-    if(0 == $currentFolder.length)
+    if (0 == $currentFolder.length)
       return;
 
     const folderId = $currentFolder[0].dataset.id;
-    files.createFile(folderId, (result)=>{
-      if(null != result.message) {
+    files.createFile([folderId], (result) => {
+      if (null != result.message) {
         return;
       }
     });
-
   }
 })

@@ -4,7 +4,7 @@
  *            https://developer.chrome.com/apps/app_identity
  */
 
- //Todo 更改调用为jquery方式
+//Todo 更改调用为jquery方式
 
 function GDrive() {
   this.accessToken = null;
@@ -198,7 +198,8 @@ GDrive.prototype.list = function(parentId, callback, pageToken) {
   const parent = {
     corpora: "user",
     q: q,
-    pageToken: pageToken
+    pageToken: pageToken,
+    fields: "files(id, name, modifiedTime, description)"
   }
   $.ajax({
     type: "GET",
@@ -227,7 +228,7 @@ GDrive.prototype.list = function(parentId, callback, pageToken) {
 GDrive.prototype.createFileMetadata = function(meta, callback) {
   const metadata = {
     name: meta.name,
-    parents: meta.parent ? [meta.parent] : null,
+    parents: meta.parent ? meta.parent : null,
     description: meta.description
   }
   $.ajax({

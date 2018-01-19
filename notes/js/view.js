@@ -49,7 +49,7 @@ $(function() {
     const item =
       '<div class="note-item ">' +
       '<div class="item-status" data-id=' + data.id + '>' +
-      '<div class="time">' + data.modifiedTime + '</div>' +
+      '<div class="time">' + (data.modifiedTime ? new Date().toLocaleDateString() : data.modifiedTime.toLocaleDateString()) + '</div>' +
       '<div class="fav"></div>' +
       '<div class="image-note"></div>' +
       '</div>' +
@@ -82,6 +82,27 @@ $(function() {
     this.listeners.push(listener);
   }
 
+  function NoteView() {
+    this.editor = window.editor;
+    this.listeners = [];
+  }
+
+  noteView.prototype.onNoteFileClick = function(event) {
+    const data = event.data;
+    editor.setValue(data);
+  }
+
+  NoteView.prototype.notifyListeners = function(fileId) {
+    for (var listener of this.listeners) {
+      listener(fileId);
+    }
+  }
+
+  NoteView.prototype.addListener = function(listener) {
+    this.listeners.push(listener);
+  }
+
   window.noteFolderView = new NoteFolderView();
   window.noteFileView = new NoteFileView();
+  window.noteView = new NoteView();
 })

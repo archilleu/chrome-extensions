@@ -47,8 +47,8 @@ $(function() {
 
   NoteFileView.prototype.add = function(data) {
     const item =
-      '<div class="note-item ">' +
-      '<div class="item-status" data-id=' + data.id + '>' +
+      '<div class="note-item" data-id=' + data.id + '>' +
+      '<div class="item-status">' +
       '<div class="time">' + (data.modifiedTime ? new Date().toLocaleDateString() : data.modifiedTime.toLocaleDateString()) + '</div>' +
       '<div class="fav"></div>' +
       '<div class="image-note"></div>' +
@@ -60,6 +60,7 @@ $(function() {
     const $item = $(item);
     this.$noteFiles.append($item);
     $item.click(this.bindClick);
+    return $item;
   }
 
   NoteFileView.prototype.emptyList = function() {
@@ -87,8 +88,7 @@ $(function() {
     this.listeners = [];
   }
 
-  noteView.prototype.onNoteFileClick = function(event) {
-    const data = event.data;
+  NoteView.prototype.onNoteFileClick = function(data) {
     editor.setValue(data);
   }
 

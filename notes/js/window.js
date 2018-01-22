@@ -2,6 +2,7 @@ $(function() {
   const files = window.files;
   const noteFolders = window.noteFolderView;
   const noteFiles = window.noteFileView;
+  const noteView = window.noteView;
 
   waitingDialog.show("loading...");
   files.init(function(result) {
@@ -55,12 +56,22 @@ $(function() {
       }
 
       for (file of result.data) {
-        noteFiles.add(file);
+        const $item = noteFiles.add(file);
+        noteFiles.addListener(getNoteContent);
       }
     });
   }
 
-  function getNoteContent(noteId) {}
+  function getNoteContent(noteId) {
+    files.getFileContent(noteId, function(result) {
+      if(null != result.message) {
+        return;
+      }
+
+      noteView.onNoteFileClick(result.data);
+      return;
+    })
+  }
 
 
   function bindBtnClickEvent() {

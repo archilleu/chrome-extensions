@@ -211,6 +211,23 @@ $(function() {
     });
   }
 
+  Files.prototype.getFileContent = function(fileId, callback) {
+    this.gdrive.getFileContent({fileId:fileId, mine:"text"}, (result)=>{
+      if(null != result.message) {
+        callback({
+          message: result.message
+        })
+        return;
+      }
+
+      callback({
+        message: null,
+        data: result.data
+      })
+      return;
+    });
+  }
+
   Date.prototype.toCustomStr = function() {
     var yyyy = this.getFullYear();
     var mm = this.getMonth() < 9 ? "0" + (this.getMonth() + 1) : (this.getMonth() + 1); // getMonth() is zero-based

@@ -5,41 +5,57 @@ $(function() {
   const noteView = window.noteView;
 
   waitingDialog.show("loading...");
-  files.init(function(result) {
-    if (null != result.message) {
+  files.init({
+    success: () => {
+      getNoteFolders({
+        success: () => {
+          waitingDialog.hide();
+        },
+        error: (status, msg) => {
+          console.log("status: " + status + " msg: " + msg);
+        },
+        network: () => {
+          console.log("network error");
+        }
+      });
+
+      bindBtnClickEvent();
+
+      noteFolders.addListener(cleanNoteListPrev);
+      noteFolders.addListener(getNoteList);
+    },
+    error: (status, msg) => {
       waitingDialog.show(result.message);
       setTimeout(function() {
         waitingDialog.hide()
       }, 1000);
-      return;
+      console.log("status: " + status + " msg: " + msg);
+    },
+    neterror: () => {
+      waitingDialog.show(result.message);
+      setTimeout(function() {
+        waitingDialog.hide()
+      }, 1000);
+      console.log("network error");
     }
+  });
 
-    getNoteFolders(function() {
-      waitingDialog.hide();
+  function getNoteFolders(settings) {
+    files.listFolder({
+      success: (folder) => {
+        for (folder of folder) {
+          folder.sum = 0;
+          noteFolders.add(folder);
+        }
+        settings.success && settings.success();
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+      },
+      network: () => {
+        settings.network && settings.network();
+      }
     });
-
-    bindBtnClickEvent();
-
-    noteFolders.addListener(cleanNoteListPrev);
-    noteFolders.addListener(getNoteList);
-  })
-
-  function getNoteFolders(callback) {
-    files.listFolder(null, result => {
-      if (null != result.message) {
-        callback({
-          message: result.message
-        });
-        return;
-      }
-
-      for (folder of result.data) {
-        folder.sum = 0;
-        noteFolders.add(folder);
-      }
-
-      callback(null);
-    })
   }
 
   function cleanNoteListPrev() {
@@ -64,7 +80,7 @@ $(function() {
 
   function getNoteContent(noteId) {
     files.getFileContent(noteId, function(result) {
-      if(null != result.message) {
+      if (null != result.message) {
         return;
       }
 

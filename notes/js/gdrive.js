@@ -54,55 +54,43 @@ function GDrive() {
 }
 
 //init
-GDrive.prototype.init = function(callback) {
-  try {
-    chrome.identity.getAuthToken({
-      interactive: false
-    }, function(token) {
-      if (chrome.runtime.lastError) {
-        callback && callback(chrome.runtime.lastError);
-        return;
-      }
+GDrive.prototype.init = function(settings) {
+  chrome.identity.getAuthToken({
+    interactive: false
+  }, function(token) {
+    if (chrome.runtime.lastError) {
+      settings.error && settings.error(chrome.runtime.lastError);
+      return;
+    }
 
-      if (token) {
-        callback && callback("success");
-      }
-    }.bind(this));
-  } catch (e) {
-    console.error(e);
-  }
+    settings.success && settings.success();
+  }.bind(this));
 }
 
 //auth
-GDrive.prototype.checkAuth = function(callback) {
+GDrive.prototype.checkAuth = function() {
   return (null == this.accessToken ? false : true);
 }
 
 //auth
-GDrive.prototype.auth = function(callback) {
-  try {
-    chrome.identity.getAuthToken({
-      interactive: true
-    }, function(token) {
-      if (chrome.runtime.lastError) {
-        callback && callback(chrome.runtime.lastError.message);
-        return;
-      }
+GDrive.prototype.auth = function(settings) {
+  chrome.identity.getAuthToken({
+    interactive: true
+  }, function(token) {
+    if (chrome.runtime.lastError) {
+      settings.error && settings.error(chrome.runtime.lastError);
+      return;
+    }
 
-      if (token) {
-        this.accessToken = token;
-        callback && callback(null);
-      }
-    }.bind(this));
-  } catch (e) {
-    console.error(e);
-  }
+    this.accessToken = token;
+    settings.success && settings.success();
+  }.bind(this));
 }
 
 //remove cache auth
-GDrive.prototype.removeCachedAuth = function(callback) {
+GDrive.prototype.removeCachedAuth = function(settings) {
   if (null == this.accessToken) {
-    callback && callback();
+    settings.success && settings.success();
     return;
   }
 
@@ -113,7 +101,7 @@ GDrive.prototype.removeCachedAuth = function(callback) {
       token: accessToken
     },
     function() {
-      callback && callback();
+      settings.success && settings.success();
     }
   );
 }
@@ -129,18 +117,10 @@ GDrive.prototype.revokeAuth = function() {
 }
 
 //create folder
-GDrive.prototype.createFolder = function(parent, name, callback) {
-  if (null == this.accessToken) {
-    callback && callback({
-      message: "token is null",
-      data: null
-    });
-    return;
-  }
-
+GDrive.prototype.createFolder = function(settings) {
   const metadata = {
-    name: name,
-    parents: parent ? [parent] : null,
+    name: settings.name,
+    parents: settings.parents,
     mimeType: 'application/vnd.google-apps.folder'
   };
   $.ajax({
@@ -152,84 +132,75 @@ GDrive.prototype.createFolder = function(parent, name, callback) {
       request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
     }.bind(this),
     success: function(data) {
-      callback && callback({
-        message: null,
-        data: data
-      });
+      settings.success && settings.success(data);
     },
-    error: function(jqXHR, textStatus, errorTrown) {
-      callback && callback({
-        message: textStatus,
-        errorTrown: errorTrown,
-        jqXHR: jqXHR
-      });
+    error: (jqXHR, textStatus, errorTrown) => {
+      this.error(jqXHR, textStatus, errorTrown, settings);
     }
   });
 }
 
 //delete folder
-GDrive.prototype.deleteFolder = function(folderId, callback) {
+GDrive.prototype.deleteFolder = function(settings) {
   $.ajax({
     type: "DELETE",
-    url: this.REST_FOLDER_DELETE + folderId,
+    url: this.REST_FOLDER_DELETE + settings.folderId,
     beforeSend: function(request) {
       request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
     }.bind(this),
     success: function(data) {
-      callback && callback({
-        message: null,
-        data: data
-      });
+      settings.success && settings.success(data);
     },
-    error: function(jqXHR, textStatus, errorTrown) {
-      callback && callback({
-        message: textStatus,
-        errorTrown: errorTrown,
-        jqXHR: jqXHR
-      });
+    error: (jqXHR, textStatus, errorTrown) => {
+      this.error(jqXHR, textStatus, errorTrown, settings);
     }
   });
 }
 
 //list
-GDrive.prototype.list = function(parentId, callback, pageToken) {
-  parentId = parentId ? parentId : 'root';
-  const q = '\"' + parentId + '\"' + ' in parents';
-  const parent = {
-    corpora: "user",
-    q: q,
-    pageToken: pageToken,
-    fields: "files(id, name, modifiedTime, description)"
+/*;
+{
+  corpora: corpora
+  pageToken: pageToken,
+  parents:[],
+  fields: "files(id, name, modifiedTime, description)"
+}
+*/
+GDrive.prototype.list = function(settings) {
+
+  let parents = settings.parents ? settings.parents : ["root"];
+  let query = [];
+  for (const parent of parents) {
+    query.push('\"' + parent + '\"' + ' in parents');
+  }
+  const parameter = {
+    corpora: settings.corpora ? settings.corpora : "user",
+    q: query.join(" or "),
+    pageToken: settings.pageToken ? settings.pageToken : null,
+    fields: settings.fields ? settings.fields : "files(id, name, modifiedTime, description)"
   }
   $.ajax({
     type: "GET",
     url: this.REST_FOLDER_LIST,
-    data: parent,
+    data: parameter,
     beforeSend: function(request) {
       request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
     }.bind(this),
     success: function(data) {
-      callback && callback({
-        message: null,
-        data: data
-      });
+      settings.success && settings.success(data);
     },
-    error: function(jqXHR, textStatus, errorTrown) {
-      callback && callback({
-        message: textStatus,
-        errorTrown: errorTrown,
-        jqXHR: jqXHR
-      });
+    error: (jqXHR, textStatus, errorTrown) => {
+      this.error(jqXHR, textStatus, errorTrown, settings);
     }
   });
 }
 
 //create file fileMetadata
-GDrive.prototype.createFileMetadata = function(meta, callback) {
+GDrive.prototype.createFileMetadata = function(settings) {
   const metadata = {
-    name: meta.name,
-    parents: meta.parent ? meta.parent : null,
-    description: meta.description
+    name: settings.name,
+    parents: settings.parents ? settings.parents : null,
+    description: settings.description
   }
   $.ajax({
     type: "POST",
@@ -240,78 +211,57 @@ GDrive.prototype.createFileMetadata = function(meta, callback) {
       request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
     }.bind(this),
     success: function(data) {
-      callback && callback({
-        message: null,
-        data: data
-      });
+      settings.success && settings.success(data);
     },
-    error: function(jqXHR, textStatus, errorTrown) {
-      callback && callback({
-        message: textStatus,
-        errorTrown: errorTrown,
-        jqXHR: jqXHR
-      });
+    error: (jqXHR, textStatus, errorTrown) => {
+      this.error(jqXHR, textStatus, errorTrown, settings);
     }
   });
 }
 
 //delete file
-GDrive.prototype.deleteFile = function(fileId, callback) {
+GDrive.prototype.deleteFile = function(settings) {
   $.ajax({
     type: "DELETE",
-    url: this.REST_FILE_DELETE + fileId,
+    url: this.REST_FILE_DELETE + settings.fileId,
     beforeSend: function(request) {
       request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
     }.bind(this),
     success: function(data) {
-      callback && callback({
-        message: null,
-        data: data
-      });
+      settings.success && settings.success(data);
     },
-    error: function(jqXHR, textStatus, errorTrown) {
-      callback && callback({
-        message: textStatus,
-        errorTrown: errorTrown,
-        jqXHR: jqXHR
-      });
+    error: (jqXHR, textStatus, errorTrown) => {
+      this.error(jqXHR, textStatus, errorTrown, settings);
     }
   });
 }
 
 //create file fileMetadata
-GDrive.prototype.createFileContent = function(fileId, data, callback) {
+GDrive.prototype.createFileContent = function(settings) {
   $.ajax({
     type: "PATCH",
-    url: this.REST_FILE_UPLOADCONTENT + fileId + this.REST_FILE_CONTENT_UPLOADMEDIA,
-    data: data,
+    url: this.REST_FILE_UPLOADCONTENT + settings.fileId + this.REST_FILE_CONTENT_UPLOADMEDIA,
+    data: settings.data,
     beforeSend: function(request) {
       request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
     }.bind(this),
     success: function(data) {
-      callback && callback({
-        message: null,
-        data: data
-      });
+      settings.success && settings.success(data);
     },
-    error: function(jqXHR, textStatus, errorTrown) {
-      callback && callback({
-        message: textStatus,
-        errorTrown: errorTrown,
-        jqXHR: jqXHR
-      });
+    error: (jqXHR, textStatus, errorTrown) => {
+      this.error(jqXHR, textStatus, errorTrown, settings);
     }
   });
 }
 
 //create file fileMetadata
-GDrive.prototype.getFileContent = function(file, callback) {
+GDrive.prototype.getFileContent = function(settings) {
   const param = {
     alt: "media"
   }
   $.ajax({
     type: "GET",
-    url: this.REST_FILE_GETCONTENT + file.fileId,
+    url: this.REST_FILE_GETCONTENT + settings.fileId,
     data: param,
     contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
     dataType: file.mine ? file.mine : "text",
@@ -319,17 +269,19 @@ GDrive.prototype.getFileContent = function(file, callback) {
       request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
     }.bind(this),
     success: function(data) {
-      callback && callback({
-        message: null,
-        data: data
-      });
+      settings.success && settings.success(data);
     },
-    error: function(jqXHR, textStatus, errorTrown) {
-      callback && callback({
-        message: textStatus,
-        errorTrown: errorTrown,
-        jqXHR: jqXHR
-      });
+    error: (jqXHR, textStatus, errorTrown) => {
+      this.error(jqXHR, textStatus, errorTrown, settings);
     }
   });
+}
+
+GDrive.prototype.error = function(jqXHR, textStatus, errorTrown, settings) {
+  //net error
+  if (0 == jqXHR.status) {
+    settings.neterror && settings.neterror();
+  } else {
+    settings.error && settings.error(jqXHR.status, jqXHR.responseJSON);
+  }
 }

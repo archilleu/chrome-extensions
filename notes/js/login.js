@@ -7,17 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
 
     waitingDialog.show("request auth...");
-    gdrive.auth(function(result) {
-      if (result) {
-        waitingDialog.show(result);
+    gdrive.auth({
+      success: () => {
+        gotoMainWindow();
+      },
+      error: (msg) => {
+        waitingDialog.show(msg);
         setTimeout(function() {
           waitingDialog.hide()
         }, 1000);
-        console.log(result);
-        return;
       }
-
-      gotoMainWindow();
     });
   }, false);
 

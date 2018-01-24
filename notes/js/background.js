@@ -1,8 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   this.gdrive = new GDrive();
 
-  this.gdrive.init(function(result) {
-    console.log(result);
+  this.gdrive.init({
+    success: () => {
+      console.log("init success");
+    },
+    error: (status, msg) => {
+      console.log("status: " + status + " msg: " + msg);
+    },
+    neterror: () => {
+      console.log("check network");
+    }
   });
 
   chrome.browserAction.onClicked.addListener(() => {
@@ -12,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
       gotoLogin();
     }
   });
-
 
   function gotoMainWindow() {
     window.open(chrome.extension.getURL('window.html'));

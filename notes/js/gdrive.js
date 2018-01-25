@@ -264,7 +264,7 @@ GDrive.prototype.getFileContent = function(settings) {
     url: this.REST_FILE_GETCONTENT + settings.fileId,
     data: param,
     contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-    dataType: file.mine ? file.mine : "text",
+    dataType: settings.mine ? settings.mine : "text",
     beforeSend: function(request) {
       request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
     }.bind(this),

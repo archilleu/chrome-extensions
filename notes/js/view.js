@@ -1,108 +1,145 @@
-$(function() {
+"use strict"
 
-  function NoteFolderView() {
-    this.$noteFolders = $(".folder-container");
-    this.listeners = [];
+function HtmlTemplate(html) {
+  this.html = html;
+}
+
+HtmlTemplate.prototype.replaceAll = function(exp, str) {
+  return this.html.replace(new RegExp(exp, "gm"), str);
+}
+HtmlTemplate.prototype.format = function(args) {
+  if (arguments.length < 1) {
+    return this.html;
   }
 
-  NoteFolderView.prototype.add = function(data) {
-    const item =
-      '<div class="folder-item" data-id=' + data.id + '>' +
-      '<div class="folder-icon all-icon"></div>' +
-      '<div class="folder-info">' +
-      '<div class="files-sum">' + data.sum + '</div>' +
-      '<div class="folder-name">' + data.name + '</div>' +
-      '</div>' +
-      '</div>';
-
-    const $item = $(item);
-    this.$noteFolders.append($item);
-    $item.click(this.bindClick);
+  var data = arguments;
+  if (arguments.length == 1 && typeof(args) == "object") {
+    data = args;
   }
-
-  NoteFolderView.prototype.bindClick = function() {
-    $(".folder-container .folder-item").removeClass("on");
-    $(this).addClass("on");
-    window.noteFolderView.notifyListeners(this.dataset.id);
-  }
-
-  NoteFolderView.prototype.notifyListeners = function(folderId) {
-    for (var listener of this.listeners) {
-      listener(folderId);
+  for (var key in data) {
+    var value = data[key];
+    if (undefined != value) {
+      this.html = this.replaceAll("\\{" + key + "\\}", value);
     }
   }
 
-  NoteFolderView.prototype.addListener = function(listener) {
-    this.listeners.push(listener);
+  return this.html;
+}
+
+class BaseView {
+  constructor(container) {
+    this.container = container;
+    this.$container = $(container);
+    this.listeners = {};
   }
 
-  NoteFolderView.prototype.getCurrentSelectFolder = function() {
-    return this.$noteFolders.find(".on");
+  addListener(type, listener) {
+    this.listeners[type] = listener;
   }
 
-  function NoteFileView() {
-    this.$noteFiles = $(".note-list");
-    this.listeners = [];
+  notifyListeners(type, target) {
+    if (type) {
+      const listener = this.listeners[type];
+      listener && listener(target);
+      return;
+    }
+
+    for (listener of this.listeners) {
+      listener(target);
+    }
+  }
+}
+
+class NoteFolderView extends BaseView {
+  constructor(container) {
+    super(container);
+    this.template =
+      '<div class="folder-item" data-id=' + '{id}' + '>' +
+      '<div class="folder-icon all-icon"></div>' +
+      '<div class="folder-info">' +
+      '<div class="files-sum">' + '{sum}' + '</div>' +
+      '<div class="folder-name">' + '{name}' + '</div>' +
+      '</div>' +
+      '</div>';
   }
 
-  NoteFileView.prototype.add = function(data) {
-    const item =
-      '<div class="note-item" data-id=' + data.id + '>' +
+  add(data) {
+    var template = new HtmlTemplate(this.template);
+    var html = template.format(data);
+
+    const $item = $(html);
+    this.$container.append($item);
+    $item.click({
+      container: this
+    }, function(event) {
+      event.data.container._highlight(this);
+      event.data.container.notifyListeners("click", this);
+    });
+  }
+
+  current() {
+    return this.$container.find(".on");
+  }
+
+  _highlight(item) {
+    this.$container.find(".folder-item").removeClass("on");
+    $(item).addClass("on");
+  }
+
+}
+
+class NoteFilesView extends BaseView {
+  constructor(container) {
+    super(container);
+    this.template =
+      '<div class="note-item" data-id=' + '{id}' + '>' +
       '<div class="item-status">' +
-      '<div class="time">' + (data.modifiedTime ? new Date().toLocaleDateString() : data.modifiedTime.toLocaleDateString()) + '</div>' +
+      '<div class="time">' + '{modifiedTime}' + '</div>' +
       '<div class="fav"></div>' +
       '<div class="image-note"></div>' +
       '</div>' +
       '<div class="note-title">' +
-      '<span>' + data.description + '</span>' +
+      '<span>' + '{description}' + '</span>' +
       '</div>' +
-      '</div>'
-    const $item = $(item);
-    this.$noteFiles.append($item);
-    $item.click(this.bindClick);
-    return $item;
+      '</div>';
   }
 
-  NoteFileView.prototype.emptyList = function() {
-    this.$noteFiles.empty();
+  add(data) {
+    var template = new HtmlTemplate(this.template);
+    var html = template.format(data);
+
+    const $item = $(html);
+    this.$container.append($item);
+    $item.click({
+      container: this
+    }, function(event) {
+      event.data.container._highlight(this);
+      event.data.container.notifyListeners("click", this);
+    });
   }
 
-  NoteFileView.prototype.bindClick = function() {
-    $(".note-list .note-item").removeClass("on");
-    $(this).addClass("on");
-    window.noteFileView.notifyListeners(this.dataset.id);
+  empty() {
+    this.$container.empty();
   }
 
-  NoteFileView.prototype.notifyListeners = function(fileId) {
-    for (var listener of this.listeners) {
-      listener(fileId);
-    }
+  current() {
+    return this.$container.find(".on");
   }
 
-  NoteFileView.prototype.addListener = function(listener) {
-    this.listeners.push(listener);
+  _highlight(item) {
+    this.$container.find(".note-item").removeClass("on");
+    $(item).addClass("on");
   }
 
-  function NoteView() {
-    this.editor = window.editor;
-    this.listeners = [];
+}
+
+class NoteView extends BaseView {
+  constructor(container) {
+    super(container);
   }
 
-  NoteView.prototype.onNoteFileClick = function(data) {
-    editor.setValue(data);
+  onContentReady(data) {
+    this.container.setValue(data);
   }
 
-  NoteView.prototype.notifyListeners = function(fileId) {
-    for (var listener of this.listeners) {
-      listener(fileId);
-    }
-  }
-
-  NoteView.prototype.addListener = function(listener) {
-    this.listeners.push(listener);
-  }
-
-  window.noteFolderView = new NoteFolderView();
-  window.noteFileView = new NoteFileView();
-  window.noteView = new NoteView();
-})
+}

@@ -75,17 +75,19 @@ $(function() {
     });
   };
 
-  Files.prototype.listFolder = function(settings) {
+  Files.prototype.list = function(settings) {
     this.gdrive.list({
-      parents: [this.root],
+      parents: settings.parents ? settings.parents : [this.root],
       success: (data) => {
         var files = data.files;
         var token = data.nextToken;
         var data = [];
         for (const file of files) {
           data.push({
+            id: file.id,
             name: file.name,
-            id: file.id
+            description: file.description ? file.description : null,
+            modifiedTime: file.modifiedTime ? file.modifiedTime : null,
           });
         }
 
@@ -96,8 +98,10 @@ $(function() {
               token = data.nextToken;
               for (const file of files) {
                 data.push({
+                  id: file.id,
                   name: file.name,
-                  id: file.id
+                  description: file.description ? file.description : null,
+                  modifiedTime: file.modifiedTime ? file.modifiedTime : null,
                 });
               }
             },
@@ -120,70 +124,22 @@ $(function() {
     });
   }
 
-  Files.prototype.listFiles = function(folderId, callback) {
-    this.gdrive.list(folderId, function(result) {
-      if (null != result.message) {
-        callback(result);
-        return;
+  Files.prototype.createFolder = function(settings) {
+    this.gdrive.createFolder({
+      parents: [this.root],
+      name: settings.name,
+      success: (data) => {
+        settings.success && settings.success(data);
+        settings.final && settings.final();
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+        settings.final && settings.final();
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror(status, msg);
+        settings.final && settings.final();
       }
-
-      var files = result.data.files;
-      var token = result.data.nextToken;
-      var data = [];
-      for (const file of files) {
-        data.push({
-          name: file.name,
-          description: file.description,
-          modifiedTime: file.modifiedTime,
-          id: file.id
-        });
-      }
-
-      while (token) {
-        this.gdrive.list(folderId, function(result) {
-          if (null != result.message) {
-            callback({
-              message: null,
-              data: data
-            });
-            return;
-          }
-
-          files = result.data.files;
-          token = result.data.nextToken;
-          for (const file of files) {
-            data.push({
-              name: file.name,
-              description: file.description,
-              modifiedTime: file.modifiedTime,
-              id: file.id
-            });
-          }
-        }).bind(this);
-      }
-
-      callback({
-        message: null,
-        data: data
-      })
-    });
-  }
-
-  Files.prototype.createFolder = function(folderName, callback) {
-    this.gdrive.createFolder(this.root, folderName, (result) => {
-      if (null != result.message) {
-        callback({
-          message: result.message
-        })
-        return;
-      }
-
-      callback({
-        message: null,
-        data: {
-          id: result.data.id
-        }
-      })
     });
   }
 
@@ -212,23 +168,19 @@ $(function() {
     });
   }
 
-  Files.prototype.getFileContent = function(fileId, callback) {
+  Files.prototype.getFileContent = function(settings) {
     this.gdrive.getFileContent({
-      fileId: fileId,
-      mine: "text"
-    }, (result) => {
-      if (null != result.message) {
-        callback({
-          message: result.message
-        })
-        return;
+      fileId: settings.fileId,
+      mine: "text",
+      success: (data) => {
+        settings.success && settings.success(data);
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror();
       }
-
-      callback({
-        message: null,
-        data: result.data
-      })
-      return;
     });
   }
 

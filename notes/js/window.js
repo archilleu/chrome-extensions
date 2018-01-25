@@ -1,8 +1,8 @@
 $(function() {
   const files = window.files;
-  const noteFolders = window.noteFolderView;
-  const noteFiles = window.noteFileView;
-  const noteView = window.noteView;
+  const foldersView = new NoteFolderView(document.getElementsByClassName("folder-container")[0])
+  const filesView = new NoteFilesView(document.getElementsByClassName("note-list")[0])
+  const noteView = new NoteView(window.editor);
 
   waitingDialog.show("loading...");
   files.init({
@@ -19,13 +19,14 @@ $(function() {
         }
       });
 
-      bindBtnClickEvent();
+      foldersView.addListener("click", onNoteFolderClick);
+      filesView.addListener("click", onNoteFileClick);
+      filesView.addListener("contentReady", noteView.onContentReady);
 
-      noteFolders.addListener(cleanNoteListPrev);
-      noteFolders.addListener(getNoteList);
+      bindBtnClickEvent();
     },
     error: (status, msg) => {
-      waitingDialog.show(result.message);
+      waitingDialog.show(status);
       setTimeout(function() {
         waitingDialog.hide()
       }, 1000);
@@ -41,11 +42,11 @@ $(function() {
   });
 
   function getNoteFolders(settings) {
-    files.listFolder({
+    files.list({
       success: (folder) => {
         for (folder of folder) {
           folder.sum = 0;
-          noteFolders.add(folder);
+          foldersView.add(folder);
         }
         settings.success && settings.success();
       },
@@ -58,73 +59,82 @@ $(function() {
     });
   }
 
-  function cleanNoteListPrev() {
-    noteFiles.emptyList();
-  }
+  function onNoteFolderClick(noteFolder) {
+    files.list({
+      parents: [noteFolder.dataset.id],
+      success: (data) => {
+        cleanNoteList();
+        for (file of data) {
+          const $item = filesView.add(file);
+        }
+      },
+      error: (status, msg) => {
 
-  function getNoteList(folderId) {
-    files.listFiles(folderId, result => {
-      if (null != result.message) {
-        callback({
-          message: result.message
-        })
-        return;
-      }
+      },
+      network: () => {
 
-      for (file of result.data) {
-        const $item = noteFiles.add(file);
-        noteFiles.addListener(getNoteContent);
       }
     });
   }
 
-  function getNoteContent(noteId) {
-    files.getFileContent(noteId, function(result) {
-      if (null != result.message) {
-        return;
-      }
-
-      noteView.onNoteFileClick(result.data);
-      return;
-    })
+  function onNoteFileClick(noteFile) {
+    getNoteContent(noteFile.dataset.id);
   }
 
+  function cleanNoteList() {
+    filesView.empty();
+  }
+
+  function getNoteContent(noteId) {
+    files.getFileContent({
+      fileId: noteId,
+      success: (data) => {
+        filesView.notifyListeners("contentReady", data);
+      },
+      error: (status, msg) => {
+
+      },
+      neterror: () => {
+
+      }
+    });
+  }
 
   function bindBtnClickEvent() {
     $("#create-folder-btn").click(onCreateFolder);
     $("#create-note-btn").click(onCreateNote);
-    $(".btn-logout").click(() => {
-
-    });
+    $(".btn-logout").click(() => {});
   }
 
   function onCreateFolder() {
     const name = $("#create-folder input").val();
     //Todo check repeat name
 
-    files.createFolder(name, (result) => {
-      waitingDialog.show("creating...");
-      if (null != result.message) {
-        waitingDialog.show(result.message)
-        setTimeout(function() {
-          waitingDialog.hide();
-        }, 1000)
-        return;
+    waitingDialog.show("creating...");
+    files.createFolder({
+      name: name,
+      success: (data) => {
+        foldersView.add({
+          name: name,
+          id: data.id,
+          sum: 0
+        })
+      },
+      error: (status, msg) => {
+        console.log(status + msg);
+      },
+      neterror: () => {
+        console.log(status + msg);
+      },
+      final: () => {
+        waitingDialog.hide();
+        modalCreateFlderHide();
       }
-
-      waitingDialog.hide();
-      noteFolders.add({
-        name: name,
-        id: result.data.id,
-        sum: 0
-      })
     });
-
-    $("#create-folder").modal("hide");
   }
 
   function onCreateNote() {
-    const $currentFolder = noteFolders.getCurrentSelectFolder();
+    const $currentFolder = foldersView.getCurrentSelectFolder();
     if (0 == $currentFolder.length)
       return;
 
@@ -136,3 +146,7 @@ $(function() {
     });
   }
 })
+
+function modalCreateFlderHide() {
+  $("#create-folder").modal("hide");
+}

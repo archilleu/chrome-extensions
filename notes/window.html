@@ -25,11 +25,32 @@
           <h4 class="modal-title" id="myModalLabel">标签类别名</h4>
         </div>
         <div class="modal-body">
-            <input class="form-control" type="text">
+          <input class="form-control" type="text">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
           <button id="create-folder-btn" type="button" class="btn btn-primary">创建</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="create-note" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel">标签名字</h4>
+        </div>
+        <div class="modal-body">
+          <input class="form-control" type="text">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button id="create-note-btn" type="button" class="btn btn-primary">创建</button>
         </div>
       </div>
     </div>
@@ -40,11 +61,13 @@
       <div class="note-left">
         <div class="row titlebar">
           <h1>便签</h1>
-          <div class="btn-note btn-create" id="create-note-btn">
-            <div class="">
-              <span>
+          <div data-toggle="modal" data-target="#create-note">
+            <div class="btn-note btn-create" id="create-note-btn">
+              <div class="">
+                <span>
                 <i class="icon-create"></i>
               </span>
+              </div>
             </div>
           </div>
           <div class="btn-note btn-refresh">

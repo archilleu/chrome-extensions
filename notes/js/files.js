@@ -143,28 +143,20 @@ $(function() {
     });
   }
 
-  Files.prototype.createFile = function(parent, callback) {
+  Files.prototype.createFile = function(settings) {
     this.gdrive.createFileMetadata({
-      parent: parent,
-      name: new Date().toCustomStr(),
-      description: "新建便签"
-    }, (result) => {
-      if (null != result.message) {
-        callback({
-          message: result.message
-        })
-        return;
+      parents: settings.parents,
+      name: settings.modifiedTime,
+      description: settings.name ? settings.name : "新建便签",
+      success: (data) => {
+        settings.success && settings.success(data);
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror();
       }
-
-      callback({
-        message: null,
-        data: {
-          id: result.data.id,
-          name: result.data.name,
-          description: result.data.description,
-          modifiedTime: result.data.modifiedTime || new Date()
-        }
-      })
     });
   }
 
@@ -184,15 +176,6 @@ $(function() {
     });
   }
 
-  Date.prototype.toCustomStr = function() {
-    var yyyy = this.getFullYear();
-    var mm = this.getMonth() < 9 ? "0" + (this.getMonth() + 1) : (this.getMonth() + 1); // getMonth() is zero-based
-    var dd = this.getDate() < 10 ? "0" + this.getDate() : this.getDate();
-    var hh = this.getHours() < 10 ? "0" + this.getHours() : this.getHours();
-    var min = this.getMinutes() < 10 ? "0" + this.getMinutes() : this.getMinutes();
-    var ss = this.getSeconds() < 10 ? "0" + this.getSeconds() : this.getSeconds();
-    return "".concat(yyyy).concat(mm).concat(dd).concat(hh).concat(min).concat(ss);
-  };
 
   window.files = new Files();
 });

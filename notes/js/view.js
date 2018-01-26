@@ -1,29 +1,32 @@
 "use strict"
 
-function HtmlTemplate(html) {
-  this.html = html;
-}
+class HtmlTemplate {
+  constructor(html) {
+    this.html = html;
+  }
 
-HtmlTemplate.prototype.replaceAll = function(exp, str) {
-  return this.html.replace(new RegExp(exp, "gm"), str);
-}
-HtmlTemplate.prototype.format = function(args) {
-  if (arguments.length < 1) {
+  format(args) {
+    if (arguments.length < 1) {
+      return this.html;
+    }
+
+    var data = arguments;
+    if (arguments.length == 1 && typeof(args) == "object") {
+      data = args;
+    }
+    for (var key in data) {
+      var value = data[key];
+      if (undefined != value) {
+        this.html = this._replaceAll("\\{" + key + "\\}", value);
+      }
+    }
+
     return this.html;
   }
 
-  var data = arguments;
-  if (arguments.length == 1 && typeof(args) == "object") {
-    data = args;
+  _replaceAll(exp, str) {
+    return this.html.replace(new RegExp(exp, "gm"), str);
   }
-  for (var key in data) {
-    var value = data[key];
-    if (undefined != value) {
-      this.html = this.replaceAll("\\{" + key + "\\}", value);
-    }
-  }
-
-  return this.html;
 }
 
 class BaseView {
@@ -31,21 +34,31 @@ class BaseView {
     this.container = container;
     this.$container = $(container);
     this.listeners = {};
+
+    this.EVENT_CLICK = "event-click";
   }
 
   addListener(type, listener) {
-    this.listeners[type] = listener;
+    if (!this.listeners[type]) {
+      this.listeners[type] = [];
+    }
+    let listeners = this.listeners[type];
+    listeners.push(listener);
   }
 
   notifyListeners(type, target) {
     if (type) {
-      const listener = this.listeners[type];
-      listener && listener(target);
+      const list = this.listeners[type];
+      if (list) {
+        for (const listener of list)
+          listener(target);
+      }
       return;
     }
 
-    for (listener of this.listeners) {
-      listener(target);
+    for (list of this.listeners) {
+      for (const listener of list)
+        listener(target);
     }
   }
 }
@@ -63,6 +76,13 @@ class NoteFolderView extends BaseView {
       '</div>';
   }
 
+  onListDataReady(listData) {
+    for (const data of listData) {
+      data.sum = data.sum ? dta.sum : 0;
+      this.add(data);
+    }
+  }
+
   add(data) {
     var template = new HtmlTemplate(this.template);
     var html = template.format(data);
@@ -72,8 +92,9 @@ class NoteFolderView extends BaseView {
     $item.click({
       container: this
     }, function(event) {
-      event.data.container._highlight(this);
-      event.data.container.notifyListeners("click", this);
+      const self = event.data.container;
+      self._highlight(this);
+      self.notifyListeners(self.EVENT_CLICK, this);
     });
   }
 
@@ -104,6 +125,13 @@ class NoteFilesView extends BaseView {
       '</div>';
   }
 
+  onListDataReady(listData) {
+    for (const data of listData) {
+      data.sum = data.sum ? dta.sum : 0;
+      this.add(data);
+    }
+  }
+
   add(data) {
     var template = new HtmlTemplate(this.template);
     var html = template.format(data);
@@ -113,9 +141,14 @@ class NoteFilesView extends BaseView {
     $item.click({
       container: this
     }, function(event) {
-      event.data.container._highlight(this);
-      event.data.container.notifyListeners("click", this);
+      const self = event.data.container;
+      self._highlight(this);
+      self.notifyListeners(self.EVENT_CLICK, this);
     });
+  }
+
+  onEmpty() {
+    this.empty();
   }
 
   empty() {
@@ -138,8 +171,11 @@ class NoteView extends BaseView {
     super(container);
   }
 
-  onContentReady(data) {
+  onDataReady(data) {
     this.container.setValue(data);
   }
 
+  onClear(data) {
+    this.container.setValue("");
+  }
 }

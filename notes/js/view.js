@@ -111,6 +111,14 @@ class NoteFolderView extends BaseView {
     return this.$container.find(".on");
   }
 
+  onEmpty() {
+    this.empty();
+  }
+
+  empty() {
+    this.$container.empty();
+  }
+
   _highlight(item) {
     this.$container.find(".folder-item").removeClass("on");
     $(item).addClass("on");

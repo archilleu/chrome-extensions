@@ -25,6 +25,8 @@ class Controller {
     this.EVENT_FILE_DELETE = "event-file-delete";
     this.EVENT_FILE_LIST_READY = "event-file-list-ready";
     this.EVENT_FILE_DATA_READY = "event-file-data-ready";
+
+    this.EVENT_REFRESH = "event-refresh";
     this.EVENT_ERROR = "event-error";
   }
 
@@ -176,6 +178,28 @@ class Controller {
       });
     });
 
+    $("#btn-refresh").click(() => {
+      this._getNoteFolders({
+        success: (folders) => {
+          this.notifyListeners(this.EVENT_REFRESH);
+          this.notifyListeners(this.EVENT_FOLDER_LIST_READY, folders);
+        },
+        error: (status, msg) => {
+          console.log("status: " + status + " msg: " + msg);
+          this.notifyListeners(this.EVENT_ERROR, {
+            status: status,
+            msg: msg
+          })
+        },
+        network: () => {
+          console.log("network error");
+          this.notifyListeners(this.EVENT_ERROR, {
+            status: 0
+          })
+        }
+      });
+    });
+
     $("#create-note-btn").click(() => {
       const $currentFolder = this.foldersView.current();
       if (0 == $currentFolder.length)
@@ -237,10 +261,25 @@ class Controller {
           this.notifyListeners(this.EVENT_FILE_DELETE, $currentFile);
           console.log("delete file:" + name);
         },
-        error: (stauts, msg) => {},
+        error: (stauts, msg) => { },
         neterror: () => { }
       });
     });
+
+    $("#btn-logout").click(()=>{
+      this.files.uninit({
+        success: ()=> {
+          this.gotoLogin();
+        }
+      });
+    });
+  }
+
+  on401Reauth() {
+  }
+
+  gotoLogin() {
+    window.open(chrome.extension.getURL('login.html'));
   }
 }
 
@@ -256,6 +295,7 @@ $(function () {
 
   //foldersView 关注的事件
   controller.addListener(controller.EVENT_FOLDER_CREATE, foldersView.add.bind(foldersView));
+  controller.addListener(controller.EVENT_REFRESH, foldersView.onEmpty.bind(foldersView));
   controller.addListener(controller.EVENT_FOLDER_LIST_READY, foldersView.onListDataReady.bind(foldersView));
   controller.addListener(controller.EVENT_FOLDER_DELETE, foldersView.del.bind(foldersView));
 
@@ -264,15 +304,18 @@ $(function () {
   controller.addListener(controller.EVENT_FILE_LIST_READY, filesView.onListDataReady.bind(filesView));
   controller.addListener(controller.EVENT_FILE_CREATE, filesView.add.bind(filesView));
   controller.addListener(controller.EVENT_FILE_DELETE, filesView.del.bind(filesView))
+  controller.addListener(controller.EVENT_REFRESH, filesView.onEmpty.bind(filesView));
 
   //noteView 关注的事件
   controller.addListener(controller.EVENT_FILE_DATA_READY, noteView.onDataReady.bind(noteView));
   foldersView.addListener(foldersView.EVENT_CLICK, noteView.onClear.bind(noteView));
+  controller.addListener(controller.EVENT_REFRESH, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_FILE_DELETE, noteView.onClear.bind(noteView));
 
   //其他事件
   controller.addListener(controller.EVENT_INIT_SUCCESS, controller.onBindBtnClickEvent.bind(controller));
   controller.addListener(controller.EVENT_ERROR, function () { });
-  controller.init();
 
+  //init
+  controller.init();
 });

@@ -37,6 +37,15 @@ $(function() {
     });
   }
 
+  Files.prototype.uninit = function(settings) {
+    this.gdrive.revokeAuth();
+    this.gdrive.removeCachedAuth({
+      success: ()=>{
+        settings.success && settings.success();
+      }
+    });
+  }
+
   Files.prototype._checkHasRoot = function(settings) {
     this.gdrive.list({
       success: (data) => {

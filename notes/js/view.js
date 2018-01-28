@@ -11,7 +11,7 @@ class HtmlTemplate {
     }
 
     var data = arguments;
-    if (arguments.length == 1 && typeof(args) == "object") {
+    if (arguments.length == 1 && typeof (args) == "object") {
       data = args;
     }
     for (var key in data) {
@@ -31,11 +31,11 @@ class HtmlTemplate {
 
 class BaseView {
   constructor(container) {
-    this.container = container;
     this.$container = $(container);
     this.listeners = {};
 
     this.EVENT_CLICK = "event-click";
+    this.EVENT_DELETE = "event-delete";
   }
 
   addListener(type, listener) {
@@ -91,11 +91,20 @@ class NoteFolderView extends BaseView {
     this.$container.append($item);
     $item.click({
       container: this
-    }, function(event) {
+    }, function (event) {
       const self = event.data.container;
+
+      //如果该项选中则返回
+      if (self._isChecked(this))
+        return;
+
       self._highlight(this);
       self.notifyListeners(self.EVENT_CLICK, this);
     });
+  }
+
+  del(folder) {
+    folder.remove();
   }
 
   current() {
@@ -107,6 +116,13 @@ class NoteFolderView extends BaseView {
     $(item).addClass("on");
   }
 
+  _isChecked(item) {
+    const current = this.current()[0];
+    if (current && current.dataset.id == item.dataset.id)
+      return true;
+
+    return false;
+  }
 }
 
 class NoteFilesView extends BaseView {
@@ -140,11 +156,20 @@ class NoteFilesView extends BaseView {
     this.$container.append($item);
     $item.click({
       container: this
-    }, function(event) {
+    }, function (event) {
       const self = event.data.container;
+
+      //如果该项选中则返回
+      if (self._isChecked(this))
+        return;
+
       self._highlight(this);
       self.notifyListeners(self.EVENT_CLICK, this);
     });
+  }
+
+  del(file) {
+    file.remove();
   }
 
   onEmpty() {
@@ -164,18 +189,30 @@ class NoteFilesView extends BaseView {
     $(item).addClass("on");
   }
 
+  _isChecked(item) {
+    const current = this.current()[0];
+    if (current && current.dataset.id == item.dataset.id)
+      return true;
+
+    return false;
+  }
 }
 
 class NoteView extends BaseView {
-  constructor(container) {
-    super(container);
+  constructor() {
+    super(null);
+    this.editor = window.editor;
   }
 
   onDataReady(data) {
-    this.container.setValue(data);
+    this.editor.setValue(data);
   }
 
   onClear(data) {
-    this.container.setValue("");
+    this.editor.setValue("");
+  }
+
+  getValue() {
+    return this.editor.getValue();
   }
 }

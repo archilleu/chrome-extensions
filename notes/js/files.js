@@ -143,6 +143,24 @@ $(function() {
     });
   }
 
+  Files.prototype.deleteFolder = function(settings) {
+    this.gdrive.deleteFolder({
+      folderId: settings.folderId,
+      success: (data) => {
+        settings.success && settings.success(data);
+        settings.final && settings.final();
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+        settings.final && settings.final();
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror(status, msg);
+        settings.final && settings.final();
+      }
+    });
+  }
+
   Files.prototype.createFile = function(settings) {
     this.gdrive.createFileMetadata({
       parents: settings.parents,
@@ -156,6 +174,24 @@ $(function() {
       },
       neterror: () => {
         settings.neterror && settings.neterror();
+      }
+    });
+  }
+
+  Files.prototype.deleteFile = function(settings) {
+    this.gdrive.deleteFile({
+      fileId: settings.fileId,
+      success: (data) => {
+        settings.success && settings.success(data);
+        settings.final && settings.final();
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+        settings.final && settings.final();
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror(status, msg);
+        settings.final && settings.final();
       }
     });
   }
@@ -176,6 +212,21 @@ $(function() {
     });
   }
 
+  Files.prototype.saveFileContent = function(settings) {
+    this.gdrive.createFileContent({
+      fileId: settings.fileId,
+      data: settings.data,
+      success: (data)=> {
+        settings.success && settings.success(data);
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror();
+      }
+    });
+  }
 
   window.files = new Files();
 });

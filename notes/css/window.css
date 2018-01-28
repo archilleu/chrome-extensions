@@ -129,6 +129,14 @@ html, body {
   height: 36px;
 }
 
+.btn-note .icon-save {
+  display: inline-block;
+  vertical-align: top;
+  background: url(../images/all_icons.png) no-repeat -181px -123px;
+  width: 30px;
+  height: 36px;
+}
+
 .btn-note .icon-refresh {
   display: inline-block;
   vertical-align: top;
@@ -325,6 +333,16 @@ html, body {
   width: 20px;
   margin-top: 15px;
   background: url(../images/all_icons.png) -169px -220px no-repeat;
+  cursor: pointer;
+}
+
+.bottom-menu .delete-folder-btn {
+  float: left;
+  height: 20px;
+  margin-left: 16px;
+  width: 20px;
+  margin-top: 15px;
+  background: url(../images/all_icons.png) -94px -220px no-repeat;
   cursor: pointer;
 }
 

@@ -1,12 +1,3 @@
-Date.prototype.toCustomStr = function () {
-  var yyyy = this.getFullYear();
-  var mm = this.getMonth() < 9 ? "0" + (this.getMonth() + 1) : (this.getMonth() + 1); // getMonth() is zero-based
-  var dd = this.getDate() < 10 ? "0" + this.getDate() : this.getDate();
-  var hh = this.getHours() < 10 ? "0" + this.getHours() : this.getHours();
-  var min = this.getMinutes() < 10 ? "0" + this.getMinutes() : this.getMinutes();
-  var ss = this.getSeconds() < 10 ? "0" + this.getSeconds() : this.getSeconds();
-  return "".concat(yyyy).concat(mm).concat(dd).concat(hh).concat(min).concat(ss);
-};
 class Controller {
   constructor(foldersView, filesView, noteView, files) {
     this.foldersView = foldersView;
@@ -113,13 +104,13 @@ class Controller {
   }
 
   _onNoteFolderClick(folderId) {
-    files.list({
+    this.files.list({
       parents: [folderId],
       success: (data) => {
         this.notifyListeners(this.EVENT_FILE_LIST_READY, data);
       },
-      error: (status, msg) => { },
-      network: () => { }
+      error: (status, msg) => {},
+      network: () => {}
     });
   }
 
@@ -129,13 +120,13 @@ class Controller {
   }
 
   _getNoteContent(noteId) {
-    files.getFileContent({
+    this.files.getFileContent({
       fileId: noteId,
       success: (data) => {
         this.notifyListeners(this.EVENT_FILE_DATA_READY, data);
       },
-      error: (status, msg) => { },
-      neterror: () => { }
+      error: (status, msg) => {},
+      neterror: () => {}
     });
   }
 
@@ -150,9 +141,9 @@ class Controller {
           data.sum = 0;
           this.notifyListeners(this.EVENT_FOLDER_CREATE, data);
         },
-        error: (status, msg) => { },
-        neterror: () => { },
-        final: () => { }
+        error: (status, msg) => {},
+        neterror: () => {},
+        final: () => {}
       });
     });
 
@@ -172,9 +163,9 @@ class Controller {
         success: () => {
           this.notifyListeners(this.EVENT_FOLDER_DELETE, $currentFolder);
         },
-        error: (status, msg) => { },
-        neterror: () => { },
-        final: () => { }
+        error: (status, msg) => {},
+        neterror: () => {},
+        final: () => {}
       });
     });
 
@@ -220,8 +211,8 @@ class Controller {
           data.id = data.id;
           this.notifyListeners(this.EVENT_FILE_CREATE, data);
         },
-        error: (status, msg) => { },
-        neterror: () => { }
+        error: (status, msg) => {},
+        neterror: () => {}
       });
     });
 
@@ -238,9 +229,8 @@ class Controller {
         success: (data) => {
           console.log(data);
         },
-        error: (status, msg) => {
-        },
-        neterror: () => { }
+        error: (status, msg) => {},
+        neterror: () => {}
       });
     });
 
@@ -261,61 +251,23 @@ class Controller {
           this.notifyListeners(this.EVENT_FILE_DELETE, $currentFile);
           console.log("delete file:" + name);
         },
-        error: (stauts, msg) => { },
-        neterror: () => { }
+        error: (stauts, msg) => {},
+        neterror: () => {}
       });
     });
 
-    $("#btn-logout").click(()=>{
+    $("#btn-logout").click(() => {
       this.files.uninit({
-        success: ()=> {
+        success: () => {
           this.gotoLogin();
         }
       });
     });
   }
 
-  on401Reauth() {
-  }
+  on401Reauth() {}
 
   gotoLogin() {
     window.open(chrome.extension.getURL('login.html'));
   }
 }
-
-$(function () {
-  const foldersView = new NoteFolderView(document.getElementsByClassName("folder-container")[0])
-  const filesView = new NoteFilesView(document.getElementsByClassName("note-list")[0])
-  const noteView = new NoteView();
-  const controller = new Controller(foldersView, filesView, noteView, window.files);
-
-  //controllder 关注的事件
-  foldersView.addListener(foldersView.EVENT_CLICK, controller.onFolderClick.bind(controller));
-  filesView.addListener(filesView.EVENT_CLICK, controller.onFileClick.bind(controller));
-
-  //foldersView 关注的事件
-  controller.addListener(controller.EVENT_FOLDER_CREATE, foldersView.add.bind(foldersView));
-  controller.addListener(controller.EVENT_REFRESH, foldersView.onEmpty.bind(foldersView));
-  controller.addListener(controller.EVENT_FOLDER_LIST_READY, foldersView.onListDataReady.bind(foldersView));
-  controller.addListener(controller.EVENT_FOLDER_DELETE, foldersView.del.bind(foldersView));
-
-  //filesView 关注的事件
-  controller.addListener(controller.EVENT_FILE_LIST_READY, filesView.onEmpty.bind(filesView));
-  controller.addListener(controller.EVENT_FILE_LIST_READY, filesView.onListDataReady.bind(filesView));
-  controller.addListener(controller.EVENT_FILE_CREATE, filesView.add.bind(filesView));
-  controller.addListener(controller.EVENT_FILE_DELETE, filesView.del.bind(filesView))
-  controller.addListener(controller.EVENT_REFRESH, filesView.onEmpty.bind(filesView));
-
-  //noteView 关注的事件
-  controller.addListener(controller.EVENT_FILE_DATA_READY, noteView.onDataReady.bind(noteView));
-  foldersView.addListener(foldersView.EVENT_CLICK, noteView.onClear.bind(noteView));
-  controller.addListener(controller.EVENT_REFRESH, noteView.onClear.bind(noteView));
-  controller.addListener(controller.EVENT_FILE_DELETE, noteView.onClear.bind(noteView));
-
-  //其他事件
-  controller.addListener(controller.EVENT_INIT_SUCCESS, controller.onBindBtnClickEvent.bind(controller));
-  controller.addListener(controller.EVENT_ERROR, function () { });
-
-  //init
-  controller.init();
-});

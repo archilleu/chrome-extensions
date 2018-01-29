@@ -1,21 +1,19 @@
-$(function() {
-  function Files() {
+class Service {
+  constructor() {
     this.root = null;
     this.gdrive = chrome.extension.getBackgroundPage().gdrive;
-
     this.__defineGetter__("ROOT", function() {
       return "GNODE";
     })
   }
 
-  Files.prototype.init = function(settings) {
+  init(settings) {
     this._checkHasRoot({
       success: (result) => {
-        if (result) {
-          settings.success && settings.success();
-          return;
-        }
-
+        settings.success && settings.success();
+      },
+      error: (status, msg) => {
+        console.log("status:" + status, "msg:" + msg);
         this._createRoot({
           success: () => {
             settings.success && settings.success();
@@ -27,8 +25,6 @@ $(function() {
             settings.neterror && settings.neterror();
           }
         });
-      },
-      error: (status, msg) => {
         settings.error && settings.error(status, msg);
       },
       neterror: () => {
@@ -37,16 +33,7 @@ $(function() {
     });
   }
 
-  Files.prototype.uninit = function(settings) {
-    this.gdrive.revokeAuth();
-    this.gdrive.removeCachedAuth({
-      success: ()=>{
-        settings.success && settings.success();
-      }
-    });
-  }
-
-  Files.prototype._checkHasRoot = function(settings) {
+  _checkHasRoot(settings) {
     this.gdrive.list({
       success: (data) => {
         for (const file of data.files) {
@@ -56,7 +43,8 @@ $(function() {
             return;
           }
         }
-        settings.success && settings.success(false);
+
+        settings.error && settings.error(404, msg);
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
@@ -67,7 +55,7 @@ $(function() {
     });
   }
 
-  Files.prototype._createRoot = function(settings) {
+  _createRoot(settings) {
     this.gdrive.createFolder({
       name: this.ROOT,
       parents: [],
@@ -84,7 +72,15 @@ $(function() {
     });
   };
 
-  Files.prototype.list = function(settings) {
+  uninit(settings) {
+    this.gdrive.removeCachedAuth({
+      success: () => {
+        settings.success && settings.success();
+      }
+    });
+  }
+
+  list(settings) {
     this.gdrive.list({
       parents: settings.parents ? settings.parents : [this.root],
       success: (data) => {
@@ -133,7 +129,7 @@ $(function() {
     });
   }
 
-  Files.prototype.createFolder = function(settings) {
+  createFolder(settings) {
     this.gdrive.createFolder({
       parents: [this.root],
       name: settings.name,
@@ -152,7 +148,7 @@ $(function() {
     });
   }
 
-  Files.prototype.deleteFolder = function(settings) {
+  deleteFolder(settings) {
     this.gdrive.deleteFolder({
       folderId: settings.folderId,
       success: (data) => {
@@ -170,24 +166,27 @@ $(function() {
     });
   }
 
-  Files.prototype.createFile = function(settings) {
+  createFile(settings) {
     this.gdrive.createFileMetadata({
       parents: settings.parents,
       name: settings.modifiedTime,
       description: settings.name ? settings.name : "新建便签",
       success: (data) => {
         settings.success && settings.success(data);
+        settings.final && settings.final();
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
+        settings.final && settings.final();
       },
       neterror: () => {
         settings.neterror && settings.neterror();
+        settings.final && settings.final();
       }
     });
   }
 
-  Files.prototype.deleteFile = function(settings) {
+  deleteFile(settings) {
     this.gdrive.deleteFile({
       fileId: settings.fileId,
       success: (data) => {
@@ -205,37 +204,41 @@ $(function() {
     });
   }
 
-  Files.prototype.getFileContent = function(settings) {
+  getFileContent(settings) {
     this.gdrive.getFileContent({
       fileId: settings.fileId,
       mine: "text",
       success: (data) => {
         settings.success && settings.success(data);
+        settings.final && settings.final();
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
+        settings.final && settings.final();
       },
       neterror: () => {
         settings.neterror && settings.neterror();
+        settings.final && settings.final();
       }
     });
   }
 
-  Files.prototype.saveFileContent = function(settings) {
+  saveFileContent(settings) {
     this.gdrive.createFileContent({
       fileId: settings.fileId,
       data: settings.data,
-      success: (data)=> {
+      success: (data) => {
         settings.success && settings.success(data);
+        settings.final && settings.final();
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
+        settings.final && settings.final();
       },
       neterror: () => {
         settings.neterror && settings.neterror();
+        settings.final && settings.final();
       }
     });
   }
-
-  window.files = new Files();
-});
+}

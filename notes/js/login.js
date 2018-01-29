@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const bg = chrome.extension.getBackgroundPage();
-  const gdrive = bg.gdrive;
+
+  const gdrive = chrome.extension.getBackgroundPage().gdrive;
+
+  gdrive.init({
+    success: () => {
+      gotoMainWindow();
+    },
+    error: (msg) => {
+      console.log(msg);
+    }
+  })
 
   const google = document.getElementById("google-login");
   google.addEventListener("click", function(event) {

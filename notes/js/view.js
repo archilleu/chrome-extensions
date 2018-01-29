@@ -1,34 +1,5 @@
 "use strict"
 
-class HtmlTemplate {
-  constructor(html) {
-    this.html = html;
-  }
-
-  format(args) {
-    if (arguments.length < 1) {
-      return this.html;
-    }
-
-    var data = arguments;
-    if (arguments.length == 1 && typeof (args) == "object") {
-      data = args;
-    }
-    for (var key in data) {
-      var value = data[key];
-      if (undefined != value) {
-        this.html = this._replaceAll("\\{" + key + "\\}", value);
-      }
-    }
-
-    return this.html;
-  }
-
-  _replaceAll(exp, str) {
-    return this.html.replace(new RegExp(exp, "gm"), str);
-  }
-}
-
 class BaseView {
   constructor(container) {
     this.$container = $(container);
@@ -91,7 +62,7 @@ class NoteFolderView extends BaseView {
     this.$container.append($item);
     $item.click({
       container: this
-    }, function (event) {
+    }, function(event) {
       const self = event.data.container;
 
       //如果该项选中则返回
@@ -164,7 +135,7 @@ class NoteFilesView extends BaseView {
     this.$container.append($item);
     $item.click({
       container: this
-    }, function (event) {
+    }, function(event) {
       const self = event.data.container;
 
       //如果该项选中则返回

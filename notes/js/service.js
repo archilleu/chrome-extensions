@@ -34,7 +34,7 @@ class Service {
   }
 
   _checkHasRoot(settings) {
-    this.gdrive.list({
+    this.list({
       success: (data) => {
         for (const file of data.files) {
           if (this.ROOT == file.name) {
@@ -43,15 +43,10 @@ class Service {
             return;
           }
         }
-
         settings.error && settings.error(404, msg);
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
-      },
-      e401: () => {
-        this._reAuth();
-        console.log(401);
       },
       neterror: () => {
         settings.neterror && settings.neterror();
@@ -60,7 +55,7 @@ class Service {
   }
 
   _createRoot(settings) {
-    this.gdrive.createFolder({
+    this.createFolder({
       name: this.ROOT,
       parents: [],
       success: (data) => {
@@ -126,8 +121,7 @@ class Service {
         settings.success && settings.success(files);
       },
       e401: () => {
-        console.log(401)
-        this._reAuth();
+        this._reAuth(settings, this.gdrive.list.bind(this.gdrive));
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
@@ -251,8 +245,26 @@ class Service {
     });
   }
 
-  _reAuth() {
-    this.gdrive.removeCachedAuth();
-    this.gdrive.init();
+  _reAuth(settings, fun) {
+    this.gdrive.removeCachedAuth({
+      success: () => {
+        this.gdrive.init({
+          success: () => {
+            fun(settings);
+          },
+          error: () => {
+            this.gdrive.auth({
+              success: () => {
+                fun(settings);
+              },
+              error: () => {
+                settings.error && settings.error(403, "request auth failed");
+              }
+            })
+          }
+        });
+      }
+    });
   }
+
 }

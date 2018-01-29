@@ -58,7 +58,7 @@ class GDrive {
       interactive: false
     }, (token) => {
       if (chrome.runtime.lastError) {
-        settings._error && settings._error(chrome.runtime.lastError);
+        settings.error && settings.error(chrome.runtime.lastError);
         return;
       }
 
@@ -78,7 +78,7 @@ class GDrive {
       interactive: true
     }, (token) => {
       if (chrome.runtime.lastError) {
-        settings._error && settings._error(chrome.runtime.lastError);
+        settings.error && settings.error(chrome.runtime.lastError);
         return;
       }
 

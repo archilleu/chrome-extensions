@@ -129,7 +129,7 @@ class GDrive {
       success: (data) => {
         settings.success && settings.success(data);
       },
-      _error: (jqXHR, textStatus, errorTrown) => {
+      error: (jqXHR, textStatus, errorTrown) => {
         this._error(jqXHR, textStatus, errorTrown, settings);
       }
     });
@@ -146,7 +146,7 @@ class GDrive {
       success: (data) => {
         settings.success && settings.success(data);
       },
-      _error: (jqXHR, textStatus, errorTrown) => {
+      error: (jqXHR, textStatus, errorTrown) => {
         this._error(jqXHR, textStatus, errorTrown, settings);
       }
     });
@@ -184,7 +184,7 @@ class GDrive {
       success: (data) => {
         settings.success && settings.success(data);
       },
-      _error: (jqXHR, textStatus, errorTrown) => {
+      error: (jqXHR, textStatus, errorTrown) => {
         this._error(jqXHR, textStatus, errorTrown, settings);
       }
     });
@@ -208,7 +208,7 @@ class GDrive {
       success: (data) => {
         settings.success && settings.success(data);
       },
-      _error: (jqXHR, textStatus, errorTrown) => {
+      error: (jqXHR, textStatus, errorTrown) => {
         this._error(jqXHR, textStatus, errorTrown, settings);
       }
     });
@@ -225,7 +225,7 @@ class GDrive {
       success: (data) => {
         settings.success && settings.success(data);
       },
-      _error: (jqXHR, textStatus, errorTrown) => {
+      error: (jqXHR, textStatus, errorTrown) => {
         this._error(jqXHR, textStatus, errorTrown, settings);
       }
     });
@@ -243,7 +243,7 @@ class GDrive {
       success: (data) => {
         settings.success && settings.success(data);
       },
-      _error: (jqXHR, textStatus, errorTrown) => {
+      error: (jqXHR, textStatus, errorTrown) => {
         this._error(jqXHR, textStatus, errorTrown, settings);
       }
     });
@@ -266,7 +266,7 @@ class GDrive {
       success: (data) => {
         settings.success && settings.success(data);
       },
-      _error: (jqXHR, textStatus, errorTrown) => {
+      error: (jqXHR, textStatus, errorTrown) => {
         this._error(jqXHR, textStatus, errorTrown, settings);
       }
     });
@@ -276,8 +276,10 @@ class GDrive {
     //net error
     if (0 == jqXHR.status) {
       settings.neterror && settings.neterror();
+    } else if (401 == jqXHR.status) {
+      settings.e401 && settings.e401();
     } else {
-      settings._error && settings._error(jqXHR.status, jqXHR.responseJSON);
+      settings.error && settings.error(jqXHR.status, jqXHR.responseJSON);
     }
   }
 

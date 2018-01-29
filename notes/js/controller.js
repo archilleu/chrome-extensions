@@ -268,6 +268,6 @@ class Controller {
   on401Reauth() {}
 
   gotoLogin() {
-    window.open(chrome.extension.getURL('login.html'));
+    window.location.href = chrome.extension.getURL('login.html');
   }
 }

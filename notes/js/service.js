@@ -49,6 +49,10 @@ class Service {
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
       },
+      e401: () => {
+        this._reAuth();
+        console.log(401);
+      },
       neterror: () => {
         settings.neterror && settings.neterror();
       }
@@ -73,6 +77,7 @@ class Service {
   };
 
   uninit(settings) {
+    // this.gdrive.revokeAuth();
     this.gdrive.removeCachedAuth({
       success: () => {
         settings.success && settings.success();
@@ -119,6 +124,10 @@ class Service {
           });
         }
         settings.success && settings.success(files);
+      },
+      e401: () => {
+        console.log(401)
+        this._reAuth();
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
@@ -240,5 +249,10 @@ class Service {
         settings.final && settings.final();
       }
     });
+  }
+
+  _reAuth() {
+    this.gdrive.removeCachedAuth();
+    this.gdrive.init();
   }
 }

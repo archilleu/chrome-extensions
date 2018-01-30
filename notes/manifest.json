@@ -3,7 +3,7 @@
 
   "name": "notes",
   "description": "notes use google driver",
-  "version": "1.0.0",
+  "version": "1.0.2",
 
   "browser_action": {
     "default_title": "notes",

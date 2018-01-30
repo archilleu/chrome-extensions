@@ -231,6 +231,20 @@ class Controller extends Listener {
     });
   }
 
+  _checkContinue() {
+    if(!this.noteView.isChanged()) {
+      return true;
+    }
+
+    if(!confirm("保存文件")) {
+      this.noteView.onClearChange();
+      return false;
+    }
+
+    $(".btn-save").trigger("click");
+    return false;
+  }
+
   onBindBtnClickEvent() {
     $("#create-folder-btn").click(() => {
       this.notifyListeners(this.EVENT_ACTION_BEGIN);

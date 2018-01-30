@@ -29,6 +29,8 @@ $(function() {
   controller.addListener(controller.EVENT_REFRESH, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_FILE_DELETE, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_FOLDER_DELETE, noteView.onClear.bind(noteView));
+  controller.addListener(controller.EVENT_FOLDER_LIST_READY, noteView.onClearChange.bind(noteView));
+  controller.addListener(controller.EVENT_FILE_LIST_READY, noteView.onClearChange.bind(noteView));
 
   //nteraction 关注的事件
   controller.addListener(controller.EVENT_ACTION_BEGIN, interaction.onLoadingShow.bind(interaction));

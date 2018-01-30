@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
   init();
 
   function init() {
@@ -21,6 +21,15 @@ $(function() {
         // "Esc": function() {
         // }
       }
+    })
+
+    //监控内容是否改变
+    editor.changedCount = 0;
+    editor.__defineGetter__("changed", function () {
+      return editor.changedCount > 1;
+    });
+    editor.on("changes", function (ins, obj) {
+      editor.changedCount += 1;
     });
 
     window.editor = editor;

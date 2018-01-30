@@ -161,14 +161,24 @@ class NoteView extends BaseView {
 
   onDataReady(data) {
     this.editor.setValue(data);
+    this.editor.clearHistory();
   }
 
   onClear(data) {
     this.editor.setValue("");
+    this.editor.clearHistory();
   }
 
   getValue() {
     return this.editor.getValue();
+  }
+
+  isChanged() {
+    return this.editor.changed;
+  }
+
+  onClearChange() {
+    this.editor.changedCount = 1;
   }
 }
 

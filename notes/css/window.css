@@ -11,6 +11,73 @@ html, body {
   padding: 0;
 }
 
+#snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background: -webkit-linear-gradient(top, #827265, #716053);
+  background: linear-gradient(#827265, #716053);
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 20;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+}
+
+#snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
 .row {
   width: 100%;
   margin: 0;
@@ -320,7 +387,7 @@ html, body {
   right: 0;
   border-right: 1px solid #dcd6ca;
   height: 50px;
-  box-shadow: rgba(0,0,0,.03) 0 -1px 6px;
+  box-shadow: rgba(0, 0, 0, .03) 0 -1px 6px;
   z-index: 6;
   border-top: 1px #e9dece solid;
   background: #fbf7ed;

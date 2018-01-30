@@ -171,3 +171,27 @@ class NoteView extends BaseView {
     return this.editor.getValue();
   }
 }
+
+class Interaction {
+  constructor() {
+    this.loading = new Loading("images/loading.gif");
+    this.tips = new Tips();
+  }
+
+  loading() {
+    this.onLoadingShow();
+  }
+
+  onLoadingShow() {
+    this.loading.show();
+  }
+
+  onLoadingHide() {
+    this.loading.hide();
+  }
+
+  onTips(tip) {
+    const msg = "status:" + tip.status + " msg:" + (tip.msg ? tip.msg : "网络不通...");
+    this.tips.show(msg);
+  }
+}

@@ -8,6 +8,41 @@ Date.prototype.toCustomStr = function() {
   return "".concat(yyyy).concat(mm).concat(dd).concat(hh).concat(min).concat(ss);
 };
 
+class Loading {
+  constructor(gif) {
+    const loading =
+      '<div style="top: 0;bottom: 0;left: 0;right: 0;background-color: #9e9e9e33;position: fixed;z-index:100">' +
+      '<img style="position: relative;top: 45%;left: 50%;" src="' + gif + '" />' +
+      '</div>';
+
+    this.$loading = $(loading);
+    $("body").append(this.$loading);
+    this.$loading.hide();
+  }
+
+  show() {
+    this.$loading.show();
+  }
+
+  hide() {
+    this.$loading.hide();
+  }
+}
+
+class Tips {
+  constructor() {
+    this.$tips = $("#snackbar");
+  }
+
+  show(msg) {
+    this.$tips.text(msg);
+    this.$tips.addClass("show");
+    setTimeout(() => {
+      this.$tips.removeClass("show")
+    }, 3000);
+  }
+}
+
 class HtmlTemplate {
   constructor(html) {
     this.html = html;

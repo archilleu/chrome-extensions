@@ -12,7 +12,9 @@ class Controller extends Listener {
     this.EVENT_CREATE_FOLDER_ALL = "event-create-folder-all";
     this.EVENT_INIT_SUCCESS = "event-init-success";
 
-    this.EVENT_SUCCESS = "event-success";
+    this.EVENT_ACTION_BEGIN = "event-action-begin";
+    this.EVENT_ACTION_END = "event-action-end";
+
     this.EVENT_ERROR = "event-error";
     this.EVENT_NETERROR = "event-neterror";
 
@@ -29,6 +31,8 @@ class Controller extends Listener {
   }
 
   init(settings) {
+    this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
     this.service.checkHasRoot({
       success: () => {
         this.notifyListeners(this.EVENT_CHECK_HAS_FOLDER_ALL, settings);
@@ -83,6 +87,7 @@ class Controller extends Listener {
             settings.success && settings.success();
             this.notifyListeners(this.EVENT_INIT_SUCCESS);
             this.notifyListeners(this.EVENT_FOLDER_LIST_READY, folders);
+            this.notifyListeners(this.EVENT_ACTION_END);
           }
         });
       },
@@ -114,6 +119,7 @@ class Controller extends Listener {
           success: (folders) => {
             this.notifyListeners(this.EVENT_INIT_SUCCESS);
             this.notifyListeners(this.EVENT_FOLDER_LIST_READY, folders);
+            this.notifyListeners(this.EVENT_ACTION_END);
             settings.success && settings.success();
           }
         });
@@ -156,11 +162,14 @@ class Controller extends Listener {
   }
 
   onFolderClick(folder) {
+    this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
     const folderId = folder.dataset.id;
     this._onNoteFolderClick({
       folderId: folderId,
       success: (data) => {
         this.notifyListeners(this.EVENT_FILE_LIST_READY, data);
+        this.notifyListeners(this.EVENT_ACTION_END);
       }
     });
   }
@@ -188,11 +197,14 @@ class Controller extends Listener {
   }
 
   onFileClick(file) {
+    this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
     const fileId = file.dataset.id;
     this._getNoteContent({
       fileId: fileId,
       success: (data) => {
         this.notifyListeners(this.EVENT_FILE_DATA_READY, data);
+        this.notifyListeners(this.EVENT_ACTION_END);
       },
     });
   }
@@ -221,6 +233,8 @@ class Controller extends Listener {
 
   onBindBtnClickEvent() {
     $("#create-folder-btn").click(() => {
+      this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
       const name = $("#create-folder input").val();
       //Todo check repeat name
 
@@ -229,6 +243,7 @@ class Controller extends Listener {
         success: (data) => {
           data.sum = 0;
           this.notifyListeners(this.EVENT_FOLDER_CREATE, data);
+          this.notifyListeners(this.EVENT_ACTION_END);
         },
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {
@@ -247,6 +262,8 @@ class Controller extends Listener {
     });
 
     $("#delete-folder-btn").click(() => {
+      this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
       const $currentFolder = this.foldersView.current();
       if (0 == $currentFolder.length)
         return;
@@ -261,6 +278,7 @@ class Controller extends Listener {
         folderId: id,
         success: () => {
           this.notifyListeners(this.EVENT_FOLDER_DELETE, $currentFolder);
+          this.notifyListeners(this.EVENT_ACTION_END);
         },
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {
@@ -279,10 +297,13 @@ class Controller extends Listener {
     });
 
     $("#btn-refresh").click(() => {
+      this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
       this._getNoteFolders({
         success: (folders) => {
           this.notifyListeners(this.EVENT_REFRESH);
           this.notifyListeners(this.EVENT_FOLDER_LIST_READY, folders);
+          this.notifyListeners(this.EVENT_ACTION_END);
         },
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {
@@ -301,6 +322,8 @@ class Controller extends Listener {
     });
 
     $("#create-note-btn").click(() => {
+      this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
       const $currentFolder = this.foldersView.current();
       if (0 == $currentFolder.length)
         return;
@@ -319,6 +342,7 @@ class Controller extends Listener {
           data.modifiedTime = modifiedTime;
           data.id = data.id;
           this.notifyListeners(this.EVENT_FILE_CREATE, data);
+          this.notifyListeners(this.EVENT_ACTION_END);
         },
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {
@@ -337,6 +361,8 @@ class Controller extends Listener {
     });
 
     $(".btn-save").click(() => {
+      this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
       const $curentFile = this.serviceView.current();
       if (0 == $curentFile.length)
         return;
@@ -346,7 +372,9 @@ class Controller extends Listener {
       this.service.saveFileContent({
         fileId: id,
         data: data,
-        success: (data) => {},
+        success: (data) => {
+          this.notifyListeners(this.EVENT_ACTION_END);
+        },
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {
             status: status,
@@ -364,6 +392,8 @@ class Controller extends Listener {
     });
 
     $(".btn-delete").click(() => {
+      this.notifyListeners(this.EVENT_ACTION_BEGIN);
+
       const $currentFile = this.serviceView.current();
       if (0 == $currentFile.length)
         return;
@@ -378,7 +408,7 @@ class Controller extends Listener {
         fileId: id,
         success: () => {
           this.notifyListeners(this.EVENT_FILE_DELETE, $currentFile);
-          console.log("delete file:" + name);
+          this.notifyListeners(this.EVENT_ACTION_END);
         },
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {

@@ -140,13 +140,13 @@ class Service {
         settings.success && settings.success(data);
       },
       e401: () => {
-        this._reAuthSend(settings, this.gdrive.list.bind(this.gdrive));
+        this._reAuthSend(settings, this.list.bind(this));
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
       },
       neterror: () => {
-        settings.neterror && settings.neterror(status, msg);
+        settings.neterror && settings.neterror();
       }
     });
   }
@@ -164,10 +164,10 @@ class Service {
         settings.final && settings.final();
       },
       e401: () => {
-        this._reAuthSend(settings, this.gdrive.createFolder.bind(this.gdrive));
+        this._reAuthSend(settings, this.createFolder.bind(this));
       },
       neterror: () => {
-        settings.neterror && settings.neterror(status, msg);
+        settings.neterror && settings.neterror();
         settings.final && settings.final();
       }
     });
@@ -185,10 +185,10 @@ class Service {
         settings.final && settings.final();
       },
       e401: () => {
-        this._reAuthSend(settings, this.gdrive.deleteFolder.bind(this.gdrive));
+        this._reAuthSend(settings, this.deleteFolder.bind(this));
       },
       neterror: () => {
-        settings.neterror && settings.neterror(status, msg);
+        settings.neterror && settings.neterror();
         settings.final && settings.final();
       }
     });
@@ -208,7 +208,7 @@ class Service {
         settings.final && settings.final();
       },
       e401: () => {
-        this._reAuthSend(settings, this.gdrive.createFile.bind(this.gdrive));
+        this._reAuthSend(settings, this.createFile.bind(this));
       },
       neterror: () => {
         settings.neterror && settings.neterror();
@@ -229,10 +229,10 @@ class Service {
         settings.final && settings.final();
       },
       e401: () => {
-        this._reAuthSend(settings, this.gdrive.deleteFile.bind(this.gdrive));
+        this._reAuthSend(settings, this.deleteFile.bind(this));
       },
       neterror: () => {
-        settings.neterror && settings.neterror(status, msg);
+        settings.neterror && settings.neterror();
         settings.final && settings.final();
       }
     });
@@ -251,7 +251,7 @@ class Service {
         settings.final && settings.final();
       },
       e401: () => {
-        this._reAuthSend(settings, this.gdrive.getFileContent.bind(this.gdrive));
+        this._reAuthSend(settings, this.getFileContent.bind(this));
       },
       neterror: () => {
         settings.neterror && settings.neterror();
@@ -273,7 +273,7 @@ class Service {
         settings.final && settings.final();
       },
       e401: () => {
-        this._reAuthSend(settings, this.gdrive.saveFileContent.bind(this.gdrive));
+        this._reAuthSend(settings, this.saveFileContent.bind(this));
       },
       neterror: () => {
         settings.neterror && settings.neterror();

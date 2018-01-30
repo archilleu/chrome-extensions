@@ -105,7 +105,6 @@ class Controller extends Listener {
         })
       }
     })
-
   }
 
   onCreateFolderAll(settings) {
@@ -158,14 +157,19 @@ class Controller extends Listener {
 
   onFolderClick(folder) {
     const folderId = folder.dataset.id;
-    this._onNoteFolderClick(folderId);
-  }
-
-  _onNoteFolderClick(folderId) {
-    this.service.list({
-      parents: [folderId],
+    this._onNoteFolderClick({
+      folderId: folderId,
       success: (data) => {
         this.notifyListeners(this.EVENT_FILE_LIST_READY, data);
+      }
+    });
+  }
+
+  _onNoteFolderClick(settings) {
+    this.service.list({
+      parents: [settings.folderId],
+      success: (data) => {
+        settings.success && settings.success(data);
       },
       error: (status, msg) => {
         this.notifyListeners(this.EVENT_ERROR, {
@@ -185,14 +189,19 @@ class Controller extends Listener {
 
   onFileClick(file) {
     const fileId = file.dataset.id;
-    this._getNoteContent(fileId);
-  }
-
-  _getNoteContent(noteId) {
-    this.service.getFileContent({
-      fileId: noteId,
+    this._getNoteContent({
+      fileId: fileId,
       success: (data) => {
         this.notifyListeners(this.EVENT_FILE_DATA_READY, data);
+      },
+    });
+  }
+
+  _getNoteContent(settings) {
+    this.service.getFileContent({
+      fileId: settings.fileId,
+      success: (data) => {
+        settings.success && settings.success(data);
       },
       error: (status, msg) => {
         this.notifyListeners(this.EVENT_ERROR, {
@@ -221,7 +230,6 @@ class Controller extends Listener {
           data.sum = 0;
           this.notifyListeners(this.EVENT_FOLDER_CREATE, data);
         },
-        error: (status, msg) => {},
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {
             status: status,
@@ -254,7 +262,6 @@ class Controller extends Listener {
         success: () => {
           this.notifyListeners(this.EVENT_FOLDER_DELETE, $currentFolder);
         },
-        error: (status, msg) => {},
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {
             status: status,
@@ -339,9 +346,7 @@ class Controller extends Listener {
       this.service.saveFileContent({
         fileId: id,
         data: data,
-        success: (data) => {
-          console.log(data);
-        },
+        success: (data) => {},
         error: (status, msg) => {
           this.notifyListeners(this.EVENT_ERROR, {
             status: status,

@@ -28,9 +28,25 @@ $(function() {
   controller.addListener(controller.EVENT_FILE_DELETE, noteView.onClear.bind(noteView));
 
   //其他事件
+  controller.addListener(controller.EVENT_CREATE_ROOT, controller.onCreateRoot.bind(controller));
+  controller.addListener(controller.EVENT_CHECK_HAS_FOLDER_ALL, controller.onCheckHasFolderAll.bind(controller));
+  controller.addListener(controller.EVENT_CREATE_FOLDER_ALL, controller.onCreateFolderAll.bind(controller));
   controller.addListener(controller.EVENT_INIT_SUCCESS, controller.onBindBtnClickEvent.bind(controller));
-  controller.addListener(controller.EVENT_ERROR, function() {});
+
+  controller.addListener(controller.EVENT_ERROR, (error) => {
+    console.log(error);
+  });
+  controller.addListener(controller.EVENT_NETERROR, (error) => {
+    console.log(error);
+  });
 
   //init
-  controller.init();
+  controller.init({
+    success: () => {
+      console.log("init success");
+    },
+    error: () => {
+      console.log("init error");
+    }
+  });
 });

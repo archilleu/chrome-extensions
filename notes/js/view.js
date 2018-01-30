@@ -1,36 +1,12 @@
 "use strict"
 
-class BaseView {
+class BaseView extends Listener {
   constructor(container) {
-    this.$container = $(container);
-    this.listeners = {};
+    super();
 
+    this.$container = $(container);
     this.EVENT_CLICK = "event-click";
     this.EVENT_DELETE = "event-delete";
-  }
-
-  addListener(type, listener) {
-    if (!this.listeners[type]) {
-      this.listeners[type] = [];
-    }
-    let listeners = this.listeners[type];
-    listeners.push(listener);
-  }
-
-  notifyListeners(type, target) {
-    if (type) {
-      const list = this.listeners[type];
-      if (list) {
-        for (const listener of list)
-          listener(target);
-      }
-      return;
-    }
-
-    for (list of this.listeners) {
-      for (const listener of list)
-        listener(target);
-    }
   }
 }
 

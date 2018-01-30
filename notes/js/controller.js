@@ -1,12 +1,22 @@
-class Controller {
-  constructor(foldersView, filesView, noteView, files) {
-    this.foldersView = foldersView;
-    this.filesView = filesView;
-    this.noteView = noteView;
-    this.files = files;
-    this.listeners = {};
+class Controller extends Listener {
+  constructor(foldersView, serviceView, noteView, service) {
+    super();
 
+    this.foldersView = foldersView;
+    this.serviceView = serviceView;
+    this.noteView = noteView;
+    this.service = service;
+
+    this.EVENT_CREATE_ROOT = "event-create-root";
+    this.EVENT_CHECK_HAS_FOLDER_ALL = "event-check-has-folder-all";
+    this.EVENT_CREATE_FOLDER_ALL = "event-create-folder-all";
     this.EVENT_INIT_SUCCESS = "event-init-success";
+
+    this.EVENT_SUCCESS = "event-success";
+    this.EVENT_ERROR = "event-error";
+    this.EVENT_NETERROR = "event-neterror";
+
+    this.EVENT_REFRESH = "event-refresh";
     this.EVENT_FOLDER_LIST_READY = "event-folder-list-ready";
     this.EVENT_FOLDER_CLICK = "event-folder-click";
     this.EVENT_FOLDER_CREATE = "event-folder-create";
@@ -16,84 +26,132 @@ class Controller {
     this.EVENT_FILE_DELETE = "event-file-delete";
     this.EVENT_FILE_LIST_READY = "event-file-list-ready";
     this.EVENT_FILE_DATA_READY = "event-file-data-ready";
-
-    this.EVENT_REFRESH = "event-refresh";
-    this.EVENT_ERROR = "event-error";
   }
 
-  addListener(type, listener) {
-    if (!this.listeners[type]) {
-      this.listeners[type] = [];
-    }
-    let listeners = this.listeners[type];
-    listeners.push(listener);
-  }
+  init(settings) {
+    this.service.checkHasRoot({
+      success: () => {
+        this.notifyListeners(this.EVENT_CHECK_HAS_FOLDER_ALL, settings);
+      },
+      error: (status, msg) => {
+        if (404 == status) {
+          this.notifyListeners(this.EVENT_CREATE_ROOT, settings);
+          return;
+        }
 
-  notifyListeners(type, target) {
-    if (type) {
-      const list = this.listeners[type];
-      if (list) {
-        for (const listener of list)
-          listener(target);
+        this.notifyListeners(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "checkHasRoot"
+        })
+      },
+      neterror: () => {
+        this.notifyListeners(this.EVENT_NETERROR, {
+          status: 0,
+          method: "checkHasRoot"
+        })
       }
-      return;
-    }
-
-    for (list of this.listeners) {
-      for (const listener of list)
-        listener(target);
-    }
+    });
   }
 
-  init() {
-    this.files.init({
+  onCreateRoot(settings) {
+    this.service.createRoot({
+      success: () => {
+        this.notifyListeners(this.EVENT_CHECK_HAS_FOLDER_ALL, settings);
+      },
+      error: (status, msg) => {
+        this.notifyListeners(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "onCreateRoot"
+        })
+      },
+      neterror: () => {
+        this.notifyListeners(this.EVENT_NETERROR, {
+          status: 0,
+          method: "onCreateRoot"
+        })
+      }
+    });
+  }
+
+  onCheckHasFolderAll(settings) {
+    this.service.checkHasFolderAll({
       success: () => {
         this._getNoteFolders({
           success: (folders) => {
-            this.notifyListeners(this.EVENT_FOLDER_LIST_READY, folders);
+            settings.success && settings.success();
             this.notifyListeners(this.EVENT_INIT_SUCCESS);
-          },
-          error: (status, msg) => {
-            console.log("status: " + status + " msg: " + msg);
-            this.notifyListeners(this.EVENT_ERROR, {
-              status: status,
-              msg: msg
-            })
-          },
-          network: () => {
-            console.log("network error");
-            this.notifyListeners(this.EVENT_ERROR, {
-              status: 0
-            })
+            this.notifyListeners(this.EVENT_FOLDER_LIST_READY, folders);
           }
         });
       },
       error: (status, msg) => {
-        console.log("status: " + status + " msg: " + msg);
+        if (404 == status) {
+          this.notifyListeners(this.EVENT_CREATE_FOLDER_ALL, settings);
+          return;
+        }
+
         this.notifyListeners(this.EVENT_ERROR, {
           status: status,
-          msg: msg
+          msg: msg,
+          method: "onCheckHasFolderAll"
         })
       },
       neterror: () => {
-        console.log("network error");
+        this.notifyListeners(this.EVENT_NETERROR, {
+          status: 0,
+          method: "onCheckHasFolderAll"
+        })
+      }
+    })
+
+  }
+
+  onCreateFolderAll(settings) {
+    this.service.onCreateFolderAll({
+      success: () => {
+        this._getNoteFolders({
+          success: (folders) => {
+            this.notifyListeners(this.EVENT_INIT_SUCCESS);
+            this.notifyListeners(this.EVENT_FOLDER_LIST_READY, folders);
+            settings.success && settings.success();
+          }
+        });
+      },
+      error: (status, msg) => {
         this.notifyListeners(this.EVENT_ERROR, {
-          status: 0
+          status: status,
+          msg: msg,
+          method: "onCreateFolderAll"
+        })
+      },
+      neterror: () => {
+        this.notifyListeners(this.EVENT_NETERROR, {
+          status: 0,
+          method: "onCreateFolderAll"
         })
       }
     });
   }
 
   _getNoteFolders(settings) {
-    this.files.list({
+    this.service.list({
       success: (folders) => {
         settings.success && settings.success(folders);
       },
       error: (status, msg) => {
-        settings.error && settings.error(status, msg);
+        this.notifyListeners(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "_getNoteFolders"
+        })
       },
-      network: () => {
-        settings.network && settings.network();
+      neterror: () => {
+        this.notifyListeners(this.EVENT_NETERROR, {
+          status: 0,
+          method: "_getNoteFolders"
+        })
       }
     });
   }
@@ -104,13 +162,24 @@ class Controller {
   }
 
   _onNoteFolderClick(folderId) {
-    this.files.list({
+    this.service.list({
       parents: [folderId],
       success: (data) => {
         this.notifyListeners(this.EVENT_FILE_LIST_READY, data);
       },
-      error: (status, msg) => {},
-      network: () => {}
+      error: (status, msg) => {
+        this.notifyListeners(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "_onNoteFolderClick"
+        })
+      },
+      neterror: () => {
+        this.notifyListeners(this.EVENT_NETERROR, {
+          status: 0,
+          method: "_onNoteFolderClick"
+        })
+      }
     });
   }
 
@@ -120,13 +189,24 @@ class Controller {
   }
 
   _getNoteContent(noteId) {
-    this.files.getFileContent({
+    this.service.getFileContent({
       fileId: noteId,
       success: (data) => {
         this.notifyListeners(this.EVENT_FILE_DATA_READY, data);
       },
-      error: (status, msg) => {},
-      neterror: () => {}
+      error: (status, msg) => {
+        this.notifyListeners(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "_getNoteContent"
+        })
+      },
+      neterror: () => {
+        this.notifyListeners(this.EVENT_NETERROR, {
+          status: 0,
+          method: "_getNoteContent"
+        })
+      }
     });
   }
 
@@ -135,15 +215,26 @@ class Controller {
       const name = $("#create-folder input").val();
       //Todo check repeat name
 
-      this.files.createFolder({
+      this.service.createFolder({
         name: name,
         success: (data) => {
           data.sum = 0;
           this.notifyListeners(this.EVENT_FOLDER_CREATE, data);
         },
         error: (status, msg) => {},
-        neterror: () => {},
-        final: () => {}
+        error: (status, msg) => {
+          this.notifyListeners(this.EVENT_ERROR, {
+            status: status,
+            msg: msg,
+            method: "createFolder"
+          })
+        },
+        neterror: () => {
+          this.notifyListeners(this.EVENT_NETERROR, {
+            status: 0,
+            method: "createFolder"
+          })
+        }
       });
     });
 
@@ -158,14 +249,25 @@ class Controller {
         return;
       }
 
-      this.files.deleteFolder({
+      this.service.deleteFolder({
         folderId: id,
         success: () => {
           this.notifyListeners(this.EVENT_FOLDER_DELETE, $currentFolder);
         },
         error: (status, msg) => {},
-        neterror: () => {},
-        final: () => {}
+        error: (status, msg) => {
+          this.notifyListeners(this.EVENT_ERROR, {
+            status: status,
+            msg: msg,
+            method: "deleteFolder"
+          })
+        },
+        neterror: () => {
+          this.notifyListeners(this.EVENT_NETERROR, {
+            status: 0,
+            method: "deleteFolder"
+          })
+        }
       });
     });
 
@@ -176,16 +278,16 @@ class Controller {
           this.notifyListeners(this.EVENT_FOLDER_LIST_READY, folders);
         },
         error: (status, msg) => {
-          console.log("status: " + status + " msg: " + msg);
           this.notifyListeners(this.EVENT_ERROR, {
             status: status,
-            msg: msg
+            msg: msg,
+            method: "_getNoteFolders"
           })
         },
         network: () => {
-          console.log("network error");
-          this.notifyListeners(this.EVENT_ERROR, {
-            status: 0
+          this.notifyListeners(this.EVENT_NETERROR, {
+            status: 0,
+            method: "_getNoteFolders"
           })
         }
       });
@@ -201,7 +303,7 @@ class Controller {
 
       const folderId = $currentFolder[0].dataset.id;
       const modifiedTime = new Date().toCustomStr();
-      this.files.createFile({
+      this.service.createFile({
         parents: [folderId],
         name: name,
         modifiedTime: modifiedTime,
@@ -211,31 +313,53 @@ class Controller {
           data.id = data.id;
           this.notifyListeners(this.EVENT_FILE_CREATE, data);
         },
-        error: (status, msg) => {},
-        neterror: () => {}
+        error: (status, msg) => {
+          this.notifyListeners(this.EVENT_ERROR, {
+            status: status,
+            msg: msg,
+            method: "createFile"
+          })
+        },
+        neterror: () => {
+          this.notifyListeners(this.EVENT_NETERROR, {
+            status: 0,
+            method: "createFile"
+          })
+        }
       });
     });
 
     $(".btn-save").click(() => {
-      const $curentFile = this.filesView.current();
+      const $curentFile = this.serviceView.current();
       if (0 == $curentFile.length)
         return;
 
       const id = $curentFile[0].dataset.id;
       const data = this.noteView.getValue();
-      this.files.saveFileContent({
+      this.service.saveFileContent({
         fileId: id,
         data: data,
         success: (data) => {
           console.log(data);
         },
-        error: (status, msg) => {},
-        neterror: () => {}
+        error: (status, msg) => {
+          this.notifyListeners(this.EVENT_ERROR, {
+            status: status,
+            msg: msg,
+            method: "saveFileContent"
+          })
+        },
+        neterror: () => {
+          this.notifyListeners(this.EVENT_NETERROR, {
+            status: 0,
+            method: "saveFileContent"
+          })
+        }
       });
     });
 
     $(".btn-delete").click(() => {
-      const $currentFile = this.filesView.current();
+      const $currentFile = this.serviceView.current();
       if (0 == $currentFile.length)
         return;
 
@@ -245,27 +369,36 @@ class Controller {
         return;
       }
 
-      this.files.deleteFile({
+      this.service.deleteFile({
         fileId: id,
         success: () => {
           this.notifyListeners(this.EVENT_FILE_DELETE, $currentFile);
           console.log("delete file:" + name);
         },
-        error: (stauts, msg) => {},
-        neterror: () => {}
+        error: (status, msg) => {
+          this.notifyListeners(this.EVENT_ERROR, {
+            status: status,
+            msg: msg,
+            method: "deleteFile"
+          })
+        },
+        neterror: () => {
+          this.notifyListeners(this.EVENT_NETERROR, {
+            status: 0,
+            method: "deleteFile"
+          })
+        }
       });
     });
 
     $("#btn-logout").click(() => {
-      this.files.uninit({
+      this.service.uninit({
         success: () => {
           this.gotoLogin();
         }
       });
     });
   }
-
-  on401Reauth() {}
 
   gotoLogin() {
     window.location.href = chrome.extension.getURL('login.html');

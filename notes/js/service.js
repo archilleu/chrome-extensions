@@ -1,49 +1,28 @@
 class Service {
   constructor() {
     this.root = null;
+    this.folderAll = null;
     this.gdrive = chrome.extension.getBackgroundPage().gdrive;
     this.__defineGetter__("ROOT", function() {
       return "GNODE";
     })
+    this.__defineGetter__("FOLDER_ALL", function() {
+      return "全部便签";
+    })
   }
 
-  init(settings) {
-    this._checkHasRoot({
-      success: (result) => {
-        settings.success && settings.success();
-      },
-      error: (status, msg) => {
-        console.log("status:" + status, "msg:" + msg);
-        this._createRoot({
-          success: () => {
-            settings.success && settings.success();
-          },
-          error: (status, msg) => {
-            settings.error && settings.error(status, msg);
-          },
-          neterror: () => {
-            settings.neterror && settings.neterror();
-          }
-        });
-        settings.error && settings.error(status, msg);
-      },
-      neterror: () => {
-        settings.neterror && settings.neterror();
-      }
-    });
-  }
-
-  _checkHasRoot(settings) {
+  checkHasRoot(settings) {
     this.list({
+      parents: ["root"],
       success: (data) => {
-        for (const file of data.files) {
+        for (const file of data) {
           if (this.ROOT == file.name) {
             this.root = file.id;
             settings.success && settings.success(true);
             return;
           }
         }
-        settings.error && settings.error(404, msg);
+        settings.error && settings.error(404, "not found");
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
@@ -54,12 +33,51 @@ class Service {
     });
   }
 
-  _createRoot(settings) {
+  createRoot(settings) {
     this.createFolder({
       name: this.ROOT,
-      parents: [],
+      parents: ["root"],
       success: (data) => {
         this.root = data.id;
+        settings.success && settings.success();
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror();
+      }
+    });
+  };
+
+  checkHasFolderAll(settings) {
+    this.list({
+      parents: [this.root],
+      success: (data) => {
+        for (const file of data) {
+          if (this.FOLDER_ALL == file.name) {
+            this.folderAll = file.id;
+            settings.success && settings.success(true);
+            return;
+          }
+        }
+        settings.error && settings.error(404, "not found");
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror();
+      }
+    });
+  }
+
+  onCreateFolderAll(settings) {
+    this.createFolder({
+      name: this.FOLDER_ALL,
+      parents: [this.root],
+      success: (data) => {
+        this.folderAll = data.id;
         settings.success && settings.success();
       },
       error: (status, msg) => {
@@ -98,6 +116,7 @@ class Service {
 
         while (token) {
           this.gdrive.list({
+            parents: settings.parents ? settings.parents : [this.root],
             success: (data) => {
               files = data.files;
               token = data.nextToken;
@@ -118,10 +137,10 @@ class Service {
             }
           });
         }
-        settings.success && settings.success(files);
+        settings.success && settings.success(data);
       },
       e401: () => {
-        this._reAuth(settings, this.gdrive.list.bind(this.gdrive));
+        this._reAuthSend(settings, this.gdrive.list.bind(this.gdrive));
       },
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
@@ -134,7 +153,7 @@ class Service {
 
   createFolder(settings) {
     this.gdrive.createFolder({
-      parents: [this.root],
+      parents: settings.parents ? settings.parents : [this.root],
       name: settings.name,
       success: (data) => {
         settings.success && settings.success(data);
@@ -143,6 +162,9 @@ class Service {
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
         settings.final && settings.final();
+      },
+      e401: () => {
+        this._reAuthSend(settings, this.gdrive.createFolder.bind(this.gdrive));
       },
       neterror: () => {
         settings.neterror && settings.neterror(status, msg);
@@ -161,6 +183,9 @@ class Service {
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
         settings.final && settings.final();
+      },
+      e401: () => {
+        this._reAuthSend(settings, this.gdrive.deleteFolder.bind(this.gdrive));
       },
       neterror: () => {
         settings.neterror && settings.neterror(status, msg);
@@ -182,6 +207,9 @@ class Service {
         settings.error && settings.error(status, msg);
         settings.final && settings.final();
       },
+      e401: () => {
+        this._reAuthSend(settings, this.gdrive.createFile.bind(this.gdrive));
+      },
       neterror: () => {
         settings.neterror && settings.neterror();
         settings.final && settings.final();
@@ -199,6 +227,9 @@ class Service {
       error: (status, msg) => {
         settings.error && settings.error(status, msg);
         settings.final && settings.final();
+      },
+      e401: () => {
+        this._reAuthSend(settings, this.gdrive.deleteFile.bind(this.gdrive));
       },
       neterror: () => {
         settings.neterror && settings.neterror(status, msg);
@@ -219,6 +250,9 @@ class Service {
         settings.error && settings.error(status, msg);
         settings.final && settings.final();
       },
+      e401: () => {
+        this._reAuthSend(settings, this.gdrive.getFileContent.bind(this.gdrive));
+      },
       neterror: () => {
         settings.neterror && settings.neterror();
         settings.final && settings.final();
@@ -238,6 +272,9 @@ class Service {
         settings.error && settings.error(status, msg);
         settings.final && settings.final();
       },
+      e401: () => {
+        this._reAuthSend(settings, this.gdrive.saveFileContent.bind(this.gdrive));
+      },
       neterror: () => {
         settings.neterror && settings.neterror();
         settings.final && settings.final();
@@ -245,7 +282,7 @@ class Service {
     });
   }
 
-  _reAuth(settings, fun) {
+  _reAuthSend(settings, fun) {
     this.gdrive.removeCachedAuth({
       success: () => {
         this.gdrive.init({

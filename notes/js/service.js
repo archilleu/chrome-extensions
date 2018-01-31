@@ -101,31 +101,36 @@ class Service {
   list(settings) {
     this.gdrive.list({
       parents: settings.parents ? settings.parents : [this.root],
+      orderBy: settings.orderBy,
       success: (data) => {
         var files = data.files;
         var token = data.nextToken;
         var data = [];
         for (const file of files) {
+          let modifiedTime = file.modifiedTime ? file.modifiedTime : null;
+          modifiedTime = new Date(modifiedTime).toCustomStr();
           data.push({
             id: file.id,
             name: file.name,
             description: file.description ? file.description : null,
-            modifiedTime: file.modifiedTime ? file.modifiedTime : null,
+            modifiedTime: modifiedTime
           });
         }
 
         while (token) {
           this.gdrive.list({
             parents: settings.parents ? settings.parents : [this.root],
+            orderBy: settings.orderBy,
             success: (data) => {
               files = data.files;
               token = data.nextToken;
               for (const file of files) {
+                let modifiedTime = file.modifiedTime ? file.modifiedTime : null;
                 data.push({
                   id: file.id,
                   name: file.name,
                   description: file.description ? file.description : null,
-                  modifiedTime: file.modifiedTime ? file.modifiedTime : null,
+                  modifiedTime: modifiedTime
                 });
               }
             },

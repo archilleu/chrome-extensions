@@ -170,6 +170,7 @@ class GDrive {
     }
     const parameter = {
       corpora: settings.corpora ? settings.corpora : "user",
+      orderBy: settings.orderBy,
       q: query.join(" or "),
       pageToken: settings.pageToken ? settings.pageToken : null,
       fields: settings.fields ? settings.fields : "files(id, name, modifiedTime, description)"

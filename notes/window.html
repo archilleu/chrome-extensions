@@ -27,11 +27,10 @@
         </div>
         <div class="modal-body">
           <input class="form-control" type="text">
-          <img src="images/loading.gif" alt="">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button id="create-folder-btn" type="button" class="btn btn-primary">创建</button>
+          <button id="btn-folder-create-ok" type="button" class="btn btn-primary">创建</button>
         </div>
       </div>
     </div>
@@ -52,7 +51,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button id="create-note-btn" type="button" class="btn btn-primary">创建</button>
+          <button id="btn-note-create-ok" type="button" class="btn btn-primary">创建</button>
         </div>
       </div>
     </div>
@@ -63,8 +62,8 @@
       <div class="note-left">
         <div class="row titlebar">
           <h1>便签</h1>
-          <div data-toggle="modal" data-target="#create-note">
-            <div class="btn-note btn-create" id="create-note-btn">
+          <div data-toggle="modal">
+            <div class="btn-note btn-create" id="btn-note-create">
               <div class="">
                 <span>
                 <i class="icon-create"></i>
@@ -111,7 +110,7 @@
               </div> -->
             </div>
             <div class="bottom-menu">
-              <div class="create-folder-btn" data-toggle="modal" data-target="#create-folder"></div>
+              <div class="create-folder-btn" id="btn-folder-create"></div>
               <div class="delete-folder-btn" id="delete-folder-btn"></div>
             </div>
           </div>

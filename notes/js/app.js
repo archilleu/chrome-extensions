@@ -3,11 +3,13 @@ $(function() {
   const filesView = new NoteFilesView(document.getElementsByClassName("note-list")[0])
   const noteView = new NoteView();
   const controller = new Controller(foldersView, filesView, noteView, new Service());
-  const interaction = new Interaction();
+  const interaction = new Interaction("images/loading.gif");
 
   //controllder 关注的事件
   foldersView.addListener(foldersView.EVENT_CLICK, controller.onFolderClick.bind(controller));
   filesView.addListener(filesView.EVENT_CLICK, controller.onFileClick.bind(controller));
+  foldersView.addListener(filesView.EVENT_ADD, controller.onFolderCreate.bind(controller));
+  filesView.addListener(foldersView.EVENT_ADD, controller.onFileCreate.bind(controller));
 
   //foldersView 关注的事件
   controller.addListener(controller.EVENT_FOLDER_CREATE, foldersView.add.bind(foldersView));
@@ -27,17 +29,15 @@ $(function() {
   controller.addListener(controller.EVENT_FILE_DATA_READY, noteView.onDataReady.bind(noteView));
   foldersView.addListener(foldersView.EVENT_CLICK, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_REFRESH, noteView.onClear.bind(noteView));
+  controller.addListener(controller.EVENT_FILE_LIST_READY, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_FILE_DELETE, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_FOLDER_DELETE, noteView.onClear.bind(noteView));
-  controller.addListener(controller.EVENT_FOLDER_LIST_READY, noteView.onClearChange.bind(noteView));
-  controller.addListener(controller.EVENT_FILE_LIST_READY, noteView.onClearChange.bind(noteView));
 
   //nteraction 关注的事件
   controller.addListener(controller.EVENT_ACTION_BEGIN, interaction.onLoadingShow.bind(interaction));
   controller.addListener(controller.EVENT_ACTION_END, interaction.onLoadingHide.bind(interaction));
   controller.addListener(controller.EVENT_ERROR, interaction.onLoadingHide.bind(interaction));
   controller.addListener(controller.EVENT_NETERROR, interaction.onLoadingHide.bind(interaction));
-
   controller.addListener(controller.EVENT_ERROR, interaction.onTips.bind(interaction));
   controller.addListener(controller.EVENT_NETERROR, interaction.onTips.bind(interaction));
 

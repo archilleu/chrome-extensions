@@ -29,6 +29,10 @@ class GDrive {
       return "https://www.googleapis.com/drive/v3/files";
     })
 
+    this.__defineGetter__("REST_FILE_UPDATE_METADATA", function() {
+      return "https://www.googleapis.com/drive/v3/files/" /*fileId*/ ;
+    })
+
     this.__defineGetter__("REST_FILE_DELETE", function() {
       return "https://www.googleapis.com/drive/v3/files/" /*fileId*/ ;
     })
@@ -233,12 +237,35 @@ class GDrive {
     });
   }
 
-  //create file fileMetadata
+  //create file metadata
   createFileContent(settings) {
     $.ajax({
       type: "PATCH",
       url: this.REST_FILE_UPLOADCONTENT + settings.fileId + this.REST_FILE_CONTENT_UPLOADMEDIA,
       data: settings.data,
+      beforeSend: (request) => {
+        request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
+      },
+      success: (data) => {
+        settings.success && settings.success(data);
+      },
+      error: (jqXHR, textStatus, errorTrown) => {
+        this._error(jqXHR, textStatus, errorTrown, settings);
+      }
+    });
+  }
+
+  //update file metadata
+  updateFileMetadata(settings) {
+    const metadata = {
+      parents: settings.parents ? settings.parents : null,
+      description: settings.description
+    }
+    $.ajax({
+      type: "PATCH",
+      url: this.REST_FILE_UPDATE_METADATA + settings.fileId,
+      contentType: 'application/json',
+      data: JSON.stringify(metadata),
       beforeSend: (request) => {
         request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
       },

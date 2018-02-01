@@ -1,17 +1,10 @@
-$(function () {
-  init();
+class Editor {
+  constructor(container) {
+    this.changedCount = 0;
+    this.onchange = null;
 
-  function init() {
-    addEditorArea();
-    initEditor();
-  }
-
-  function addEditorArea() {
-    $(".note-editor").append("<textarea id='note-editor' style='display: none;'></textarea>");
-  }
-
-  function initEditor() {
-    const editor = CodeMirror.fromTextArea(document.getElementById("note-editor"), {
+    $(container).append("<textarea id='codemirror-editor' style='display: none;'></textarea>");
+    this.editor = CodeMirror.fromTextArea(document.getElementById("codemirror-editor"), {
       lineWrapping: true,
       tabSize: 4,
       scrollbarStyle: "simple",
@@ -21,18 +14,48 @@ $(function () {
         // "Esc": function() {
         // }
       }
-    })
-
-    //监控内容是否改变
-    editor.changedCount = 0;
-    editor.__defineGetter__("changed", function () {
-      return editor.changedCount > 1;
-    });
-    editor.on("changes", function (ins, obj) {
-      editor.changedCount += 1;
     });
 
-    window.editor = editor;
+    this.editor.on("changes", (ins, obj) => {
+      this.changedCount += 1;
+
+      if (!this.isChanged()) {
+        return;
+      }
+
+      const abstract = this.editor.getRange({
+        line: 0,
+        ch: 0
+      }, {
+        line: 0,
+        ch: 40
+      });
+      this.onchange && this.onchange(abstract);
+    });
+
   }
 
-});
+  setValue(value) {
+    this.editor.setValue(value);
+    this.clearChange();
+    this.editor.clearHistory();
+  }
+
+  getValue() {
+    return this.editor.getValue();
+  }
+
+  clear() {
+    this.editor.setValue("");
+    this.clearChange();
+    this.editor.clearHistory();
+  }
+
+  isChanged() {
+    return this.changedCount > 1;
+  }
+
+  clearChange() {
+    this.changedCount = 0;
+  }
+}

@@ -243,6 +243,28 @@ class Service {
     });
   }
 
+  updateFileMetadata(settings) {
+    this.gdrive.updateFileMetadata({
+      fileId: settings.fileId,
+      description: settings.description,
+      success: (data) => {
+        settings.success && settings.success(data);
+        settings.final && settings.final();
+      },
+      error: (status, msg) => {
+        settings.error && settings.error(status, msg);
+        settings.final && settings.final();
+      },
+      e401: () => {
+        this._reAuthSend(settings, this.createFile.bind(this));
+      },
+      neterror: () => {
+        settings.neterror && settings.neterror();
+        settings.final && settings.final();
+      }
+    });
+  }
+
   getFileContent(settings) {
     this.gdrive.getFileContent({
       fileId: settings.fileId,

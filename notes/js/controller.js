@@ -427,13 +427,33 @@ class Controller extends Listener {
 
     const id = $curentFile[0].dataset.id;
     const data = this.noteView.getValue();
+    const description = $curentFile.find(".note-title span").text();
     this.service.saveFileContent({
       fileId: id,
       data: data,
       success: (data) => {
-        this.noteView.clearChange();
-        this.notifyListeners(this.EVENT_ACTION_END);
-        settings.success && settings.success();
+        this.service.updateFileMetadata({
+          fileId: id,
+          description: description,
+          success: (data) => {
+            this.noteView.clearChange();
+            this.notifyListeners(this.EVENT_ACTION_END);
+            settings.success && settings.success();
+          },
+          error: (status, msg) => {
+            this.notifyListeners(this.EVENT_ERROR, {
+              status: status,
+              msg: msg,
+              method: "updateFileMetadata"
+            })
+          },
+          neterror: () => {
+            this.notifyListeners(this.EVENT_NETERROR, {
+              status: 0,
+              method: "updateFileMetadata"
+            })
+          }
+        }).bind(this);
       },
       error: (status, msg) => {
         this.notifyListeners(this.EVENT_ERROR, {
@@ -449,6 +469,7 @@ class Controller extends Listener {
         })
       }
     });
+
   }
 
   _deleteNote() {

@@ -117,24 +117,27 @@ class NoteFilesView extends BaseView {
     $(item).addClass("on");
   }
 
+  onNoteViewChange(abstract) {
+    const desc = this.current().find(".note-title span");
+    desc.text(abstract);
+  }
 }
 
 class NoteView extends BaseView {
   constructor() {
     super(null);
-    this.editor = window.editor;
+    this.editor = new Editor(document.getElementById("note-editor"));
+    this.editor.onchange = this._onChange.bind(this);
+
+    this.EVENT_CHANGE = "event-change";
   }
 
   onDataReady(data) {
     this.editor.setValue(data);
-    this.clearChange();
-    this.editor.clearHistory();
   }
 
   onClear(data) {
-    this.editor.setValue("");
-    this.clearChange();
-    this.editor.clearHistory();
+    this.editor.clear();
   }
 
   getValue() {
@@ -142,10 +145,14 @@ class NoteView extends BaseView {
   }
 
   isChanged() {
-    return this.editor.changed;
+    return this.editor.isChanged();
   }
 
   clearChange() {
-    this.editor.changedCount = 1;
+    this.editor.clearChange();
+  }
+
+  _onChange(abstract) {
+    this.notifyListeners(this.EVENT_CHANGE, abstract);
   }
 }

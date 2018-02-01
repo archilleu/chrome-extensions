@@ -26,14 +26,15 @@ $(function() {
   controller.addListener(controller.EVENT_FILE_DELETE, filesView.del.bind(filesView))
   controller.addListener(controller.EVENT_REFRESH, filesView.onEmpty.bind(filesView));
   controller.addListener(controller.EVENT_FOLDER_DELETE, filesView.onEmpty.bind(filesView));
+  noteView.addListener(noteView.EVENT_CHANGE, filesView.onNoteViewChange.bind(filesView));
 
   //noteView 关注的事件
   controller.addListener(controller.EVENT_FILE_DATA_READY, noteView.onDataReady.bind(noteView));
-  foldersView.addListener(foldersView.EVENT_CLICK, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_REFRESH, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_FILE_LIST_READY, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_FILE_DELETE, noteView.onClear.bind(noteView));
   controller.addListener(controller.EVENT_FOLDER_DELETE, noteView.onClear.bind(noteView));
+  foldersView.addListener(foldersView.EVENT_CLICK, noteView.onClear.bind(noteView));
 
   //nteraction 关注的事件
   controller.addListener(controller.EVENT_ACTION_BEGIN, loading.show.bind(loading));

@@ -389,13 +389,14 @@ class Controller extends Listener {
     //Todo check repeat name
 
     const folderId = $currentFolder[0].dataset.id;
-    const modifiedTime = new Date().toCustomStr();
+    const modifiedTime = dateToCustomStr(new Date());
     this.service.createFile({
       parents: [folderId],
-      name: name,
-      modifiedTime: modifiedTime,
+      name: "新建便签.txt",
+      description: "新建便签",
       success: (data) => {
-        data.description = name;
+        data.description = "新建便签";
+        data.name = data.description + ".txt";
         data.modifiedTime = modifiedTime;
         data.id = data.id;
         this.notifyListeners(this.EVENT_FILE_CREATE, data);

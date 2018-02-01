@@ -10,16 +10,16 @@ document.addEventListener('DOMContentLoaded', () => {
   google.addEventListener("click", function(event) {
     event.preventDefault();
 
-    waitingDialog.show("request auth...");
+    const loading = new Loading("../images/loading.gif");
+    loading.show();
     gdrive.auth({
       success: () => {
         gotoMainWindow();
       },
       error: (msg) => {
-        waitingDialog.show(msg);
-        setTimeout(function() {
-          waitingDialog.hide()
-        }, 1000);
+        loading.hide();
+        const tips = new Tips();
+        tips.show(msg.message);
       }
     });
   }, false);

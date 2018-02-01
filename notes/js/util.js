@@ -1,48 +1,3 @@
-Date.prototype.toCustomStr = function() {
-  var yyyy = this.getFullYear();
-  var mm = this.getMonth() < 9 ? "0" + (this.getMonth() + 1) : (this.getMonth() + 1); // getMonth() is zero-based
-  var dd = this.getDate() < 10 ? "0" + this.getDate() : this.getDate();
-  var hh = this.getHours() < 10 ? "0" + this.getHours() : this.getHours();
-  var min = this.getMinutes() < 10 ? "0" + this.getMinutes() : this.getMinutes();
-  var ss = this.getSeconds() < 10 ? "0" + this.getSeconds() : this.getSeconds();
-  return "".concat(yyyy).concat("-").concat(mm).concat("-").concat(dd).concat(" ").concat(hh).concat(":").concat(min).concat(":").concat(ss);
-};
-
-class Loading {
-  constructor(gif) {
-    const loading =
-      '<div style="top: 0;bottom: 0;left: 0;right: 0;background-color: #9e9e9e33;position: fixed;z-index:100">' +
-      '<img style="position: relative;top: 45%;left: 50%;" src="' + gif + '" />' +
-      '</div>';
-
-    this.$loading = $(loading);
-    $("body").append(this.$loading);
-    this.$loading.hide();
-  }
-
-  show() {
-    this.$loading.show();
-  }
-
-  hide() {
-    this.$loading.hide();
-  }
-}
-
-class Tips {
-  constructor() {
-    this.$tips = $("#snackbar");
-  }
-
-  show(msg) {
-    this.$tips.text(msg);
-    this.$tips.addClass("show");
-    setTimeout(() => {
-      this.$tips.removeClass("show")
-    }, 3000);
-  }
-}
-
 class HtmlTemplate {
   constructor(html) {
     this.html = html;
@@ -72,32 +27,12 @@ class HtmlTemplate {
   }
 }
 
-class Listener {
-  constructor() {
-    this.listeners = {};
-  }
-
-  addListener(type, listener) {
-    if (!this.listeners[type]) {
-      this.listeners[type] = [];
-    }
-    let listeners = this.listeners[type];
-    listeners.push(listener);
-  }
-
-  notifyListeners(type, param) {
-    if (type) {
-      const list = this.listeners[type];
-      if (list) {
-        for (const listener of list)
-          listener(param);
-      }
-      return;
-    }
-
-    for (list of this.listeners) {
-      for (const listener of list)
-        listener(param);
-    }
-  }
-}
+function dateToCustomStr(data) {
+  var yyyy = data.getFullYear();
+  var mm = data.getMonth() < 9 ? "0" + (data.getMonth() + 1) : (data.getMonth() + 1); // getMonth() is zero-based
+  var dd = data.getDate() < 10 ? "0" + data.getDate() : data.getDate();
+  var hh = data.getHours() < 10 ? "0" + data.getHours() : data.getHours();
+  var min = data.getMinutes() < 10 ? "0" + data.getMinutes() : data.getMinutes();
+  var ss = data.getSeconds() < 10 ? "0" + data.getSeconds() : data.getSeconds();
+  return "".concat(yyyy).concat("-").concat(mm).concat("-").concat(dd).concat(" ").concat(hh).concat(":").concat(min).concat(":").concat(ss);
+};

@@ -196,7 +196,8 @@ class GDrive {
     const metadata = {
       name: settings.name,
       parents: settings.parents ? settings.parents : null,
-      description: settings.description
+      description: settings.description,
+      mimeType: "text/plain"
     }
     $.ajax({
       type: "POST",

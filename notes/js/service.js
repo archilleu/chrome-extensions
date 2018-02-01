@@ -108,7 +108,7 @@ class Service {
         var data = [];
         for (const file of files) {
           let modifiedTime = file.modifiedTime ? file.modifiedTime : null;
-          modifiedTime = new Date(modifiedTime).toCustomStr();
+          modifiedTime = dateToCustomStr(new Date(modifiedTime));
           data.push({
             id: file.id,
             name: file.name,
@@ -202,8 +202,8 @@ class Service {
   createFile(settings) {
     this.gdrive.createFileMetadata({
       parents: settings.parents,
-      name: settings.modifiedTime,
-      description: settings.name ? settings.name : "新建便签",
+      name: settings.name,
+      description: settings.description,
       success: (data) => {
         settings.success && settings.success(data);
         settings.final && settings.final();

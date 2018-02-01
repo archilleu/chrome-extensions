@@ -3,7 +3,9 @@ $(function() {
   const filesView = new NoteFilesView(document.getElementsByClassName("note-list")[0])
   const noteView = new NoteView();
   const controller = new Controller(foldersView, filesView, noteView, new Service());
-  const interaction = new Interaction("images/loading.gif");
+
+  const loading = new Loading("../images/loading.gif");
+  const tips = new Tips();
 
   //controllder 关注的事件
   foldersView.addListener(foldersView.EVENT_CLICK, controller.onFolderClick.bind(controller));
@@ -34,12 +36,12 @@ $(function() {
   controller.addListener(controller.EVENT_FOLDER_DELETE, noteView.onClear.bind(noteView));
 
   //nteraction 关注的事件
-  controller.addListener(controller.EVENT_ACTION_BEGIN, interaction.onLoadingShow.bind(interaction));
-  controller.addListener(controller.EVENT_ACTION_END, interaction.onLoadingHide.bind(interaction));
-  controller.addListener(controller.EVENT_ERROR, interaction.onLoadingHide.bind(interaction));
-  controller.addListener(controller.EVENT_NETERROR, interaction.onLoadingHide.bind(interaction));
-  controller.addListener(controller.EVENT_ERROR, interaction.onTips.bind(interaction));
-  controller.addListener(controller.EVENT_NETERROR, interaction.onTips.bind(interaction));
+  controller.addListener(controller.EVENT_ACTION_BEGIN, loading.show.bind(loading));
+  controller.addListener(controller.EVENT_ACTION_END, loading.hide.bind(loading));
+  controller.addListener(controller.EVENT_ERROR, loading.hide.bind(loading));
+  controller.addListener(controller.EVENT_NETERROR, loading.hide.bind(loading));
+  controller.addListener(controller.EVENT_ERROR, onTips);
+  controller.addListener(controller.EVENT_NETERROR, onTips);
 
   //其他事件
   controller.addListener(controller.EVENT_CREATE_ROOT, controller.onCreateRoot.bind(controller));
@@ -49,4 +51,12 @@ $(function() {
 
   //init
   controller.init({});
+
+  function onTips(event) {
+    if (!event.msg) event.msg = "网络不通";
+    const msg = "status: " + event.status + ",msg: " + event.msg;
+    const log = "status: " + event.status + ",msg: " + event.msg + ",method: " + event.method;
+    console.log(log);
+    tips.show(msg);
+  }
 });

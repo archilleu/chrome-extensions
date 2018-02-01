@@ -8,7 +8,6 @@ class Controller extends Listener {
     this.service = service;
 
     this.$dlgCreateFolder = $("#create-folder");
-    this.$dlgCreateNote = $("#create-note");
 
     this.EVENT_CREATE_ROOT = "event-create-root";
     this.EVENT_CHECK_HAS_FOLDER_ALL = "event-check-has-folder-all";
@@ -171,7 +170,6 @@ class Controller extends Listener {
   }
 
   onFileCreate(file) {
-    this.$dlgCreateNote.modal('hide');
     this.fileClick(file);
   }
 
@@ -379,14 +377,11 @@ class Controller extends Listener {
   }
 
   _createNote() {
-    this.notifyListeners(this.EVENT_ACTION_BEGIN);
-
     const $currentFolder = this.foldersView.current();
     if (0 == $currentFolder.length)
       return;
 
-    const name = $("#create-note input").val();
-    //Todo check repeat name
+    this.notifyListeners(this.EVENT_ACTION_BEGIN);
 
     const folderId = $currentFolder[0].dataset.id;
     const modifiedTime = dateToCustomStr(new Date());
@@ -528,18 +523,17 @@ class Controller extends Listener {
         //是否保存改变的内容
         if (!confirm("保存文件")) {
           this.noteView.clearChange();
-          this.$dlgCreateNote.modal('show');
           return;
         }
 
         //保存
         this._saveFile({
           success: () => {
-            this.$dlgCreateNote.modal('show');
+            this._createNote();
           }
         });
       } else {
-        this.$dlgCreateNote.modal('show');
+        this._createNote();
       }
     });
 
@@ -563,7 +557,6 @@ class Controller extends Listener {
         this.$dlgCreateFolder.modal('show');
       }
     });
-    $("#btn-note-create-ok").click(this._createNote.bind(this));
     $(".btn-save").click(this._saveFile.bind(this));
     $(".btn-delete").click(this._deleteNote.bind(this));
     $("#btn-logout").click(this._logout.bind(this));

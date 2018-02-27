@@ -31,7 +31,8 @@
     "https://*.gstatic.com/",
     "https://*.googleapis.com/"
   ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "background": {
-    "scripts": ["js/jquery.min.js", "js/gdrive.js", "js/background.js"]
+    "scripts": ["js/lib/jquery-3.3.1.min.js", "js/gdrive.js", "js/background.js"]
   }
 }

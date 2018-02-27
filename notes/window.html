@@ -5,12 +5,11 @@
   <title>notes</title>
   <meta charset="utf-8">
   <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href="css/codemirror.css" rel="stylesheet">
+  <link href="css/lib/bootstrap.min.css" rel="stylesheet">
+  <link href="css/lib/codemirror.css" rel="stylesheet">
   <link href="css/tips.css" rel="stylesheet">
   <link href="css/window.css" rel="stylesheet">
-  <link href="addon/scroll/simplescrollbars.css" rel="stylesheet">
-  <link href="addon/scroll/simplescrollbars.css" rel="stylesheet">
+  <link href="js/lib/addon/scroll/simplescrollbars.css" rel="stylesheet">
 </head>
 
 <body>
@@ -97,7 +96,7 @@
                 </div>
               </div>
             </div>
-            <div class="folder-container">
+            <div class="folder-container" id="folder-container">
               <!-- <div class="folder-item on">
                 <div class="folder-icon all-icon"></div>
                 <div class="folder-info">
@@ -193,31 +192,62 @@
   </div>
 </body>
 <!--
+  template
+-->
+<script id="folderTemplate" type="text/template">
+  <div <%= on == true ? 'class="on"' : '' %> id="<%= id %>">
+    <div class="folder-icon all-icon"></div>
+    <div class="folder-info">
+      <div class="files-sum">
+        <%= sum %>
+      </div>
+      <div class="folder-name">
+        <%= name %>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script id="noteTemplate" type="text/template">
+  <div class="item-status">
+    <div class="time">
+      <%= modifiedTime %>
+    </div>
+    <div class="fav"></div>
+    <div class="image-note"></div>
+  </div>
+  <div class="note-title">
+    <span><%= description %></span>
+  </div>
+</script>
+
+<!--
     - JavaScript and HTML must be in separate files: see our Content Security
     - Policy documentation[1] for details and explanation.
     -
     - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
   -->
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script src="js/lib/underscore.js"></script>
+<script src="js/lib/jquery-3.3.1.min.js"></script>
+<script src="js/lib/jquery-dateFormat.min.js"></script>
+<script src="js/lib/backbone.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+<script src="js/lib/codemirror.js"></script>
+<script src="js/lib/addon/scroll/simplescrollbars.js"></script>
 
-<script src="js/codemirror.js"></script>
-<script src="addon/scroll/simplescrollbars.js"></script>
-
-<script src="js/interaction.js"></script>
-
-<script src="js/util.js"></script>
 <script src="js/editor.js"></script>
-<script src="js/gdrive.js"></script>
 
-<script src="js/listener.js"></script>
+<script src="js/models/folder.js"></script>
+<script src="js/models/note.js"></script>
+<script src="js/collections/folders.js"></script>
+<script src="js/collections/notes.js"></script>
+<script src="js/views/folder.js"></script>
+<script src="js/views/folders.js"></script>
+
 <script src="js/service.js"></script>
-<script src="js/view.js"></script>
-<script src="js/controller.js"></script>
-
+<script src="js/views/message.js"></script>
+<script src="js/views/appView.js"></script>
 <script src="js/app.js"></script>
-<!-- <script src="js/bootstrap.min.js"></script>
-<script src="js/bloading.js"></script> -->
-<!-- <script src="js/window.js"></script> -->
+
 
 </html>

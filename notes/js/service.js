@@ -108,7 +108,7 @@ class Service {
         var data = [];
         for (const file of files) {
           let modifiedTime = file.modifiedTime ? file.modifiedTime : null;
-          modifiedTime = dateToCustomStr(new Date(modifiedTime));
+          modifiedTime = $.format.date(modifiedTime, "yyyy/MM/dd HH:mm:ss");
           data.push({
             id: file.id,
             name: file.name,

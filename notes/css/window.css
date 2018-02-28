@@ -371,7 +371,11 @@ html, body {
   position: relative;
 }
 
-.note-list .note-item.on {
+.note-list .note-item>div{
+  height: inherit;
+}
+
+.note-list .note-item>.on {
   background: #f1ece1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .03) inset;
 }

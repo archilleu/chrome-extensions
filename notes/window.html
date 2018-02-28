@@ -70,7 +70,7 @@
               </div>
             </div>
           </div>
-          <div class="btn-note btn-save">
+          <div class="btn-note btn-save" id="btn-note-save">
             <div class="">
               <span>
                 <i class="icon-save"></i>
@@ -115,7 +115,7 @@
           </div>
         </div>
         <div class="note-left-col2">
-          <div class="note-list">
+          <div class="note-list" id="note-list">
             <!-- <div class="note-item on">
               <div class="item-status">
                 <div class="time">2017年1月20日</div>
@@ -146,7 +146,7 @@
             </span>
           </div>
         </div>
-        <div class="btn-note btn-delete">
+        <div class="btn-note btn-delete" id="btn-note-delete">
           <div class="">
             <span>
               <i class="icon-delete"></i>
@@ -180,9 +180,10 @@
         </div>
         <div class="edit-main">
           <i></i>
-          <div class="edit-area">
+          <div class="edit-area" id="edit-area">
             <div class="edge"></div>
             <div class="note-editor" id="note-editor">
+              <textarea id='codemirror-editor' style='display: none;'></textarea>
             </div>
           </div>
         </div>
@@ -195,29 +196,31 @@
   template
 -->
 <script id="folderTemplate" type="text/template">
-  <div <%= on == true ? 'class="on"' : '' %> id="<%= id %>">
-    <div class="folder-icon all-icon"></div>
-    <div class="folder-info">
-      <div class="files-sum">
-        <%= sum %>
+  <div <%= on==true ? 'class="on"' : '' %> id="<%= id %>">
+      <div class="folder-icon all-icon"></div>
+      <div class="folder-info">
+        <div class="files-sum">
+          <%= sum %>
+        </div>
+        <div class="folder-name">
+          <%= name %>
+        </div>
       </div>
-      <div class="folder-name">
-        <%= name %>
-      </div>
-    </div>
   </div>
 </script>
 
 <script id="noteTemplate" type="text/template">
-  <div class="item-status">
-    <div class="time">
-      <%= modifiedTime %>
-    </div>
-    <div class="fav"></div>
-    <div class="image-note"></div>
-  </div>
-  <div class="note-title">
-    <span><%= description %></span>
+  <div <%= on==true ? 'class="on"' : '' %> id="<%= id %>">
+      <div class="item-status">
+        <div class="time">
+          <%= modifiedTime %>
+        </div>
+        <div class="fav"></div>
+        <div class="image-note"></div>
+      </div>
+      <div class="note-title">
+        <span><%= description %></span>
+      </div>
   </div>
 </script>
 
@@ -235,12 +238,14 @@
 <script src="js/lib/codemirror.js"></script>
 <script src="js/lib/addon/scroll/simplescrollbars.js"></script>
 
-<script src="js/editor.js"></script>
-
-<script src="js/models/folder.js"></script>
+<script src="js/models/editor.js"></script>
 <script src="js/models/note.js"></script>
-<script src="js/collections/folders.js"></script>
+<script src="js/models/folder.js"></script>
 <script src="js/collections/notes.js"></script>
+<script src="js/collections/folders.js"></script>
+<script src="js/views/editor.js"></script>
+<script src="js/views/note.js"></script>
+<script src="js/views/notes.js"></script>
 <script src="js/views/folder.js"></script>
 <script src="js/views/folders.js"></script>
 

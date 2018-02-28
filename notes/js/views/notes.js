@@ -1,27 +1,27 @@
 var app = app || {};
 
-app.FoldersView = Backbone.View.extend({
-  el: $('#folder-container'),
+app.NotesView = Backbone.View.extend({
+  el: $('#note-list'),
 
-  initialize: function(initialFolders) {
-    this.collection = new app.Folders(initialFolders);
+  initialize: function(initialNotes) {
+    this.collection = new app.Notes(initialNotes);
     this.render();
 
-    this.listenTo(this.collection, "add", this.renderFolder);
+    this.listenTo(this.collection, "add", this.renderNote);
     this.listenTo(this.collection, "reset", this.render);
   },
 
-  reset: function(folders) {
+  reset: function(notes) {
     let item = this.collection.pop();
     while (item) {
       item.destroy();
       item = this.collection.pop();
     }
-    this.collection.reset(folders);
+    this.collection.reset(notes);
   },
 
-  addFolder: function(data) {
-    this.collection.add(new app.Folder(data));
+  addNote: function(data) {
+    this.collection.add(new app.Note(data));
   },
 
   getSelected: function() {
@@ -34,15 +34,15 @@ app.FoldersView = Backbone.View.extend({
 
   render: function() {
     this.collection.each(function(item) {
-      this.renderFolder(item);
+      this.renderNote(item);
     }, this);
   },
 
-  renderFolder: function(item) {
-    var folderView = new app.FolderView({
+  renderNote: function(item) {
+    var view = new app.NoteView({
       model: item
     });
-    this.$el.append(folderView.render().el);
+    this.$el.append(view.render().el);
     this._bindItemOn(item);
   },
 
@@ -58,7 +58,7 @@ app.FoldersView = Backbone.View.extend({
         item.unselect();
       }
 
-      //触发自定义的点击事件，让appView更新notesView
+      //触发自定义的点击事件，让appView更新editview
       this.trigger("item:on", obj);
     })
   }

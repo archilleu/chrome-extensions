@@ -93,16 +93,25 @@ class GDrive {
 
   //remove cache auth
   removeCachedAuth(settings) {
-    const accessToken = this.accessToken;
-    this.accessToken = null;
 
-    chrome.identity.removeCachedAuthToken({
-        token: accessToken
-      },
-      () => {
-        settings.success && settings.success();
+    chrome.identity.getAuthToken({
+      interactive: false
+    }, (token) => {
+      if (chrome.runtime.lastError) {
+        settings.error && settings.error(chrome.runtime.lastError);
+        return;
       }
-    );
+
+      chrome.identity.removeCachedAuthToken({
+          token: token
+        },
+        () => {
+          settings.success && settings.success();
+          this.accessToken = null;
+        }
+      );
+    });
+
   }
 
   //revoke auth

@@ -7,6 +7,10 @@ app.AppView = Backbone.View.extend({
     'click #btn-folder-create': 'showCreateFolderDlg',
     'click #btn-folder-create-ok': 'createFolder',
     'click #delete-folder-btn': 'deleteFolder',
+
+    'click #btn-note-create': 'createNote',
+    'click #btn-note-save': 'saveNote',
+    'click #btn-note-delete': 'deleteNote',
   },
 
   initEvent: function() {
@@ -43,9 +47,20 @@ app.AppView = Backbone.View.extend({
     app.message.listenTo(this, this.EVENT_NETERROR, app.message.onneterror);
 
     this.listenTo(this, this.EVENT_FOLDER_LIST_READY, this.onFolderListReady);
+    this.listenTo(this, this.EVENT_FILE_LIST_READY, this.onNoteListReady);
+    this.listenTo(this, this.EVENT_FILE_DATA_READY, this.onNoteContentReady);
+
+    this.notesView.listenTo(this.editorView, "change", this.onEditorChange.bind(this));
   },
 
   initialize: function() {
+    this.foldersView = new app.FoldersView();
+    this.listenTo(this.foldersView, "item:on", this.getNoteList);
+    this.notesView = new app.NotesView();
+    this.listenTo(this.notesView, "item:on", this.getNoteContent);
+    this.editorView = new app.EditorView({
+      model: new app.Editor()
+    });
 
     this.initEvent();
 
@@ -161,6 +176,59 @@ app.AppView = Backbone.View.extend({
     });
   },
 
+  getNoteList(folder) {
+    this.trigger(this.EVENT_ACTION_BEGIN);
+    this.service.list({
+      orderBy: "modifiedTime desc",
+      parents: [folder.get("id")],
+      success: (notes) => {
+        this.trigger(this.EVENT_FILE_LIST_READY, notes);
+        this.trigger(this.EVENT_ACTION_END);
+      },
+      error: (status, msg) => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "getNoteList"
+        })
+      },
+      neterror: () => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_NETERROR, {
+          status: 0,
+          method: "getNoteList"
+        })
+      }
+    });
+  },
+
+  getNoteContent: function(note) {
+    this.trigger(this.EVENT_ACTION_BEGIN);
+    this.service.getFileContent({
+      fileId: note.get("id"),
+      success: (data) => {
+        this.trigger(this.EVENT_FILE_DATA_READY, data);
+        this.trigger(this.EVENT_ACTION_END);
+      },
+      error: (status, msg) => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "getNoteContent"
+        })
+      },
+      neterror: () => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_NETERROR, {
+          status: 0,
+          method: "getNoteContent"
+        })
+      }
+    });
+  },
+
   onCreateFolderAll(settings) {
     this.service.onCreateFolderAll({
       success: () => {
@@ -186,7 +254,24 @@ app.AppView = Backbone.View.extend({
   },
 
   onFolderListReady: function(folders) {
-    this.foldersView = new app.FoldersView(folders);
+    this.foldersView.reset(folders);
+  },
+
+  onNoteListReady: function(notes) {
+    this.notesView.reset(notes);
+  },
+
+  onNoteContentReady: function(text) {
+    this.editorView.setText(text);
+  },
+
+  onEditorChange: function(text) {
+    const selected = this.notesView.getSelected();
+    if (!selected) {
+      return;
+    }
+
+    selected.setDescription(text.substring(0, 15));
   },
 
   showCreateFolderDlg: function(e) {
@@ -260,6 +345,134 @@ app.AppView = Backbone.View.extend({
         this.trigger(this.EVENT_NETERROR, {
           status: 0,
           method: "deleteFolder"
+        })
+      }
+    });
+  },
+
+  createNote: function() {
+    const selected = this.foldersView.getSelected();
+    if (!selected) {
+      return;
+    }
+
+    this.trigger(this.EVENT_ACTION_BEGIN);
+
+    this.service.createFile({
+      parents: [selected.get("id")],
+      name: "新建便签.txt",
+      description: "新建便签",
+      success: (data) => {
+        // this.trigger(this.EVENT_FILE_CREATE, data);
+        this.trigger(this.EVENT_ACTION_END);
+
+        //触发自定义的点击事件，让appView更新notesView
+        this.foldersView.trigger("item:on", selected);
+      },
+      error: (status, msg) => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "createNote"
+        })
+      },
+      neterror: () => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_NETERROR, {
+          status: 0,
+          method: "createNote"
+        })
+      }
+    });
+  },
+
+  saveNote: function() {
+    const selected = this.notesView.getSelected();
+    if (!selected) {
+      return;
+    }
+    const id = selected.get("id");
+    const text = selected.getText();
+    const description = selected.getDescription();
+    this.service.saveFileContent({
+      fileId: id,
+      data: text,
+      success: (data) => {
+        this.service.updateFileMetadata({
+          fileId: id,
+          description: description,
+          success: (data) => {
+            this.trigger(this.EVENT_ACTION_END);
+          },
+          error: (status, msg) => {
+            this.trigger(this.EVENT_ACTION_END);
+            this.trigger(this.EVENT_ERROR, {
+              status: status,
+              msg: msg,
+              method: "updateFileMetadata"
+            })
+          },
+          neterror: () => {
+            this.trigger(this.EVENT_ACTION_END);
+            this.trigger(this.EVENT_NETERROR, {
+              status: 0,
+              method: "updateFileMetadata"
+            })
+          }
+        }).bind(this);
+      },
+      error: (status, msg) => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "saveFileContent"
+        })
+      },
+      neterror: () => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_NETERROR, {
+          status: 0,
+          method: "saveFileContent"
+        })
+      }
+    });
+  },
+
+  deleteNote: function() {
+    const selected = this.notesView.getSelected();
+    if (!selected) {
+      return;
+    }
+
+    if (!confirm("删除笔记:" + selected.get("name"))) {
+      return;
+    }
+
+    this.trigger(this.EVENT_ACTION_BEGIN);
+    this.service.deleteFile({
+      fileId: selected.get("id"),
+      success: () => {
+        // this.trigger(this.EVENT_FILE_CREATE, data);
+        this.trigger(this.EVENT_ACTION_END);
+
+        //触发自定义的点击事件，让appView更新notesView
+        this.foldersView.trigger("item:on", this.foldersView.getSelected());
+      },
+      error: (status, msg) => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_ERROR, {
+          status: status,
+          msg: msg,
+          method: "deleteNote"
+        })
+      },
+      neterror: () => {
+        this.trigger(this.EVENT_ACTION_END);
+        this.trigger(this.EVENT_NETERROR, {
+          status: 0,
+          method: "deleteNote"
         })
       }
     });

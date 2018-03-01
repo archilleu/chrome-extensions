@@ -268,6 +268,7 @@ class GDrive {
   updateFileMetadata(settings) {
     const metadata = {
       parents: settings.parents ? settings.parents : null,
+      name: settings.name,
       description: settings.description
     }
     $.ajax({

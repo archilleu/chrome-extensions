@@ -246,6 +246,7 @@ class Service {
   updateFileMetadata(settings) {
     this.gdrive.updateFileMetadata({
       fileId: settings.fileId,
+      name: settings.name,
       description: settings.description,
       success: (data) => {
         settings.success && settings.success(data);

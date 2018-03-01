@@ -35,6 +35,9 @@ app.AppView = Backbone.View.extend({
     this.EVENT_FILE_LIST_READY = "event-file-list-ready";
     this.EVENT_FILE_DATA_READY = "event-file-data-ready";
 
+    this.EVENT_FOLDER_LIST_SELECT_FIRST = "event-folder-list-select-first";
+    this.EVENT_NOTE_LIST_SELECT_FIRST = "event-note-list-select-first";
+
     this.listenTo(this, this.EVENT_CREATE_ROOT, this.onCreateRoot);
     this.listenTo(this, this.EVENT_CREATE_FOLDER_ALL, this.onCreateFolderAll);
     this.listenTo(this, this.EVENT_CHECK_HAS_FOLDER_ALL, this.onCheckHasFolderAll);
@@ -51,13 +54,17 @@ app.AppView = Backbone.View.extend({
     this.listenTo(this, this.EVENT_FILE_DATA_READY, this.onNoteContentReady);
 
     this.notesView.listenTo(this.editorView, "change", this.onEditorChange.bind(this));
+
+    this.listenTo(this, this.EVENT_FOLDER_LIST_SELECT_FIRST, this.foldersView.selectFirstItem.bind(this.foldersView));
+    this.listenTo(this, this.EVENT_NOTE_LIST_SELECT_FIRST, this.notesView.selectFirstItem.bind(this.notesView));
   },
 
   initialize: function() {
     this.foldersView = new app.FoldersView();
-    this.listenTo(this.foldersView, "item:on", this.getNoteList);
+    this.listenTo(this.foldersView, "item:on", this.folderItemChange);
     this.notesView = new app.NotesView();
-    this.listenTo(this.notesView, "item:on", this.getNoteContent);
+    this.listenTo(this.notesView, "item:on", this.noteItemChange);
+    this.listenTo(this.notesView, "item:on", this.editorReset);
     this.editorView = new app.EditorView({
       model: new app.Editor()
     });
@@ -176,12 +183,23 @@ app.AppView = Backbone.View.extend({
     });
   },
 
+  folderItemChange: function(folder) {
+    //有修改保存
+    if (this.editorView.isChanged()) {
+      this.saveNote();
+    }
+
+    this.getNoteList(folder);
+  },
+
   getNoteList(folder) {
     this.trigger(this.EVENT_ACTION_BEGIN);
     this.service.list({
       orderBy: "modifiedTime desc",
       parents: [folder.get("id")],
       success: (notes) => {
+        this.foldersView.selectedChange(folder);
+
         this.trigger(this.EVENT_FILE_LIST_READY, notes);
         this.trigger(this.EVENT_ACTION_END);
       },
@@ -203,11 +221,24 @@ app.AppView = Backbone.View.extend({
     });
   },
 
+  //检查内容是否有修改
+  noteItemChange: function(note) {
+    //有修改保存
+    if (this.editorView.isChanged()) {
+      this.saveNote();
+    }
+
+    this.getNoteContent(note);
+  },
+
   getNoteContent: function(note) {
     this.trigger(this.EVENT_ACTION_BEGIN);
     this.service.getFileContent({
       fileId: note.get("id"),
       success: (data) => {
+        //选中当前点击note项
+        this.notesView.selectedChange(note);
+
         this.trigger(this.EVENT_FILE_DATA_READY, data);
         this.trigger(this.EVENT_ACTION_END);
       },
@@ -227,6 +258,10 @@ app.AppView = Backbone.View.extend({
         })
       }
     });
+  },
+
+  editorReset: function() {
+    this.editorView.reset();
   },
 
   onCreateFolderAll(settings) {
@@ -255,10 +290,12 @@ app.AppView = Backbone.View.extend({
 
   onFolderListReady: function(folders) {
     this.foldersView.reset(folders);
+    this.trigger(this.EVENT_FOLDER_LIST_SELECT_FIRST);
   },
 
   onNoteListReady: function(notes) {
     this.notesView.reset(notes);
+    this.trigger(this.EVENT_NOTE_LIST_SELECT_FIRST);
   },
 
   onNoteContentReady: function(text) {
@@ -271,7 +308,7 @@ app.AppView = Backbone.View.extend({
       return;
     }
 
-    selected.setDescription(text.substring(0, 15));
+    selected.editorChange(text);
   },
 
   showCreateFolderDlg: function(e) {
@@ -387,20 +424,24 @@ app.AppView = Backbone.View.extend({
     });
   },
 
-  saveNote: function() {
+  saveNote: function(settings) {
     const selected = this.notesView.getSelected();
     if (!selected) {
       return;
     }
+
+    this.trigger(this.EVENT_ACTION_BEGIN);
+
     const id = selected.get("id");
-    const text = selected.getText();
-    const description = selected.getDescription();
+    const text = selected.get("text");
+    const description = selected.get("description");
     this.service.saveFileContent({
       fileId: id,
       data: text,
       success: (data) => {
         this.service.updateFileMetadata({
           fileId: id,
+          name: description,
           description: description,
           success: (data) => {
             this.trigger(this.EVENT_ACTION_END);
@@ -420,7 +461,7 @@ app.AppView = Backbone.View.extend({
               method: "updateFileMetadata"
             })
           }
-        }).bind(this);
+        });
       },
       error: (status, msg) => {
         this.trigger(this.EVENT_ACTION_END);

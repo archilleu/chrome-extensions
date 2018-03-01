@@ -44,7 +44,7 @@ app.MessageView = Backbone.View.extend({
 
   onneterror: function(error) {
     this.tip("网络不通");
-    console.log(msg);
+    console.log(error);
   },
 });
 app.message = new app.MessageView();

@@ -18,8 +18,11 @@ app.EditorView = Backbone.View.extend({
     this.editor.on("changes", (ins, obj) => {
       this.model.set("text", this.editor.getValue());
       this.trigger("change", this.model.get("text"));
+
+      this.changedCount++;
     });
 
+    this.changedCount = -1;
   },
 
   setText: function(text) {
@@ -29,6 +32,14 @@ app.EditorView = Backbone.View.extend({
 
   getText: function() {
     return this.model.get("text");
+  },
+
+  reset: function() {
+    this.changedCount = -1;
+  },
+
+  isChanged: function() {
+    return this.changedCount > 0;
   },
 
 });

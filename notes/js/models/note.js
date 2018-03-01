@@ -19,8 +19,9 @@ app.Note = Backbone.Model.extend({
     this.set("on", false);
   },
 
-  setDescription: function(description) {
-    this.set("description", description);
+  editorChange: function(text) {
+    this.set("text", text);
+    this.set("description", text.substring(0, 30));
   },
 
   idAttribute: '_id'

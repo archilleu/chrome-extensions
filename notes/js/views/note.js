@@ -15,17 +15,9 @@ app.NoteView = Backbone.View.extend({
   },
 
   onclick: function() {
-    this.model.select();
-    this.model.trigger("item:on", this.model);
+    //转发点击消息，自是为了得到完整的note项
+    this.trigger("item:on", this.model);
   },
-
-  // setDescription: function(description) {
-  //   this.model.set("description");
-  // },
-  //
-  // getDescription: function() {
-  //   return this.model.get("description");
-  // },
 
   render: function() {
     //tmpl is a function that takes a JSON object and returns html

@@ -20,6 +20,13 @@ app.NotesView = Backbone.View.extend({
     this.collection.reset(notes);
   },
 
+  selectFirstItem: function() {
+    if (this.collection.length) {
+      const id = this.collection.models[0].get("id");
+      $("#" + id).trigger("click");
+    }
+  },
+
   addNote: function(data) {
     this.collection.add(new app.Note(data));
   },
@@ -43,24 +50,22 @@ app.NotesView = Backbone.View.extend({
       model: item
     });
     this.$el.append(view.render().el);
-    this._bindItemOn(item);
+
+    this.listenTo(view, "item:on", (item) => {
+      this.trigger("item:on", item);
+    });
   },
 
-  _bindItemOn: function(item) {
-    //取消先前选中的item
-    //不使用change:on消息而使用额外的消息是避免change:on循环触发
-    this.collection.listenTo(item, "item:on", (obj) => {
-      const selecteds = this.collection.selecteds();
-      for (item of selecteds) {
-        if (item == obj) {
-          continue;
-        }
-        item.unselect();
+  selectedChange: function(cur_item) {
+    const selecteds = this.collection.selecteds();
+    for (item of selecteds) {
+      if (item == cur_item) {
+        continue;
       }
+      item.unselect();
+    }
 
-      //触发自定义的点击事件，让appView更新editview
-      this.trigger("item:on", obj);
-    })
-  }
+    cur_item.select();
+  },
 
 });

@@ -15,8 +15,8 @@ app.FolderView = Backbone.View.extend({
   },
 
   onclick: function() {
-    this.model.select();
-    this.model.trigger("item:on", this.model);
+    //转发点击消息，自是为了得到完整的folder项
+    this.trigger("item:on", this.model);
   },
 
   render: function() {

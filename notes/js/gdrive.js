@@ -150,9 +150,14 @@ class GDrive {
 
   //delete folder
   deleteFolder(settings) {
+    const metadata = {
+      trashed: true
+    }
     $.ajax({
-      type: "DELETE",
-      url: this.REST_FOLDER_DELETE + settings.folderId,
+      type: "PATCH",
+      url: this.REST_FILE_UPDATE_METADATA + settings.folderId,
+      contentType: 'application/json',
+      data: JSON.stringify(metadata),
       beforeSend: (request) => {
         request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
       },
@@ -163,6 +168,19 @@ class GDrive {
         this._error(jqXHR, textStatus, errorTrown, settings);
       }
     });
+    // $.ajax({
+    //   type: "DELETE",
+    //   url: this.REST_FOLDER_DELETE + settings.folderId,
+    //   beforeSend: (request) => {
+    //     request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
+    //   },
+    //   success: (data) => {
+    //     settings.success && settings.success(data);
+    //   },
+    //   error: (jqXHR, textStatus, errorTrown) => {
+    //     this._error(jqXHR, textStatus, errorTrown, settings);
+    //   }
+    // });
   }
 
   //list
@@ -184,7 +202,7 @@ class GDrive {
     const parameter = {
       corpora: settings.corpora ? settings.corpora : "user",
       orderBy: settings.orderBy,
-      q: query.join(" or "),
+      q: query.join(" or ") + " and trashed=false",
       pageToken: settings.pageToken ? settings.pageToken : null,
       fields: settings.fields ? settings.fields : "files(id, name, modifiedTime, description)"
     }
@@ -231,9 +249,14 @@ class GDrive {
 
   //delete file
   deleteFile(settings) {
+    const metadata = {
+      trashed: true
+    }
     $.ajax({
-      type: "DELETE",
-      url: this.REST_FILE_DELETE + settings.fileId,
+      type: "PATCH",
+      url: this.REST_FILE_UPDATE_METADATA + settings.fileId,
+      contentType: 'application/json',
+      data: JSON.stringify(metadata),
       beforeSend: (request) => {
         request.setRequestHeader("Authorization", 'Bearer ' + this.accessToken);
       },

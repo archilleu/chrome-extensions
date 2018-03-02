@@ -24,6 +24,8 @@ app.NotesView = Backbone.View.extend({
     if (this.collection.length) {
       const id = this.collection.models[0].get("id");
       $("#" + id).trigger("click");
+    } else {
+      this.trigger("editor:clear");
     }
   },
 

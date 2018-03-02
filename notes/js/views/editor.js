@@ -38,6 +38,10 @@ app.EditorView = Backbone.View.extend({
     this.changedCount = -1;
   },
 
+  clear: function() {
+    this.editor.setValue("");
+  },
+
   isChanged: function() {
     return this.changedCount > 0;
   },

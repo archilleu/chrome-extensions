@@ -63,6 +63,7 @@ app.AppView = Backbone.View.extend({
     this.foldersView = new app.FoldersView();
     this.listenTo(this.foldersView, "item:on", this.folderItemChange);
     this.notesView = new app.NotesView();
+    this.listenTo(this.notesView, "editor:clear", this.editorClear);
     this.listenTo(this.notesView, "item:on", this.noteItemChange);
     this.listenTo(this.notesView, "item:on", this.editorReset);
     this.editorView = new app.EditorView({
@@ -192,6 +193,10 @@ app.AppView = Backbone.View.extend({
     this.getNoteList(folder);
   },
 
+  editorClear: function() {
+    this.editorView.clear();
+  },
+
   getNoteList(folder) {
     this.trigger(this.EVENT_ACTION_BEGIN);
     this.service.list({
@@ -201,7 +206,10 @@ app.AppView = Backbone.View.extend({
         this.foldersView.selectedChange(folder);
 
         this.trigger(this.EVENT_FILE_LIST_READY, notes);
-        this.trigger(this.EVENT_ACTION_END);
+
+        //因为出发选择第一个项目的消息，所以动作等结束后取消
+        if (0 == notes.length)
+          this.trigger(this.EVENT_ACTION_END);
       },
       error: (status, msg) => {
         this.trigger(this.EVENT_ACTION_END);

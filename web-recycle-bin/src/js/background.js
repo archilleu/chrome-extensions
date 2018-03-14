@@ -1,172 +1,98 @@
 const PREFIXTABS = "TABS";
 const CLOSEDTABS = "CLOSED";
 
-document.addEventListener('DOMContentLoaded', () => {
-  init();
-});
-
-function init() {
-  initStorage();
-  bindEvent();
-}
-
-function initStorage() {
-  clearTabs();
-  saveClosedTabs([]);
-}
-
-function bindEvent() {
-  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    // Note: this event is fired twice:
-    // Once with `changeInfo.status` = "loading" and another time with "complete"
-    saveTab(tab);
-  });
-
-  chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-    saveClosedTab(tabId);
-  });
-}
-
-function saveTab(tab) {
-  if(!checkComplete(tab.status)) return;
-  if(!checkValidUrl(tab.url)) return;
-
-  const tabName = openedTabName(tab.id);
-  const tabData = openedTabData(tab);
-  save(tabName, tabData);
-}
-
-function checkComplete(status) {
-  return status == "complete";
-}
-
-function checkValidUrl(url) {
-  var re = /^(http:|https:|ftp:|file:)/;
-  if (url && re.test(url)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function openedTabName(id) {
-  return PREFIXTABS + "_" + id;
-}
-
-function openedTabData(tab) {
-  const data = {
-    id : tab.id,
-    index : tab.index,
-    title : tab.title,
-    url : tab.url,
-    favIconUrl : undefined==tab.favIconUrl ? "../images/default.png" : tab.favIconUrl
+class Tabs {
+  constructor() {
+    this.openedTabs = {};
+    this.closedTabs = [];
+    this.re = /^(http:|https:|ftp:|file:)/;
   }
 
-  return data;
-}
-
-function saveClosedTab(id) {
-  if(!checkIsCompleteTab(id))
-    return;
-
-  appendToClosedTab(id);
-}
-
-function checkIsCompleteTab(id) {
-  const name = openedTabName(id);
-  if(null == get(name))
-    return false;
-
-  return true;
-}
-
-function appendToClosedTab(id) {
-  const tab = {
-    name: id,
-    time: (new Date()).getTime()
+  getClosedTabs(option) {
+    option = !option ? {} : option;
+    option.start = !option.start ? 0 : option.start;
+    option.end = option.end ? option.end : this.closedTabs.length;
+    return this.closedTabs.slice(option.start, option.end);
   }
 
-  let closedTabs = getClosedTabs();
-  closedTabs.push(tab);
-  saveClosedTabs(closedTabs);
-}
-
-function getClosedTabs() {
-  const data = get(CLOSEDTABS);
-  return data;
-}
-
-function getClosedTabsCount() {
-  return getClosedTabs().length;
-}
-
-function clearClosedTabs() {
-  saveClosedTabs([]);
-}
-
-function getSortedClosedTabs(option) {
-    const tabs = getClosedTabs();
-    tabs.sort(function(left, right){
-      if(left.time>right.time) return -1;
-      if(left.time<right.time) return 1;
-      return 0;
-    });
-
-    if(0 == tabs.length)
-      return tabs;
-
-    if(undefined==option) option = {};
-    if(undefined==option.start) option.start = 0;
-    if(undefined==option.end) option.end = tabs.length;
-    return tabs.slice(option.start, option.end);
-}
-
-function saveClosedTabs(data) {
-  save(CLOSEDTABS, data);
-}
-
-function removeTab(tab) {
-  const tabName = openedTabName(tab.id);
-  remove(tabName);
-}
-
-function clearTabs() {
-    clear();
-}
-
-function getClosedTab(id) {
-  const tabName = openedTabName(id);
-  return get(tabName);
-}
-
-function removeClosedTab(id) {
-  let tabs = getClosedTabs();
-  let flag = false;
-  for(let i=0; i<tabs.length; i++) {
-    if(tabs[i].name == id) {
-      tabs.splice(i, 1);
-      flag = true;
-      break;
+  removeClosedTab(tabId) {
+    for (var i = 0; i < this.closedTabs.length; i++) {
+      if (this.closedTabs[i].id == tabId) {
+        this.closedTabs.splice(i, 1);
+        break;
+      }
     }
   }
 
-  if(flag)
-    saveClosedTabs(tabs);
-}
+  clear() {
+    this.closedTabs = [];
+  }
 
-function save(tabName, tabData) {
-  localStorage.setItem(tabName, JSON.stringify(tabData));
-}
+  saveTab(tab) {
+    if (!this._checkValid(tab)) {
+      return;
+    }
 
-function get(tabName) {
-  const tabData = localStorage.getItem(tabName);
-  return JSON.parse(tabData);
-}
+    const data = {
+      id: tab.id,
+      index: tab.index,
+      title: tab.title,
+      content: tab.title,
+      href: tab.url,
+      image: undefined == tab.favIconUrl ? "../images/default.png" : tab.favIconUrl
+    }
+    this.openedTabs[tab.id] = data;
+  }
 
-function remove(tabName) {
-  localStorage.removeItem(tabName);
-}
+  saveClosedTab(tabId) {
+    if (!this._checkIsCompleteTab(tabId)) {
+      return;
+    }
 
-function clear() {
-  localStorage.clear();
-}
+    let tab = this.openedTabs[tabId];
+    tab.date = new Date();
+    this.closedTabs.unshift(tab);
+    delete this.openedTabs[tabId];
+  }
+
+  _checkValid(tab) {
+    if (!this._checkComplete(tab)) return false;
+    if (!this._checkValidUrl(tab)) return false;
+    return true;
+  }
+
+  _checkComplete(tab) {
+    return tab.status == "complete";
+  }
+
+  _checkValidUrl(tab) {
+    if (tab.url && this.re.test(tab.url)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  _checkIsCompleteTab(id) {
+    if (!this.openedTabs[id])
+      return false;
+
+    return true;
+  }
+
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  this.tabs = new Tabs();
+
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    // Note: this event is fired twice:
+    // Once with `changeInfo.status` = "loading" and another time with "complete"
+    this.tabs.saveTab(tab);
+  });
+
+  chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+    this.tabs.saveClosedTab(tabId);
+  });
+});

@@ -3,97 +3,30 @@
   <head>
     <title>Web Recycle Bin</title>
     <meta charset="utf-8">
-
     <link href="css/popup.css" rel="stylesheet">
   </head>
 
   <body>
     <div id="item-list"></div>
-    <!--
-    <div id="item-list">
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-      <div class="item" data-id="3020" data-index="12">
-        <img src="http://wiki.jikexueyuan.com/assets/favicon.ico" alt="" width="16" height="16">
-        <a href="http://wiki.jikexueyuan.com/project/brief-talk-js/event-handlers.html" title="浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki">
-          <span>浅谈 Javascript 事件处理程序的几种方式 - 浅谈 JavaScript - 极客学院Wiki</span>
-        </a>
-        <span>17:17</span>
-      </div>
-    </div>
-  -->
+    <div id="toolbar"></div>
   </body>
-  <!--
-    - JavaScript and HTML must be in separate files: see our Content Security
-    - Policy documentation[1] for details and explanation.
-    -
-    - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
-  -->
-    <div class="toolbar">
-      <button type="button" name="next" class="nav" id="next">下一页</button>
-      <button type="button" name="up" class="nav" id="up">上一页</button>
-      <button type="button" name="clear" id="clear">清除</button>
-    </div>
-  <script src="js/popup.js"></script>
+    <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+    -->
+
+    <script src="js/lib/jquery-3.3.1.min.js"></script>
+    <script src="js/lib/underscore.js"></script>
+    <script src="js/lib/backbone.js"></script>
+    <script src="js/template/template.js"></script>
+    <script src="js/models/link.js"></script>
+    <script src="js/models/toolbar.js"></script>
+    <script src="js/collections/links.js"></script>
+    <script src="js/views/link.js"></script>
+    <script src="js/views/links.js"></script>
+    <script src="js/views/toolbar.js"></script>
+    <script src="js/views/appView.js"></script>
+    <script src="js/popup.js"></script>
 </html>

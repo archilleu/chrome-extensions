@@ -4,9 +4,9 @@ app.Toolbar = Backbone.Model.extend({
 
   defaults: {
     beginPage: 1,
-    curPage: 0,
+    curPage: 1,
     tabsCount: 1,
-    pageSize: 2,
+    pageSize: 12,
     totalPage: 1,
     nextStyle: "none",
     upStyle: "none"

@@ -1,40 +1,40 @@
 {
-  "manifest_version": 2,
+    "manifest_version": 2,
 
-  "name": "Web Recycle Bin",
-  "description" : "undo close tabs",
-  "version": "1.0.1",
+    "name": "Web Recycle Bin",
+    "short_name": "wrb",
+    "description": "undo closed tabs",
+    "version": "1.0.3",
 
-  "browser_action": {
-    "default_title": "Web Recycle Bin",
-    "default_popup": "popup.html",
-    "default_icon": "images/recycle16.png"
-  },
+    "browser_action": {
+        "default_title": "Web Recycle Bin",
+        "default_popup": "popup.html",
+        "default_icon": "images/recycle16.png"
+    },
 
-  "icons":
-  {
-    "16": "images/recycle16.png",
-    "48": "images/recycle48.png",
-    "128": "images/recycle128.png"
-  },
+    "icons": {
+        "16": "images/recycle16.png",
+        "48": "images/recycle48.png",
+        "128": "images/recycle128.png"
+    },
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
-  "background": {
-    "scripts":["js/background.js"]
-  },
+    "background": {
+        "scripts": ["js/background.js", "js/tabs.js"]
+    },
 
-  "permissions": [
-    "tabs"
-  ],
+    "permissions": [
+        "tabs"
+    ],
 
-  "commands": {
-    "_execute_browser_action": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+Q",
-        "mac": "MacCtrl+Shift+Q"
-      },
-      "description": "Open undo website"
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Q",
+                "mac": "MacCtrl+Shift+Q"
+            },
+            "description": "Open undo website"
+        }
     }
-  }
 }

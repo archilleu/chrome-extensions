@@ -11,16 +11,16 @@
 
     <div id="my-app" v-cloak>
         <div class="item-list">
-            <div class="item" v-for="item in closedTabs" :key="item.id" @click="onLink" :data-id="item.id" :data-index="item.index" :data-url="item.url">
+            <div class="item" :title="item.title" v-for="item in closedTabs" :key="item.id" @click="onLink" :data-id="item.id" :data-index="item.index" :data-url="item.url">
                 <img :src="item.favicon" :alt="item.title">
                 <a>{{ item.title }}</a>
                 <span>{{ item.date | formatTime }}</span>
             </div>
         </div>
         <div class="toolbar">
-            <span class="prev" v-if="curPage>0" @click="onPrev"></span>
-            <span class="next" v-if="curPage<(pages-1)" @click="onNext"></span>
-            <span class="clear" @click="onClear"></span>
+            <span title="prev" class="prev" v-if="curPage>0" @click="onPrev"></span>
+            <span title="next" class="next" v-if="curPage<(pages-1)" @click="onNext"></span>
+            <span title="clear" class="clear" @click="onClear"></span>
             <div class="count">
                 <span>{{ showCurPage }}</span>
                 <span>/</span>

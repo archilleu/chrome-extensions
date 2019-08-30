@@ -3,7 +3,7 @@
 
     "name": "Web Recycle Bin",
     "short_name": "wrb",
-    "description": "undo closed tabs",
+    "description": "Reopen a closed tab",
     "version": "1.0.3",
 
     "browser_action": {

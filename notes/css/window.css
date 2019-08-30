@@ -4,7 +4,8 @@
   font-size: 16px;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -21,7 +22,6 @@ html, body {
   height: 100%;
   width: 100%;
   position: relative;
-  min-height: 550px;
   min-width: 1280px;
   overflow: hidden;
   background: #262523 url(../images/bg.jpg);
@@ -35,7 +35,7 @@ html, body {
   width: 38%;
   background: #fbf7ed;
   box-shadow: rgba(0, 0, 0, .1) 1px 0 3px;
-  z-index: 11;
+  z-index: 5;
   overflow: hidden;
   transition: width .2s ease-out;
 }
@@ -53,7 +53,7 @@ html, body {
 .wrapper .titlebar {
   position: relative;
   box-shadow: rgba(0, 0, 0, .15) 0 1px 8px;
-  height: 62px;
+  height: 61px;
   line-height: 62px;
   background: linear-gradient(#827265, #716053);
   background: -webkit-linear-gradient(top, #827265, #716053);
@@ -61,18 +61,27 @@ html, body {
   border-right: 1px #564944 solid;
 }
 
-.wrapper .note-left .titlebar h1 {
-  float: left;
-  padding-left: 20px;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 61px;
-  height: 61px;
-  margin: 0;
+.wrapper .note-left .titlebar img.logo {
+  width: 44px;
+  height: 44px;
+  margin: 8px 8px;
+  vertical-align: middle;
+  display: inline-block;
 }
 
-.wrapper .note-right .titlebar .btn-note, .wrapper .note-left .titlebar .btn-note {
+.wrapper .note-left .titlebar span.logo {
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.wrapper .note-left .titlebar .btn-notes {
+  float: right;
+}
+
+.wrapper .note-right .titlebar .btn-note,
+.wrapper .note-left .titlebar .btn-note {
   margin-top: 12px;
   display: inline-block;
   vertical-align: top;
@@ -92,17 +101,20 @@ html, body {
   float: right;
 }
 
-.wrapper .note-right .titlebar .btn-insertImage, .wrapper .note-right .titlebar .btn-moveNote {
+.wrapper .note-right .titlebar .btn-insertImage,
+.wrapper .note-right .titlebar .btn-moveNote {
   margin-left: 12px;
   float: left;
 }
 
-.wrapper .note-right .titlebar .btn-share, .wrapper .note-right .titlebar .btn-delete {
+.wrapper .note-right .titlebar .btn-share,
+.wrapper .note-right .titlebar .btn-delete {
   margin-right: 14px;
   float: right;
 }
 
-.wrapper .note-right .titlebar .btn-note span, .wrapper .note-left .titlebar .btn-note span {
+.wrapper .note-right .titlebar .btn-note span,
+.wrapper .note-left .titlebar .btn-note span {
   background: #7b6a5d;
   background: linear-gradient(#816f61, #736357);
   background: -webkit-linear-gradient(#816f61, #736357);
@@ -177,23 +189,23 @@ html, body {
   height: 36px;
 }
 
-.wrapper .note-left-col1 {
+.wrapper .note-left-floder {
   position: absolute;
   width: 40%;
   left: 0;
-  top: 62px;
+  top: 61px;
   bottom: 0;
   transition: width .2s ease-out;
   border-right: 1px solid #dcd6ca;
 }
 
-.wrapper .search-box {
+.note-left-floder .search-box {
   position: relative;
-  height: 49px;
+  height: 50px;
   border-bottom: 1px #e4dad1 solid;
 }
 
-.wrapper .search-bar {
+.note-left-floder .search-box .search-bar {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -206,20 +218,23 @@ html, body {
   z-index: 2;
 }
 
-.wrapper .search-box .search-icon {
-  background: url(../images/all_icons.png) -61px -220px no-repeat;
+.note-left-floder .search-box .search-bar .text-field-view {
+  position: relative;
+}
+
+.note-left-floder .search-box .search-icon {
+  background: url(../images/all_icons.png) -59px -220px no-repeat;
   width: 20px;
   height: 20px;
   position: absolute;
-  left: 10px;
-  top: 4px;
+  left: 7px;
+  top: 5px;
 }
 
-.wrapper .search-box .search-input {
+.note-left-floder .search-box .search-input {
   position: absolute;
-  left: 32px;
   outline: 0;
-  width: 66%;
+  width: 100%;
   z-index: 3;
   background: 0 0;
   border: none;
@@ -228,12 +243,13 @@ html, body {
   height: 28px;
   line-height: 24px;
   font-size: 14px;
+  padding: 0 30px;
 }
 
-.wrapper .search-box .search-clear {
+.note-left-floder .search-box .search-clear {
   position: absolute;
-  right: 2px;
-  top: 3px;
+  right: 4px;
+  top: 4px;
   width: 20px;
   height: 20px;
   background: url(../images/search-clear.png) center no-repeat;
@@ -244,7 +260,7 @@ html, body {
   position: absolute;
   left: 0;
   right: 0;
-  top: 49px;
+  top: 50px;
   bottom: 50px;
   border-bottom: 1px solid #dcd6ca;
 }
@@ -257,11 +273,12 @@ html, body {
 .folder-container .folder-icon {
   width: 20px;
   height: 20px;
-  position: absolute;
-  top: 15px;
-  left: 20px;
   background: url(../images/all_icons.png) no-repeat;
   background-position: -132px -310px;
+  display: inline-block;
+  position: absolute;
+  left: 5px;
+  top: 15px;
 }
 
 .folder-container .all-icon {
@@ -275,26 +292,18 @@ html, body {
   position: relative;
 }
 
-.folder-container .folder-item:hover, .folder-container .folder-item.on {
+.folder-container .folder-item:hover,
+.folder-container .folder-item.on {
   background: #f1ece1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .03) inset;
 }
 
 .folder-container .folder-item .folder-info {
-  margin-left: 50px;
-  margin-right: 20px;
-  height: 50px;
-  line-height: 50px;
   color: #635752;
-}
-
-.folder-item .files-sum {
-  float: right;
-  color: #b8a692;
-  min-width: 30px;
-  text-align: right;
-  opacity: 1;
-  transition: all .3s ease;
+  position: absolute;
+  right: 10px;
+  top: 17px;
+  font-size: 14px;
 }
 
 .folder-item .folder-name {
@@ -305,12 +314,11 @@ html, body {
   text-overflow: ellipsis;
   line-height: 30px;
   margin-top: 10px;
-  max-width: 100%;
+  margin-left: 5px;
+  width: 100%;
   height: 30px;
-  vertical-align: top;
-  position: relative;
   display: inline-block;
-  cursor: default;
+  padding: 0 25px;
 }
 
 .bottom-menu {
@@ -346,17 +354,17 @@ html, body {
   cursor: pointer;
 }
 
-.note-left-col2 {
+.note-left-notes {
   position: absolute;
   left: 40%;
-  top: 62px;
+  top: 61px;
   right: 0;
   bottom: 0;
   transition: width .2s ease-out;
   border-right: 1px solid #dcd6ca;
 }
 
-.note-left-col2 .note-list {
+.note-left-notes.note-list {
   position: absolute;
   top: 0;
   left: 0;
@@ -371,11 +379,7 @@ html, body {
   position: relative;
 }
 
-.note-list .note-item>div{
-  height: inherit;
-}
-
-.note-list .note-item>.on {
+.note-list .note-item.on {
   background: #f1ece1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .03) inset;
 }
@@ -426,19 +430,14 @@ html, body {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  cursor: default;
   font-size: 14px;
   color: #635753;
-}
-
-.note-item .note-title span {
-  font-size: inherit;
 }
 
 .edit-wrapper {
   max-width: 1080px;
   position: absolute;
-  top: 62px;
+  top: 61px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -453,6 +452,11 @@ html, body {
   background: #fbf7ed;
   border-bottom: 1px solid #e3dcd1;
   cursor: default;
+}
+
+.edit-status .status-bar {
+  float: right;
+  height: 50px;
 }
 
 .edit-status .edge {
@@ -479,50 +483,49 @@ html, body {
   cursor: pointer;
 }
 
-.status-bar .status-bar {
-  float: right;
-}
-
 .status-bar .favorite {
+  display: inline-block;
   cursor: pointer;
-  float: right;
   margin-top: 13px;
   background: url(../images/all_icons.png) -786px -39px no-repeat;
   width: 24px;
   height: 24px;
+  vertical-align: top;
 }
 
 .status-bar .split-line {
+  display: inline-block;
   height: 12px;
-  float: right;
   width: 1px;
   background: #e7ded0;
-  margin: 18px 10px 0 10px
+  margin: 19px 5px;
 }
 
 .status-bar .counter {
-  float: right;
+  display: inline-block;
   height: 24px;
   line-height: 24px;
   margin-top: 13px;
   font-size: 13px;
+  vertical-align: top;
 }
 
 .status-bar .time {
-  float: right;
+  display: inline-block;
   height: 24px;
   line-height: 24px;
   margin-top: 13px;
   font-size: 13px;
+  vertical-align: top;
 }
 
 .status-bar .folder {
-  float: right;
+  display: inline-block;
   height: 24px;
   line-height: 24px;
   border-radius: 2px;
   padding-left: 29px;
-  margin-top: 13px;
+  margin: 13px 0;
   position: relative;
   font-size: 12px;
   overflow: hidden;
@@ -610,5 +613,4 @@ html, body {
   background: 0;
   border: 0;
 }
-
 /* CodeMirror css 定制 */

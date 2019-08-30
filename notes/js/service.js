@@ -3,10 +3,10 @@ class Service {
     this.root = null;
     this.folderAll = null;
     this.gdrive = chrome.extension.getBackgroundPage().gdrive;
-    this.__defineGetter__("ROOT", function() {
+    this.__defineGetter__("ROOT", function () {
       return "GNODE";
     })
-    this.__defineGetter__("FOLDER_ALL", function() {
+    this.__defineGetter__("FOLDER_ALL", function () {
       return "全部便签";
     })
   }

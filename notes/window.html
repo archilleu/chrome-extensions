@@ -2,227 +2,206 @@
 <html>
 
 <head>
-  <title>notes</title>
-  <meta charset="utf-8">
-  <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-  <link href="css/lib/bootstrap.min.css" rel="stylesheet">
-  <link href="css/lib/codemirror.css" rel="stylesheet">
-  <link href="css/tips.css" rel="stylesheet">
-  <link href="css/window.css" rel="stylesheet">
-  <link href="js/lib/addon/scroll/simplescrollbars.css" rel="stylesheet">
+    <title>notes</title>
+    <meta charset="utf-8">
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link href="css/lib/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="css/lib/codemirror.css" rel="stylesheet">
+    <link href="css/tips.css" rel="stylesheet">
+    <link href="css/window.css" rel="stylesheet">
+    <link href="js/lib/addon/scroll/simplescrollbars.css" rel="stylesheet">
 </head>
 
 <body>
 
-  <!-- Modal -->
-  <div class="modal fade" id="create-folder" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="myModalLabel">标签类别名</h4>
-        </div>
-        <div class="modal-body">
-          <input class="form-control" type="text">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button id="btn-folder-create-ok" type="button" class="btn btn-primary">创建</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div class="modal fade" id="create-note" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="myModalLabel">标签名字</h4>
-        </div>
-        <div class="modal-body">
-          <input class="form-control" type="text">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button id="btn-note-create-ok" type="button" class="btn btn-primary">创建</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="wrapper">
-    <div class="row">
-      <div class="note-left">
-        <div class="row titlebar">
-          <h1>便签</h1>
-          <div data-toggle="modal">
-            <div class="btn-note btn-create" id="btn-note-create">
-              <div class="">
-                <span>
-                <i class="icon-create"></i>
-              </span>
-              </div>
-            </div>
-          </div>
-          <div class="btn-note btn-save" id="btn-note-save">
-            <div class="">
-              <span>
-                <i class="icon-save"></i>
-              </span>
-            </div>
-          </div>
-          <div class="btn-note btn-refresh" id="btn-refresh">
-            <div class="">
-              <span>
-                <i class="icon-refresh"></i>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="note-left-col1">
-            <div class="search-box">
-              <div class="search-bar">
-                <div class="text-field-view">
-                  <div class="search-icon"></div>
-                  <input type="text" class="search-input" name="text-field" placeholder="搜索全部便签">
-                  <div class="search-clear"></div>
+    <!-- Modal 创建标签页模态窗口 -->
+    <!-- <div class="modal fade" id="create-folder" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">标签类别名</h4>
                 </div>
-              </div>
-            </div>
-            <div class="folder-container" id="folder-container">
-              <!-- <div class="folder-item on">
-                <div class="folder-icon all-icon"></div>
-                <div class="folder-info">
-                    213
-                  </div>
-                  <div class="folder-name">
-                    全部便签
-                  </div>
+                <div class="modal-body">
+                    <input class="form-control" type="text">
                 </div>
-              </div> -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button id="btn-folder-create-ok" type="button" class="btn btn-primary">创建</button>
+                </div>
             </div>
-            <div class="bottom-menu">
-              <div class="create-folder-btn" id="btn-folder-create"></div>
-              <div class="delete-folder-btn" id="delete-folder-btn"></div>
+        </div>
+    </div> -->
+
+    <!-- Modal -->
+    <!-- <div class="modal fade" id="create-note" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">标签名字</h4>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control" type="text">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button id="btn-note-create-ok" type="button" class="btn btn-primary">创建</button>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="note-left-col2">
-          <div class="note-list" id="note-list">
-            <!-- <div class="note-item on">
-              <div class="item-status">
-                <div class="time">2017年1月20日</div>
-                <div class="fav"></div>
-                <div class="image-note"></div>
-              </div>
-              <div class="note-title">
-                <span>hello</span>
-              </div>
-            </div> -->
-          </div>
+    </div> -->
+
+    <div class="wrapper" id="app">
+        <div class="note-left">
+            <div class="titlebar">
+                <img class="logo" src="images/note.png" alt="notes">
+                <span class="logo">便签</span>
+                <div class="btn-notes">
+                    <div title="创建便签" class="btn-note btn-create" id="btn-note-create">
+                        <div class="">
+                            <span>
+                                <i class="icon-create"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div title="保存便签" class="btn-note btn-save" id="btn-note-save">
+                        <div class="">
+                            <span>
+                                <i class="icon-save"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div title="刷新" class="btn-note btn-refresh" id="btn-refresh">
+                        <div class="">
+                            <span>
+                                <i class="icon-refresh"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note-left-panel">
+                <div class="note-left-floder">
+                    <div class="search-box">
+                        <div class="search-bar">
+                            <div class="text-field-view">
+                                <div class="search-icon"></div>
+                                <input type="text" class="search-input" name="text-field" placeholder="搜索全部便签">
+                                <div class="search-clear"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件夹模板 -->
+                    <folder-template></folder-template>
+
+                    <div class="bottom-menu">
+                        <div title="新建文件夹" class="create-folder-btn" id="btn-folder-create"></div>
+                        <div title="删除文件夹" class="delete-folder-btn" id="delete-folder-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="note-left-notes">
+
+                <!-- 便签模板 -->
+                <note-template></note-template>
+
+            </div>
         </div>
-      </div>
+        <div class="note-right">
+            <div class="titlebar">
+                <div title="插入图片" class="btn-note btn-insertImage">
+                    <div class="">
+                        <span>
+                            <i class="icon-insertImage"></i>
+                        </span>
+                    </div>
+                </div>
+                <div title="删除笔记" class="btn-note btn-moveNote">
+                    <div class="">
+                        <span>
+                            <i class="icon-moveNote"></i>
+                        </span>
+                    </div>
+                </div>
+                <div title="删除笔记" class="btn-note btn-delete" id="btn-note-delete">
+                    <div class="">
+                        <span>
+                            <i class="icon-delete"></i>
+                        </span>
+                    </div>
+                </div>
+                <div title="登出" class="btn-note btn-share" id="btn-logout">
+                    <div class="">
+                        <span>
+                            <i class="immersive-icon icon-share"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-wrapper">
+                <div class="edit-status">
+                    <i class="edge"></i>
+                    <div class="edit-mode">纯文本模式</div>
+                    <div class="status-bar">
+                        <div class="folder">
+                            <span>全部便签</span>
+                            <i></i>
+                        </div>
+                        <span class="split-line"></span>
+                        <span class="time">今天 11:03 AM</span>
+                        <span class="split-line"></span>
+                        <span class="counter">共 20 字</span>
+                        <span class="split-line"></span>
+                        <span class="favorite"></span>
+                    </div>
+                </div>
+                <div class="edit-main">
+                    <i></i>
+                    <div class="edit-area" id="edit-area">
+                        <div class="edge"></div>
+                        <div class="note-editor" id="note-editor">
+                            <textarea id='codemirror-editor' style='display: none;'></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="note-right">
-      <div class="row titlebar">
-        <div class="btn-note btn-insertImage">
-          <div class="">
-            <span>
-              <i class="icon-insertImage"></i>
-            </span>
-          </div>
-        </div>
-        <div class="btn-note btn-moveNote">
-          <div class="">
-            <span>
-              <i class="icon-moveNote"></i>
-            </span>
-          </div>
-        </div>
-        <div class="btn-note btn-delete" id="btn-note-delete">
-          <div class="">
-            <span>
-              <i class="icon-delete"></i>
-            </span>
-          </div>
-        </div>
-        <div class="btn-note btn-share" id="btn-logout">
-          <div class="">
-            <span>
-              <i class="immersive-icon icon-share"></i>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="row edit-wrapper">
-        <div class="edit-status">
-          <i class="edge"></i>
-          <div class="edit-mode">纯文本模式</div>
-          <div class="status-bar">
-            <span class="favorite"></span>
-            <span class="split-line"></span>
-            <span class="counter">共 20 字</span>
-            <span class="split-line"></span>
-            <span class="time">今天 11:03 AM</span>
-            <span class="split-line"></span>
-            <div class="folder">
-              <span>全部便签</span>
-              <i></i>
-            </div>
-          </div>
-        </div>
-        <div class="edit-main">
-          <i></i>
-          <div class="edit-area" id="edit-area">
-            <div class="edge"></div>
-            <div class="note-editor" id="note-editor">
-              <textarea id='codemirror-editor' style='display: none;'></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-  </div>
 </body>
-<!--
-  template
--->
-<script id="folderTemplate" type="text/template">
-  <div <%= on==true ? 'class="on"' : '' %> id="<%= id %>">
-      <div class="folder-icon all-icon"></div>
-      <div class="folder-info">
-        <div class="files-sum">
-          <%= sum %>
-        </div>
-        <div class="folder-name">
-          <%= name %>
-        </div>
-      </div>
-  </div>
-</script>
 
-<script id="noteTemplate" type="text/template">
-  <div <%= on==true ? 'class="on"' : '' %> id="<%= id %>">
-      <div class="item-status">
-        <div class="time">
-          <%= modifiedTime %>
+<!-- folder template -->
+<template id="folder-template">
+    <div class="folder-container" id="folder-container">
+        <div class="folder-item" :class="{on: item.on}" v-for="item in folderList" :key="item.id">
+            <div class="folder-icon all-icon"></div>
+            <div class="folder-name">{{ item.name }}</div>
+            <div class="folder-info">{{ item.info }}</div>
         </div>
-        <div class="fav"></div>
-        <div class="image-note"></div>
-      </div>
-      <div class="note-title">
-        <span><%= description %></span>
-      </div>
-  </div>
-</script>
+    </div>
+</template>
+
+<!-- note template -->
+<template id="note-template">
+    <div class="note-list" id="note-list">
+        <div class="note-item" :class="{on: item.on}" v-for="item in nodeList" :key="item.id">
+            <div class="item-status">
+                <div class="time">{{ item.time }}</div>
+                <div title="星标" class="fav"></div>
+                <div class="image-note"></div>
+            </div>
+            <div class="note-title">
+                <span>{{ item.descript }}</span>
+            </div>
+        </div>
+    </div>
+</template>
 
 <!--
     - JavaScript and HTML must be in separate files: see our Content Security
@@ -230,15 +209,12 @@
     -
     - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
   -->
-<script src="js/lib/underscore.js"></script>
+<!-- <script src="js/lib/underscore.js"></script>
 <script src="js/lib/jquery-3.3.1.min.js"></script>
 <script src="js/lib/jquery-dateFormat.min.js"></script>
 <script src="js/lib/backbone.js"></script>
 <script src="js/lib/bootstrap.min.js"></script>
-<script src="js/lib/codemirror.js"></script>
-<script src="js/lib/addon/scroll/simplescrollbars.js"></script>
 
-<script src="js/models/editor.js"></script>
 <script src="js/models/note.js"></script>
 <script src="js/models/folder.js"></script>
 <script src="js/collections/notes.js"></script>
@@ -252,6 +228,14 @@
 <script src="js/service.js"></script>
 <script src="js/views/message.js"></script>
 <script src="js/views/appView.js"></script>
+ -->
+<script src="js/lib/codemirror.js"></script>
+<script src="js/lib/addon/scroll/simplescrollbars.js"></script>
+<script src="js/editor.js"></script>
+
+
+<script src="js/lib/vue.min.js"></script>
+
 <script src="js/app.js"></script>
 
 

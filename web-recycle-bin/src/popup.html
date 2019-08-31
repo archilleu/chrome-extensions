@@ -12,7 +12,7 @@
     <div id="my-app" v-cloak>
         <div class="item-list">
             <div class="item" :title="item.title" v-for="item in closedTabs" :key="item.id" @click="onLink" :data-id="item.id" :data-index="item.index" :data-url="item.url">
-                <img :src="item.favicon" :alt="item.title">
+                <img :src="item.favicon">
                 <a>{{ item.title }}</a>
                 <span>{{ item.date | formatTime }}</span>
             </div>
@@ -40,7 +40,6 @@
 
 <script src="js/vue.min.js"></script>
 <script src="js/tabs.js"></script>
-<script src="js/popup.js"></script>
 <script src="js/app.js"></script>
 <!-- <script src="js/test/test_tabs.js"></script> -->
 

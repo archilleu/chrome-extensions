@@ -1,13 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+    document.gnode = new GNode();
     const bg = chrome.extension.getBackgroundPage();
 
     var app = app || new Vue({
         el: '#app',
         data: {
-            name: "aa",
-            info: "xx",
-            folder: 'true'
+            editor: null
         },
+        mounted() {
+            this.editor = new EditorView({
+                el: "#codemirror-editor"
+            });
+
+        },
+        watch: {},
         methods: {},
         computed: {},
         filters: {},

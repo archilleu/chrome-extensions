@@ -7,7 +7,7 @@ class GNode {
         this.root = null; //GNode根目录
         this.gdrive = new GDrive();
 
-        this.ROOT_NAME = "GNODE1";
+        this.ROOT_NAME = "GNODE";
         this.DEFAULT_FOLDER_MYNOTES = "我的便签";
     }
 
@@ -87,19 +87,21 @@ class GNode {
     //检测是否存在根目录,GNode的根目录是Google硬盘根目录下面一个GNODE文件夹
     _checkHasRootFolder(option) {
         option.name = this.ROOT_NAME;
+        option.parents = ["root"];
         this._checkHasFolder(option);
     }
 
     //检测是否存在我的便签（默认不可删除的一个便签)
     _checkHasMyNotesFolder(option) {
         option.name = this.DEFAULT_FOLDER_MYNOTES;
+        option.parents = [this.root];
         this._checkHasFolder(option);
     }
 
     //检测是否存在某个文件夹
     _checkHasFolder(option) {
         this.gdrive.list({
-            parents: ["root"],
+            parents: option.parents,
             success: (data) => {
                 const files = data.files;
                 let found = false;

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     document.gnode = new GNode();
+    document.gauth = new GAuth();
     const bg = chrome.extension.getBackgroundPage();
 
     var app = app || new Vue({

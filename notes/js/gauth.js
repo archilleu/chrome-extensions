@@ -1,0 +1,64 @@
+/**
+ * google 账户授权
+ */
+
+class GAuth {
+    constructor() {
+
+    }
+
+    //请求google账户授权访问
+    auth(option) {
+        chrome.identity.getAuthToken({
+            interactive: true
+        }, (token) => {
+            if (chrome.runtime.lastError) {
+                option.error && option.error(chrome.runtime.lastError);
+                return;
+            }
+
+            this.accessToken = token;
+            axios.defaults.headers.common['Authorization'] = "Bearer " + token //配置axios请求授权头;
+            option.success && option.success(token);
+        });
+    }
+
+    //监测是否授权
+    checkAuth() {
+        return (null == this.accessToken ? false : true);
+    }
+
+    //清除授权缓存
+    removeCachedAuth(option) {
+
+        //因为授权有可能丢失，所以先获取授权在取消授权缓存
+        chrome.identity.getAuthToken({
+            interactive: false
+        }, (token) => {
+            if (chrome.runtime.lastError) {
+                option.error && option.error(chrome.runtime.lastError);
+                return;
+            }
+
+            chrome.identity.removeCachedAuthToken({
+                    token: token
+                },
+                () => {
+                    option.success && option.success();
+                    this.accessToken = null;
+                }
+            );
+        });
+
+    }
+
+    //解除chrome账号授权
+    revokeAuth() {
+        if (this.accessToken) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://accounts.google.com/o/oauth2/revoke?token=' + this.accessToken);
+            xhr.send();
+            this.removeCachedAuth();
+        }
+    }
+}

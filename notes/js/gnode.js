@@ -14,13 +14,14 @@ class GNode {
     //初始化
     init(option) {
         this._checkHasRootFolder({
-            success: (result) => {
+            success: (id) => {
                 //根目录存在，检测是否存在默认文件夹
-                if (result) {
+                if (id) {
+                    this.root = id;
                     this._checkHasMyNotesFolder({
-                        success: (result) => {
+                        success: (id) => {
                             //默认文件夹存在,回调成功
-                            if (result) {
+                            if (id) {
                                 option.success && option.success();
                             } else {
                                 //创建默认文件夹
@@ -28,7 +29,7 @@ class GNode {
                                     name: this.DEFAULT_FOLDER_MYNOTES,
                                     parents: [this.root],
                                     success: (data) => {
-                                        option.success && option.success();
+                                        option.success && option.success(data);
                                     },
                                     error: (error) => {
                                         option.error && option.error(error);
@@ -52,7 +53,7 @@ class GNode {
                                 name: this.DEFAULT_FOLDER_MYNOTES,
                                 parents: [this.root],
                                 success: (data) => {
-                                    option.success && option.success();
+                                    option.success && option.success(data);
                                 },
                                 error: (error) => {
                                     option.error && option.error(error);
@@ -80,6 +81,38 @@ class GNode {
         });
     }
 
+    //获取便签文件夹列表
+    NodeFolders(option) {
+        this.gdrive.list({
+            parents: [this.root],
+            orderBy: "modifiedTime",
+            success: (folders) => {
+                //默认文件夹排在第一位
+                let firstFolder = null;
+                let sortdFolders = new Array(); 
+                for (let folder of folders) {
+                    if (folder.name === this.DEFAULT_FOLDER_MYNOTES) {
+                        firstFolder = folder;
+                    } else {
+                        sortdFolders.unshift(folder)
+                    }
+                }
+                sortdFolders.unshift(firstFolder);
+
+                option.success && option.success(sortdFolders);
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(error);
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
+                option.finaly && option.finaly();
+            },
+        });
+    }
+
     /**
      * private
      */
@@ -102,16 +135,14 @@ class GNode {
     _checkHasFolder(option) {
         this.gdrive.list({
             parents: option.parents,
-            success: (data) => {
-                const files = data.files;
-                let found = false;
+            success: (files) => {
+                let found = null;
                 for (const file of files) {
                     if (option.name !== file.name) {
                         continue;
                     }
 
-                    this.root = file.id;
-                    found = true;
+                    found = file.id;
                     break;;
                 }
 

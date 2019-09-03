@@ -79,7 +79,7 @@ class GDrive {
         axios.get(this.REST_FOLDER_LIST, {
             params: params
         }).then((resp) => {
-            option.success && option.success(resp.data);
+            option.success && option.success(resp.data.files);
         }).catch((error) => {
             this._axiosException(error, option);
         });
@@ -155,11 +155,16 @@ class GDrive {
     }
 
     _axiosException(error, option) {
-        //网络不通
-        if (!error.response || error.code === "ECONNABORTED") {
+        if (error.response) {
+            option.error && option.error(error.response.data.error);
+        } else if (error.request) {
+            //网络不通
             option.neterror && option.neterror();
         } else {
-            option.error && option.error(error.response.data.error);
+            option.error && option.error({
+                status: 600,
+                message: "axios config error!"
+            });
         }
     }
 }

@@ -98,7 +98,7 @@
                     </div>
 
                     <!-- 文件夹模板 -->
-                    <folder-template></folder-template>
+                    <folder-template :data-folders="nodeFolders"></folder-template>
 
                     <div class="bottom-menu">
                         <div title="新建文件夹" class="create-folder-btn" id="btn-folder-create"></div>
@@ -172,14 +172,22 @@
                 </div>
             </div>
         </div>
+
+        <!-- 提示 -->
+        <div id="snackbar" :class="{show: showTips}">{{ tipsMsg }}</div>
+
+        <!-- Loading -->
+        <div id="loading" :class="{show: showLoading}">
+            <img src="images/loading.gif" />
+        </div>
     </div>
-    </div>
+
 </body>
 
 <!-- folder template -->
 <template id="folder-template">
-    <div class="folder-container" id="folder-container">
-        <div class="folder-item" :class="{on: item.on}" v-for="item in folderList" :key="item.id">
+    <div class="folder-container" id="folder-container" @click="nodeFolderItemClick">
+        <div class="folder-item" :class="{on: item.on}" v-for="item in nodeFolders" :key="item.id" :data-id="item.id">
             <div class="folder-icon all-icon"></div>
             <div class="folder-name">{{ item.name }}</div>
             <div class="folder-info">{{ item.info }}</div>

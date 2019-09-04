@@ -42,7 +42,7 @@ class GDrive {
     //删除文件夹
     deleteFolder(option) {
         const metadata = {
-            trashed: optioin.trashed ? option.trashed : true
+            trashed: option.trashed ? option.trashed : true
         }
         axios.patch(this.REST_FILE_UPDATE_METADATA + option.id, metadata).then((resp) => {
             option.success && option.success(resp.data);

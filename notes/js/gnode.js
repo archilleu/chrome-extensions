@@ -20,56 +20,18 @@ class GNode {
                     this.root = id;
                     this._checkHasMyNotesFolder({
                         success: (id) => {
-                            //默认文件夹存在,回调成功
                             if (id) {
+                                //默认文件夹存在,回调成功
                                 option.success && option.success();
                             } else {
                                 //创建默认文件夹
-                                this.gdrive.createFolder({
-                                    name: this.DEFAULT_FOLDER_MYNOTES,
-                                    parents: [this.root],
-                                    success: (data) => {
-                                        option.success && option.success(data);
-                                    },
-                                    error: (error) => {
-                                        option.error && option.error(error);
-                                    },
-                                    neterror: () => {
-                                        option.neterror && option.neterror();
-                                    },
-                                });
+                                this._createDefaultFolder(option);
                             }
                         }
                     });
                 } else {
                     //创建根目录
-                    this.gdrive.createFolder({
-                        name: this.ROOT_NAME,
-                        parents: ["root"],
-                        success: (data) => {
-                            this.root = data.id;
-                            //创建默认文件夹
-                            this.gdrive.createFolder({
-                                name: this.DEFAULT_FOLDER_MYNOTES,
-                                parents: [this.root],
-                                success: (data) => {
-                                    option.success && option.success(data);
-                                },
-                                error: (error) => {
-                                    option.error && option.error(error);
-                                },
-                                neterror: () => {
-                                    option.neterror && option.neterror();
-                                },
-                            });
-                        },
-                        error: (error) => {
-                            option.error && option.error(error);
-                        },
-                        neterror: () => {
-                            option.neterror && option.neterror();
-                        },
-                    });
+                    this._createRootFolder(option);
                 }
             },
             error: (error) => {
@@ -89,7 +51,7 @@ class GNode {
             success: (folders) => {
                 //默认文件夹排在第一位
                 let firstFolder = null;
-                let sortdFolders = new Array(); 
+                let sortdFolders = new Array();
                 for (let folder of folders) {
                     if (folder.name === this.DEFAULT_FOLDER_MYNOTES) {
                         firstFolder = folder;
@@ -159,15 +121,36 @@ class GNode {
 
     //创建根目录
     _createRootFolder(option) {
-        option.name = this.ROOT_NAME;
-        option.parents = "root";
-        this.gdrive.createFolder(option);
+        this.gdrive.createFolder({
+            name: this.ROOT_NAME,
+            parents: ["root"],
+            success: (data) => {
+                this.root = data.id;
+                this._createDefaultFolder(option);
+            },
+            error: (error) => {
+                option.error && option.error(error);
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
+            },
+        });
     }
 
     //创建默认文件夹
-    _createMyNodeFolder(option) {
-        option.name = this.ROOT_NAME;
-        option.parents = "root";
-        this.gdrive.createFolder(option);
+    _createDefaultFolder(option) {
+        this.gdrive.createFolder({
+            name: this.DEFAULT_FOLDER_MYNOTES,
+            parents: [this.root],
+            success: (data) => {
+                option.success && option.success(data);
+            },
+            error: (error) => {
+                option.error && option.error(error);
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
+            },
+        });
     }
 }

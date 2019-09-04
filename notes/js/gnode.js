@@ -7,7 +7,7 @@ class GNode {
         this.root = null; //GNode根目录
         this.gdrive = new GDrive();
 
-        this.ROOT_NAME = "GNODE";
+        this.ROOT_NAME = "GNODE1";
         this.DEFAULT_FOLDER_MYNOTES = "我的便签";
     }
 
@@ -72,6 +72,45 @@ class GNode {
                 option.neterror && option.neterror();
                 option.finaly && option.finaly();
             },
+        });
+    }
+
+    //创建便签文件夹
+    NodeFolderCreate(option) {
+        this.gdrive.createFolder({
+            parents: [this.root],
+            name: option.name,
+            success: (folder) => {
+                option.success && option.success(folder);
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(error);
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror(folder);
+                option.finaly && option.finaly();
+            }
+        });
+    }
+
+    //删除文件夹
+    NodeFolderDelete(option) {
+        this.gdrive.deleteFolder({
+            id: option.id,
+            success: (folder) => {
+                option.success && option.success(folder);
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(error);
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror(folder);
+                option.finaly && option.finaly();
+            }
         });
     }
 

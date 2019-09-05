@@ -3,9 +3,6 @@
  */
 
 class GAuth {
-    constructor() {
-
-    }
 
     //请求google账户授权访问
     auth(option) {
@@ -18,7 +15,6 @@ class GAuth {
             }
 
             this.accessToken = token;
-            axios.defaults.headers.common['Authorization'] = "Bearer " + token //配置axios请求授权头;
             option.success && option.success(token);
         });
     }

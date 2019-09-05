@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const gdrive = chrome.extension.getBackgroundPage().gdrive;
+    const auth = new GAuth();
 
     const google = document.getElementById("google-login");
     google.addEventListener("click", function(event) {
         event.preventDefault();
 
-        gdrive.auth({
+        auth.auth({
             success: () => {
                 gotoMainWindow();
             },

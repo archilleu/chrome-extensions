@@ -1,8 +1,8 @@
 class EditorView {
 
     constructor(option) {
-        this.text = "";
-        this.changedCount = 0;
+        this._text = "";
+        this._isChanged = false;
 
         if (!option.el) {
             throw new Error("document's el miss");
@@ -22,8 +22,15 @@ class EditorView {
 
 
         this.editor.on("changes", () => {
-            this.text = this.editor.getValue();
-            this.changedCount++;
+            const curData = this.editor.getValue();
+            if (curData.length != this._text.length || curData != this._text) {
+                this._isChanged = true;
+            } else {
+                this._isChanged = false;
+            }
+
+            this._text = curData;
+            option.changes && option.changes(curData);
         });
 
     }
@@ -33,22 +40,22 @@ class EditorView {
     }
 
     setText(text) {
-        this.text = text;
+        this._text = text;
         this.editor.setValue(text);
     }
 
     getText() {
-        return this.text;
+        return this._text;
     }
 
     clear() {
         this.editor.setValue("");
-        this.text = "";
+        this._text = "";
         this.changedCount = 0;
     }
 
     isChanged() {
-        return this.changedCount != 0;
+        return this._isChanged;
     }
 
 }

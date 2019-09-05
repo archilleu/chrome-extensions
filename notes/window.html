@@ -47,14 +47,14 @@
                             </span>
                         </div>
                     </div>
-                    <div title="保存便签" class="btn-note btn-save" id="btn-note-save">
+                    <div title="保存便签" class="btn-note btn-save" id="btn-note-save" @click="saveNote">
                         <div class="">
                             <span>
                                 <i class="icon-save"></i>
                             </span>
                         </div>
                     </div>
-                    <div title="刷新" class="btn-note btn-refresh" id="btn-refresh">
+                    <div title="刷新" class="btn-note btn-refresh" id="btn-refresh" @click="refresh">
                         <div class="">
                             <span>
                                 <i class="icon-refresh"></i>
@@ -89,7 +89,7 @@
             <div class="note-left-notes">
 
                 <!-- 便签模板 -->
-                <note-template></note-template>
+                <note-template :data-notes="note.list" @onnotechange="onnotechange"></note-template>
 
             </div>
         </div>
@@ -157,7 +157,7 @@
         <div id="snackbar" :class="{show: showTips}">{{ tipsMsg }}</div>
 
         <!-- Loading -->
-        <div id="loading" :class="{show: showLoading}">
+        <div id="loading" :class="{show: showLoading>0}">
             <img src="images/loading.gif" />
         </div>
 
@@ -221,16 +221,16 @@
 
 <!-- note template -->
 <template id="note-template">
-    <div class="note-list" id="note-list">
-        <div class="note-item" :class="{on: item.on}" v-for="(item,index) in nodeList" :key="item.id" :data-id="item.id"
+    <div class="note-list" id="note-list" @click="nodeItemClick">
+        <div class="note-item" :class="{on: item.on}" v-for="(item,index) in noteList" :key="item.id" :data-id="item.id"
             :data-index="index">
             <div class="item-status">
-                <div class="time">{{ item.time }}</div>
+                <div class="time">{{ item.modifiedTime | formatTime }}</div>
                 <div title="星标" class="fav"></div>
                 <div class="image-note"></div>
             </div>
             <div class="note-title">
-                <span>{{ item.descript }}</span>
+                <span>{{ item.name }}</span>
             </div>
         </div>
     </div>

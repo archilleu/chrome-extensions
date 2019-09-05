@@ -431,8 +431,11 @@ body {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 14px;
   color: #635753;
+}
+
+.note-item .note-title>span {
+  font-size: 14px;
 }
 
 .edit-wrapper {
@@ -615,4 +618,5 @@ body {
   background: 0;
   border: 0;
 }
+
 /* CodeMirror css 定制 */

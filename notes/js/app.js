@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             //便签列表
             note: {
-                newrName: "",
+                newName: "",
                 deleteName: "",
                 list: [],
                 selected: null,
@@ -54,33 +54,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                //获取编辑框内容
-                this.$_myapp_loadingShow();
-                const data = this.editor.getText();
-                this.gnote.uploadNoteData({
-                    id: this.note.selected.id,
-                    data: data,
-                    success: (file) => {
-                        this.$_myapp_tips(this.note.selected.name + " 上传成功")
-                    },
-                    error: (error) => {
-                        this.$_myapp_tips(error);
-                    },
-                    neterror: () => {
-                        this.$_myapp_tipsNeterror();
-                    },
-                    finaly: () => {
-                        this.$_myapp_loadingHide();
-                    }
-
-                });
                 this.$_myapp_loadingShow();
                 this.gnote.noteUpdateMetadata({
                     id: this.note.selected.id,
                     name: this.note.selected.name,
                     description: this.note.selected.description,
                     success: (file) => {
-                        this.$_myapp_tips(this.note.selected.name + " 标题更新成功")
+                        debugger
+                        //获取编辑框内容
+                        this.$_myapp_loadingShow();
+                        const data = this.editor.getText();
+                        this.gnote.uploadNoteData({
+                            id: this.note.selected.id,
+                            data: data,
+                            success: (file) => {
+                                this.$_myapp_tips(this.note.selected.name + " 上传成功")
+                            },
+                            error: (error) => {
+                                this.$_myapp_tips(error);
+                            },
+                            neterror: () => {
+                                this.$_myapp_tipsNeterror();
+                            },
+                            finaly: () => {
+                                this.$_myapp_loadingHide();
+                            }
+
+                        });
                     },
                     error: (error) => {
                         this.$_myapp_tips(error);
@@ -161,6 +161,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             },
 
+            //创建便签
+            noteCreateDlg() {
+                this.note.newName= "";
+                this.note.$btnCreate.modal("show");
+            },
+            noteCreate() {
+                if (this.note.newName == "")
+                    return;
+                this.note.$btnCreate.modal("hide");
+
+                this.$_myapp_loadingShow();
+                this.gnote.noteNoterCreate({
+                    name: this.note.newName,
+                    success: (note) => {
+                        this.$_myapp_tips(note.name + "创建成功")
+                        this.refresh();
+                    },
+                    error: (error) => {
+                        this.$_myapp_tips(error);
+                    },
+                    neterror: () => {
+                        this.$_myapp_tipsNeterror();
+                    },
+                    finaly: () => {
+                        this.$_myapp_loadingHide();
+                    }
+                });
+            },
+            //删除便签
+            noteDeleteDlg() {
+                this.note.$btnDelete.modal("show");
+            },
+            noteDelete() {
+                this.note.$btnDelete.modal("hide");
+
+                this.$_myapp_loadingShow();
+                this.gnote.noteNoteDelete({
+                    id: this.note.selected.id,
+                    success: () => {
+                        this.$_myapp_tips(this.note.selected.name + "删除成功")
+                        this.refresh();
+                    },
+                    error: (error) => {
+                        this.$_myapp_tips(error);
+                    },
+                    neterror: () => {
+                        this.$_myapp_tipsNeterror();
+                    },
+                    finaly: () => {
+                        this.$_myapp_loadingHide();
+                    }
+                });
+            },
+
+            //选中文件夹事件
             onfolderchange: function (folder) {
                 this.selectedFolder = folder;
 
@@ -171,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.$_myapp_initNotes();
             },
 
+            //选中便签事件
             onnotechange: function (note) {
                 this.note.selected = note;
                 //获取该便签内容
@@ -183,8 +239,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             //初始化
             $_myapp_init() {
-                this.$btnCreateFolder = $('#create-folder');
-                this.$btnDeleteFolder = $('#delete-folder');
+
+                //初始化模态窗口对象
+                this.$btnCreateFolder = $("#create-folder");
+                this.$btnDeleteFolder = $("#delete-folder");
+                this.note.$btnCreate = $("#create-note");
+                this.note.$btnDelete = $("#note-note");
+
                 this.$_myapp_initEditor()
                 this.$_myapp_initAuth();
             },
@@ -280,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (!this.note.selected) {
                             if (0 != files.length)
                                 this.note.selected = files[0];
-                                this.note.selectedIndex = 0;
+                            this.note.selectedIndex = 0;
                         }
 
                         if (this.note.selected)

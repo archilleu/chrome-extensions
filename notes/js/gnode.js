@@ -52,7 +52,7 @@ class GNode {
     noteFolders(option) {
         this.gdrive.list({
             parents: [this.root],
-            orderBy: "modifiedTime",
+            orderBy: "modifiedTime desc",
             success: (folders) => {
                 //默认文件夹排在第一位
                 let firstFolder = null;
@@ -84,7 +84,7 @@ class GNode {
     noteFolderNotes(option) {
         this.gdrive.list({
             parents: [option.parent],
-            orderBy: "modifiedTime",
+            orderBy: "modifiedTime desc",
             success: (notes) => {
                 option.success && option.success(notes);
                 option.finaly && option.finaly();
@@ -163,6 +163,7 @@ class GNode {
     //更新便签元数据
     noteUpdateMetadata(option) {
         this.gdrive.updateFileMetadata({
+            id: option.id,
             name: option.name,
             description: option.description,
             success: (note) => {

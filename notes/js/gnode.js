@@ -44,7 +44,7 @@ class GNode {
     }
 
     //获取便签文件夹列表
-    NodeFolders(option) {
+    noteFolders(option) {
         this.gdrive.list({
             parents: [this.root],
             orderBy: "modifiedTime",
@@ -75,8 +75,28 @@ class GNode {
         });
     }
 
+    //获取便签文件夹下的便签列表
+    noteFolderNotes(option) {
+        this.gdrive.list({
+            parents: [option.parent],
+            orderBy: "modifiedTime",
+            success: (notes) => {
+                option.success && option.success(notes);
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(error);
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
+                option.finaly && option.finaly();
+            },
+        });
+    }
+
     //创建便签文件夹
-    NodeFolderCreate(option) {
+    noteFolderCreate(option) {
         this.gdrive.createFolder({
             parents: [this.root],
             name: option.name,
@@ -96,7 +116,7 @@ class GNode {
     }
 
     //删除文件夹
-    NodeFolderDelete(option) {
+    noteFolderDelete(option) {
         this.gdrive.deleteFolder({
             id: option.id,
             success: (folder) => {

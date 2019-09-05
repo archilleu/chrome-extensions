@@ -8,12 +8,23 @@ document.addEventListener('DOMContentLoaded', () => {
             gnode: new GNode(),
             gauth: new GAuth(),
 
+            //便签文件夹列表
             newFolderName: "",
             deleteFolderName: "",
             nodeFolders: [],
             selectedFolder: 0,
             $btnCreateFolder: null,
             $btnDeleteFolder: null,
+
+            //便签列表
+            notes: {
+                newrName: "",
+                deleteName: "",
+                list: [],
+                selected: 0,
+                $btnCreate: null,
+                $btnDelete: null,
+            },
 
             //提示
             tipsMsg: "",
@@ -38,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.$btnCreateFolder.modal("hide");
 
                 this.$_myapp_loadingShow();
-                this.gnode.NodeFolderCreate({
+                this.gnode.noteFolderCreate({
                     name: this.newFolderName,
                     success: (folder) => {
                         this.$_myapp_tips(folder.name + "创建成功")
@@ -54,8 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             //删除文件夹
             folderDeleteDlg() {
-                if (!this.$_myapp_canDeleteFolder())
-                {
+                if (!this.$_myapp_canDeleteFolder()) {
                     this.$_myapp_tips("不能删除默认便签文件夹");
                     return;
                 }
@@ -66,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.$btnDeleteFolder.modal("hide");
 
                 this.$_myapp_loadingShow();
-                this.gnode.NodeFolderDelete({
+                this.gnode.noteFolderDelete({
                     id: this.selectedFolder.id,
                     success: (folder) => {
                         this.$_myapp_tips(folder.name + "删除成功")
@@ -82,6 +92,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             onfolderchange: function (folder) {
                 this.selectedFolder = folder;
+
+                /*
+                //获取该便签文件夹的便签列表
+                this.gnode.noteFolderNotes({
+                    id: folder.id,
+                    success: (notes) => {
+
+                    },
+                    error: (error) => {
+
+                    },
+                    neterror: () => {
+
+                    }
+                });*/
             },
 
             /**
@@ -138,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             $_myapp_initNodeFolders: function () {
                 this.$_myapp_loadingShow();
 
-                this.gnode.NodeFolders({
+                this.gnode.noteFolders({
                     success: (folders) => {
                         this.nodeFolders = folders;
                     },
@@ -153,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             },
+
             $_myapp_canDeleteFolder() {
                 //没有选中，不能触发删除
                 if (!this.selectedFolder)

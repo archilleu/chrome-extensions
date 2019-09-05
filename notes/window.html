@@ -4,8 +4,7 @@
 <head>
     <title>notes</title>
     <meta charset="utf-8">
-    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link href="css/lib/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="css/lib/bootstrap.min.css" rel="stylesheet">
     <link href="css/lib/codemirror.css" rel="stylesheet">
     <link href="css/tips.css" rel="stylesheet">
     <link href="css/window.css" rel="stylesheet">
@@ -13,27 +12,6 @@
 </head>
 
 <body>
-
-    <!-- Modal 创建标签页模态窗口 -->
-    <!-- <div class="modal fade" id="create-folder" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">标签类别名</h4>
-                </div>
-                <div class="modal-body">
-                    <input class="form-control" type="text">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button id="btn-folder-create-ok" type="button" class="btn btn-primary">创建</button>
-                </div>
-            </div>
-        </div>
-    </div> -->
 
     <!-- Modal -->
     <!-- <div class="modal fade" id="create-note" tabindex="-1" role="dialog">
@@ -98,11 +76,13 @@
                     </div>
 
                     <!-- 文件夹模板 -->
-                    <folder-template :data-folders="nodeFolders"></folder-template>
+                    <folder-template :data-folders="nodeFolders" @onfolderchange="onfolderchange"></folder-template>
 
                     <div class="bottom-menu">
-                        <div title="新建文件夹" class="create-folder-btn" id="btn-folder-create"></div>
-                        <div title="删除文件夹" class="delete-folder-btn" id="delete-folder-btn"></div>
+                        <div title="新建文件夹" class="create-folder-btn" id="btn-folder-create" @click="folderCreateDlg">
+                        </div>
+                        <div title="删除文件夹" class="delete-folder-btn" id="delete-folder-btn" @click="folderDeleteDlg">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -180,6 +160,49 @@
         <div id="loading" :class="{show: showLoading}">
             <img src="images/loading.gif" />
         </div>
+
+        <!-- Modal 创建文件夹模态窗口 -->
+        <div class="modal fade" id="create-folder" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">标签类别名</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input class="form-control" type="text" v-model="newFolderName">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button id="btn-folder-create-ok" type="button" class="btn btn-primary"
+                            @click="folderCreate">创建</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 删除文件夹模态窗口 -->
+        <div class="modal fade" id="delete-folder" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">删除便签文件夹</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>删除便签:{{ selectedFolder.name }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-danger" @click="folderDelete">删除</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
     </div>
 
 </body>
@@ -187,7 +210,8 @@
 <!-- folder template -->
 <template id="folder-template">
     <div class="folder-container" id="folder-container" @click="nodeFolderItemClick">
-        <div class="folder-item" :class="{on: item.on}" v-for="item in nodeFolders" :key="item.id" :data-id="item.id">
+        <div class="folder-item" :class="{on: item.on}" v-for="(item,index) in nodeFolders" :key="item.id"
+            :data-id="item.id" :data-index="index">
             <div class="folder-icon all-icon"></div>
             <div class="folder-name">{{ item.name }}</div>
             <div class="folder-info">{{ item.info }}</div>
@@ -198,7 +222,8 @@
 <!-- note template -->
 <template id="note-template">
     <div class="note-list" id="note-list">
-        <div class="note-item" :class="{on: item.on}" v-for="item in nodeList" :key="item.id">
+        <div class="note-item" :class="{on: item.on}" v-for="(item,index) in nodeList" :key="item.id" :data-id="item.id"
+            :data-index="index">
             <div class="item-status">
                 <div class="time">{{ item.time }}</div>
                 <div title="星标" class="fav"></div>
@@ -211,6 +236,7 @@
     </div>
 </template>
 
+
 <!--
     - JavaScript and HTML must be in separate files: see our Content Security
     - Policy documentation[1] for details and explanation.
@@ -220,7 +246,6 @@
 <!-- <script src="js/lib/underscore.js"></script>
 <script src="js/lib/jquery-dateFormat.min.js"></script>
 <script src="js/lib/backbone.js"></script>
-<script src="js/lib/bootstrap.min.js"></script>
 
 <script src="js/models/note.js"></script>
 <script src="js/models/folder.js"></script>
@@ -238,6 +263,7 @@
  -->
 
 <script src="js/lib/jquery-3.3.1.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
 <script src="js/lib/axios.min.js"></script>
 <script src="js/lib/codemirror.js"></script>
 <script src="js/lib/addon/scroll/simplescrollbars.js"></script>

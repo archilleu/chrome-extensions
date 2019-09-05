@@ -53,12 +53,21 @@ class GAuth {
     }
 
     //解除chrome账号授权
-    revokeAuth() {
+    revokeAuth(option) {
         if (this.accessToken) {
             const xhr = new XMLHttpRequest();
+            xhr.timeout = 15000;
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    option.success && option.success();
+                }
+            }
+            xhr.ontimeout = function() {
+                option.error && option.error();
+            }
             xhr.open('GET', 'https://accounts.google.com/o/oauth2/revoke?token=' + this.accessToken);
             xhr.send();
-            this.removeCachedAuth();
+            this.removeCachedAuth({});
         }
     }
 }

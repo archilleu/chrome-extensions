@@ -41,10 +41,7 @@ class GDrive {
 
     //删除文件夹
     deleteFolder(option) {
-        const metadata = {
-            trashed: option.trashed ? option.trashed : true
-        }
-        axios.patch(this.REST_FILE_UPDATE_METADATA + option.id, metadata).then((resp) => {
+        axios.delete(this.REST_FOLDER_DELETE + option.id).then((resp) => {
             option.success && option.success(resp.data);
         }).catch((error) => {
             this._axiosException(error, option);
@@ -102,10 +99,7 @@ class GDrive {
 
     //删除文件
     deleteFile(option) {
-        const metadata = {
-            trashed: option.trashed ? option.trashed : true
-        }
-        axios.patch(this.REST_FILE_UPDATE_METADATA + option.id, metadata).then((resp) => {
+        axios.delete(this.REST_FILE_DELETE + option.id).then((resp) => {
             option.success && option.success(resp.data);
         }).catch((error) => {
             this._axiosException(error, option);
@@ -161,10 +155,7 @@ class GDrive {
             //网络不通
             option.neterror && option.neterror();
         } else {
-            option.error && option.error({
-                status: 600,
-                message: "axios config error!"
-            });
+            option.error && option.error(error);
         }
     }
 }

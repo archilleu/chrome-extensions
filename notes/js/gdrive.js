@@ -7,6 +7,7 @@
 
 class GDrive {
     constructor() {
+
         this.accessToken = null;
 
         this.DEFAULT_CHUNK_SIZE = 1024 * 1024 * 5;
@@ -20,9 +21,11 @@ class GDrive {
         this.REST_FILE_UPLOADCONTENT = "https://www.googleapis.com/upload/drive/v3/files/"; /*upload -> fileid +?uploadType=media or ...*/
         this.REST_FILE_GETCONTENT = "https://www.googleapis.com/drive/v3/files/"; /*download -> alt=media*/
         this.REST_FILE_CONTENT_UPLOADMEDIA = "?uploadType=media";
+    }
 
-        //默认网络超时15s
-        axios.defaults.timeout = 15000;
+    setToken(token) {
+        //配置axios请求授权头;
+        axios.defaults.headers.common['Authorization'] = "Bearer " + token;
     }
 
     //创建文件夹
@@ -41,8 +44,8 @@ class GDrive {
 
     //删除文件夹
     deleteFolder(option) {
-        axios.delete(this.REST_FOLDER_DELETE + option.id).then((resp) => {
-            option.success && option.success(resp.data);
+        axios.delete(this.REST_FOLDER_DELETE + option.id).then(() => {
+            option.success && option.success();
         }).catch((error) => {
             this._axiosException(error, option);
         });
@@ -99,8 +102,8 @@ class GDrive {
 
     //删除文件
     deleteFile(option) {
-        axios.delete(this.REST_FILE_DELETE + option.id).then((resp) => {
-            option.success && option.success(resp.data);
+        axios.delete(this.REST_FILE_DELETE + option.id).then(() => {
+            option.success && option.success();
         }).catch((error) => {
             this._axiosException(error, option);
         });

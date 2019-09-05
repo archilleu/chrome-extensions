@@ -11,6 +11,11 @@ class GNode {
         this.DEFAULT_FOLDER_MYNOTES = "我的便签";
     }
 
+    //配置axios请求授权头;
+    setToken(token) {
+        this.gdrive.setToken(token);
+    }
+
     //初始化
     init(option) {
         this._checkHasRootFolder({
@@ -35,7 +40,7 @@ class GNode {
                 }
             },
             error: (error) => {
-                option.error && option.error(error);
+                option.error && option.error(this._formatError(error));
             },
             neterror: () => {
                 option.neterror && option.neterror();
@@ -65,7 +70,7 @@ class GNode {
                 option.finaly && option.finaly();
             },
             error: (error) => {
-                option.error && option.error(error);
+                option.error && option.error(this._formatError(error));
                 option.finaly && option.finaly();
             },
             neterror: () => {
@@ -85,7 +90,7 @@ class GNode {
                 option.finaly && option.finaly();
             },
             error: (error) => {
-                option.error && option.error(error);
+                option.error && option.error(this._formatError(error));
                 option.finaly && option.finaly();
             },
             neterror: () => {
@@ -105,11 +110,11 @@ class GNode {
                 option.finaly && option.finaly();
             },
             error: (error) => {
-                option.error && option.error(error);
+                option.error && option.error(this._formatError(error));
                 option.finaly && option.finaly();
             },
             neterror: () => {
-                option.neterror && option.neterror(folder);
+                option.neterror && option.neterror();
                 option.finaly && option.finaly();
             }
         });
@@ -119,16 +124,115 @@ class GNode {
     noteFolderDelete(option) {
         this.gdrive.deleteFolder({
             id: option.id,
-            success: (folder) => {
-                option.success && option.success(folder);
+            success: () => {
+                option.success && option.success();
                 option.finaly && option.finaly();
             },
             error: (error) => {
-                option.error && option.error(error);
+                option.error && option.error(this._formatError(error));
                 option.finaly && option.finaly();
             },
             neterror: () => {
-                option.neterror && option.neterror(folder);
+                option.neterror && option.neterror();
+                option.finaly && option.finaly();
+            }
+        });
+    }
+
+    //创建便签
+    noteCreate(option) {
+        this.gdrive.createFileMetadata({
+            parents: [option.parent],
+            name: option.name,
+            description: option.description,
+            success: (note) => {
+                option.success && option.success(note);
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(this._formatError(error));
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
+                option.finaly && option.finaly();
+            }
+        });
+    }
+
+    //更新便签元数据
+    noteUpdateMetadata(option) {
+        this.gdrive.updateFileMetadata({
+            name: option.name,
+            description: option.description,
+            success: (note) => {
+                option.success && option.success(note);
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(this._formatError(error));
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
+                option.finaly && option.finaly();
+            }
+        });
+    }
+
+    //删除便签
+    noteDelete(option) {
+        this.gdrive.deleteFile({
+            id: option.id,
+            success: () => {
+                option.success && option.success();
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(this._formatError(error));
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
+                option.finaly && option.finaly();
+            }
+        });
+    }
+
+    //获取便签内容
+    getNoteData(option) {
+        this.gdrive.getFileContent({
+            id: option.id,
+            success: (data) => {
+                option.success && option.success(data);
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(this._formatError(error));
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
+                option.finaly && option.finaly();
+            }
+        });
+    }
+
+    //上传便签内容
+    uploadNoteData(option) {
+        this.gdrive.uploadFileContent({
+            id: option.id,
+            data: option.data,
+            success: (file) => {
+                option.success && option.success(file);
+                option.finaly && option.finaly();
+            },
+            error: (error) => {
+                option.error && option.error(this._formatError(error));
+                option.finaly && option.finaly();
+            },
+            neterror: () => {
+                option.neterror && option.neterror();
                 option.finaly && option.finaly();
             }
         });
@@ -170,7 +274,7 @@ class GNode {
                 option.success && option.success(found);
             },
             error(error) {
-                option.error && option.error(error);
+                option.error && option.error(this._formatError(error));
             },
             neterror() {
                 option.neterror && option.neterror();
@@ -188,7 +292,7 @@ class GNode {
                 this._createDefaultFolder(option);
             },
             error: (error) => {
-                option.error && option.error(error);
+                option.error && option.error(this._formatError(error));
             },
             neterror: () => {
                 option.neterror && option.neterror();
@@ -205,11 +309,16 @@ class GNode {
                 option.success && option.success(data);
             },
             error: (error) => {
-                option.error && option.error(error);
+                option.error && option.error(this._formatError(error));
             },
             neterror: () => {
                 option.neterror && option.neterror();
             },
         });
+    }
+
+    //格式化错误
+    _formatError(error) {
+        return error.message + " " + error.code;
     }
 }

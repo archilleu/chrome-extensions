@@ -18,7 +18,7 @@
                 <img class="logo" src="images/note.png" alt="notes">
                 <span class="logo">便签</span>
                 <div class="btn-notes">
-                    <div title="创建便签" class="btn-note btn-create" id="btn-note-create">
+                    <div title="创建便签" class="btn-note btn-create" id="btn-note-create" @click="noteCreate">
                         <div class="">
                             <span>
                                 <i class="icon-create"></i>
@@ -54,7 +54,7 @@
                     </div>
 
                     <!-- 文件夹模板 -->
-                    <folder-template :data-folders="nodeFolders" @onfolderchange="onfolderchange"></folder-template>
+                    <folder-template :data-folders="folders.list" @onfolderchange="onfolderchange"></folder-template>
 
                     <div class="bottom-menu">
                         <div title="新建文件夹" class="create-folder-btn" id="btn-folder-create" @click="folderCreateDlg">
@@ -80,14 +80,14 @@
                         </span>
                     </div>
                 </div>
-                <div title="删除笔记" class="btn-note btn-moveNote">
+                <div title="删除便签" class="btn-note btn-moveNote">
                     <div class="">
                         <span>
                             <i class="icon-moveNote"></i>
                         </span>
                     </div>
                 </div>
-                <div title="删除笔记" class="btn-note btn-delete" id="btn-note-delete">
+                <div title="删除便签" class="btn-note btn-delete" id="btn-note-delete" @click="noteDeleteDlg">
                     <div class="">
                         <span>
                             <i class="icon-delete"></i>
@@ -147,10 +147,10 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel">标签类别名</h4>
+                        <h4 class="modal-title">标签类别名</h4>
                     </div>
                     <div class="modal-body">
-                        <input class="form-control" type="text" v-model="newFolderName">
+                        <input class="form-control" type="text" v-model="folders.newName">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -170,7 +170,7 @@
                         <h4 class="modal-title">删除便签文件夹</h4>
                     </div>
                     <div class="modal-body">
-                        <p>删除笔记本:{{ selectedFolder.name }}</p>
+                        <p v-if="folders.selected">删除笔记本:{{ folders.selected.name }}</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -180,27 +180,6 @@
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
-        <!-- 创建便签Modal -->
-        <div class="modal fade" id="create-note" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title" id="myModalLabel">标签名字</h4>
-                    </div>
-                    <div class="modal-body">
-                        <input class="form-control" type="text" v-model="note.newName">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button id="btn-note-create-ok" type="button" class="btn btn-primary"
-                            @click="noteCreate">创建</button>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- Modal 删除便签模态窗口 -->
         <div class="modal fade" id="delete-note" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
@@ -211,7 +190,7 @@
                         <h4 class="modal-title">删除便签</h4>
                     </div>
                     <div class="modal-body">
-                        <p>删除便签:{{ note.selected.name }}</p>
+                        <p v-if="note.selected">删除便签:{{ note.selected.name }}</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -228,7 +207,7 @@
 <!-- folder template -->
 <template id="folder-template">
     <div class="folder-container" id="folder-container" @click="nodeFolderItemClick">
-        <div class="folder-item" :class="{on: item.on}" v-for="(item,index) in nodeFolders" :key="item.id"
+        <div class="folder-item" :class="{on: item.on}" v-for="(item,index) in noteFolders" :key="item.id"
             :data-id="item.id" :data-index="index">
             <div class="folder-icon all-icon"></div>
             <div class="folder-name">{{ item.name }}</div>
@@ -288,7 +267,7 @@
 <script src="js/editor.js"></script>
 <script src="js/gauth.js"></script>
 <script src="js/gdrive.js"></script>
-<script src="js/gnode.js"></script>
+<script src="js/gnote.js"></script>
 <script src="js/lib/vue.min.js"></script>
 <script src="js/app.js"></script>
 

@@ -40,6 +40,11 @@ class EditorView {
     }
 
     setText(text) {
+        //有可能输入是纯数字
+        if(!isNaN(text)) {
+            text = text.toString();
+        }
+
         this._text = text;
         this.editor.setValue(text);
     }

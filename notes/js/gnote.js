@@ -2,7 +2,7 @@
     gnode 文件（夹子)访问
 */
 
-class GNode {
+class GNote {
     constructor() {
         this.root = null; //GNode根目录
         this.gdrive = new GDrive();

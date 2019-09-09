@@ -67,7 +67,8 @@
             <div class="note-left-notes">
 
                 <!-- 便签模板 -->
-                <note-template :data-notes="note.list" @onnotechange="onnotechange"></note-template>
+                <note-template :gnote="gnote" ref="notes">
+                </note-template>
 
             </div>
         </div>
@@ -131,13 +132,11 @@
             </div>
         </div>
 
-        <!-- 提示 -->
-        <div id="snackbar" :class="{show: showTips}">{{ tipsMsg }}</div>
+        <!-- tips -->
+        <tips ref="tips"> {{ msg } </tips>
 
         <!-- Loading -->
-        <div id="loading" :class="{show: showLoading>0}">
-            <img src="images/loading.gif" />
-        </div>
+        <loading ref="loading"></loading>
 
         <!-- Modal 创建文件夹模态窗口 -->
         <div class="modal fade" id="create-folder" tabindex="-1" role="dialog">
@@ -190,7 +189,7 @@
                         <h4 class="modal-title">删除便签</h4>
                     </div>
                     <div class="modal-body">
-                        <p v-if="note.selected">删除便签:{{ note.selected.name }}</p>
+                        <p v-if="selectedNoteName">删除便签:{{ selectedNoteName }}</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -204,8 +203,20 @@
 
 </body>
 
+<!-- loading template -->
+<template id="tpl-loading">
+    <div id="loading" :class="{show: loadingCount>0}">
+        <img src="images/loading.gif" />
+    </div>
+</template>
+
+<!-- tips template -->
+<template id="tpl-tips">
+    <div id="snackbar" :class="{show: show}">{{ msg }}</div>
+</template>
+
 <!-- folder template -->
-<template id="folder-template">
+<template id="tpl-folder">
     <div class="folder-container" id="folder-container" @click="nodeFolderItemClick">
         <div class="folder-item" :class="{on: item.on}" v-for="(item,index) in noteFolders" :key="item.id"
             :data-id="item.id" :data-index="index">
@@ -217,7 +228,7 @@
 </template>
 
 <!-- note template -->
-<template id="note-template">
+<template id="tpl-note">
     <div class="note-list" id="note-list" @click="nodeItemClick">
         <div class="note-item" :class="{on: item.on}" v-for="(item,index) in noteList" :key="item.id" :data-id="item.id"
             :data-index="index">

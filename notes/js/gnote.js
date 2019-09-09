@@ -160,15 +160,31 @@ class GNote {
         });
     }
 
-    //更新便签元数据
-    noteUpdateMetadata(option) {
+    //更新便签
+    noteSave(option) {
+        //更新便签元数据
         this.gdrive.updateFileMetadata({
             id: option.id,
             name: option.name,
             description: option.description,
             success: (note) => {
-                option.success && option.success(note);
-                option.finaly && option.finaly();
+                //上传便签内容
+                this.gdrive.uploadFileContent({
+                    id: option.id,
+                    data: option.data,
+                    success: (file) => {
+                        option.success && option.success(file);
+                        option.finaly && option.finaly();
+                    },
+                    error: (error) => {
+                        option.error && option.error(this._formatError(error));
+                        option.finaly && option.finaly();
+                    },
+                    neterror: () => {
+                        option.neterror && option.neterror();
+                        option.finaly && option.finaly();
+                    }
+                });
             },
             error: (error) => {
                 option.error && option.error(this._formatError(error));
@@ -206,26 +222,6 @@ class GNote {
             id: option.id,
             success: (data) => {
                 option.success && option.success(data);
-                option.finaly && option.finaly();
-            },
-            error: (error) => {
-                option.error && option.error(this._formatError(error));
-                option.finaly && option.finaly();
-            },
-            neterror: () => {
-                option.neterror && option.neterror();
-                option.finaly && option.finaly();
-            }
-        });
-    }
-
-    //上传便签内容
-    uploadNoteData(option) {
-        this.gdrive.uploadFileContent({
-            id: option.id,
-            data: option.data,
-            success: (file) => {
-                option.success && option.success(file);
                 option.finaly && option.finaly();
             },
             error: (error) => {

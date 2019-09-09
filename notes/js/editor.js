@@ -56,11 +56,15 @@ class EditorView {
     clear() {
         this.editor.setValue("");
         this._text = "";
-        this.changedCount = 0;
+        this._isChanged = false;
     }
 
     isChanged() {
         return this._isChanged;
+    }
+
+    resetChanged() {
+        this._isChanged = false;
     }
 
 }

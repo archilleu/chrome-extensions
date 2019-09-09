@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.myapp = new Vue({
         el: '#app',
         data: {
-            editor: null,
             gnote: new GNote(),
             gauth: new GAuth(),
 
@@ -19,20 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             //便签列表
+            selectedNoteName: null,
             note: {
                 deleteName: "",
                 list: [],
                 selected: null,
                 // $btnCreate: null, 创建便签不需要确认
                 $btnDelete: null,
-            },
-
-            //提示
-            tipsMsg: "",
-            showTips: false,
-
-            //loading...
-            showLoading: 0,
+            }
         },
         mounted() {
             //默认网络超时15s
@@ -44,55 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         methods: {
             //保存便签
             saveNote() {
-                if (!this.note.selected) {
-                    this.$_myapp_tips("请选中便签");
-                    return;
-                }
-
-                //编辑框内容是否改变
-                if (!this.editor.isChanged()) {
-                    this.$_myapp_tips("保存成功");
-                    return;
-                }
-
-                this.$_myapp_loadingShow();
-                this.gnote.noteUpdateMetadata({
-                    id: this.note.selected.id,
-                    name: this.note.selected.name,
-                    description: this.note.selected.description,
-                    success: (file) => {
-                        //获取编辑框内容
-                        this.$_myapp_loadingShow();
-                        const data = this.editor.getText();
-                        this.gnote.uploadNoteData({
-                            id: this.note.selected.id,
-                            data: data,
-                            success: (file) => {
-                                this.$_myapp_tips(this.note.selected.name + " 保存成功")
-                            },
-                            error: (error) => {
-                                this.$_myapp_tips(error);
-                            },
-                            neterror: () => {
-                                this.$_myapp_tipsNeterror();
-                            },
-                            finaly: () => {
-                                this.$_myapp_loadingHide();
-                            }
-
-                        });
-                    },
-                    error: (error) => {
-                        this.$_myapp_tips(error);
-                    },
-                    neterror: () => {
-                        this.$_myapp_tipsNeterror();
-                    },
-                    finaly: () => {
-                        this.$_myapp_loadingHide();
-                    }
-
-                });
+                this.$refs.notes.saveNote({});
             },
 
             //刷新
@@ -116,21 +61,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 this.folders.$btnCreate.modal("hide");
 
-                this.$_myapp_loadingShow();
+                this.$refs.loading.show();
                 this.gnote.noteFolderCreate({
                     name: this.folders.newName,
                     success: (folder) => {
-                        this.$_myapp_tips(folder.name + "创建成功")
+                        this.$refs.tips.tip(folder.name + "创建成功")
                         this.refresh();
                     },
                     error: (error) => {
-                        this.$_myapp_tips(error);
+                        this.$refs.tips.tip(error);
                     },
                     neterror: () => {
-                        this.$_myapp_tipsNeterror();
+                        this.$refs.tips.neterror();
                     },
                     finaly: () => {
-                        this.$_myapp_loadingHide();
+                        this.$refs.loading.hide();
                     }
                 });
             },
@@ -138,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             //删除文件夹
             folderDeleteDlg() {
                 if (!this.$_myapp_canDeleteFolder()) {
-                    this.$_myapp_tips("不能删除默认便签文件夹");
+                    this.$refs.tips.tip("不能删除默认便签文件夹");
                     return;
                 }
 
@@ -147,71 +92,42 @@ document.addEventListener('DOMContentLoaded', () => {
             folderDelete() {
                 this.folders.$btnDelete.modal("hide");
 
-                this.$_myapp_loadingShow();
+                this.$refs.loading.show();
                 this.gnote.noteFolderDelete({
                     id: this.folders.selected.id,
                     success: () => {
-                        this.$_myapp_tips(this.folders.selected.name + "删除成功")
+                        this.$refs.tips.tip(this.folders.selected.name + "删除成功")
                         this.refresh();
                     },
                     error: (error) => {
-                        this.$_myapp_tips(error);
+                        this.$refs.tips.tip(error);
                     },
                     neterror: () => {
-                        this.$_myapp_tipsNeterror();
+                        this.$refs.tips.neterror();
                     },
                     finaly: () => {
-                        this.$_myapp_loadingHide();
+                        this.$refs.loading.hide();
                     }
                 });
             },
 
             //创建便签
             noteCreate() {
-                this.$_myapp_loadingShow();
-                this.gnote.noteCreate({
-                    parent: this.folders.selected.id,
-                    name: "新建便签",
-                    description: "",
-                    success: (note) => {
-                        this.$_myapp_tips("便签创建成功")
-                        this.$_myapp_initNotes();
-                    },
-                    error: (error) => {
-                        this.$_myapp_tips(error);
-                    },
-                    neterror: () => {
-                        this.$_myapp_tipsNeterror();
-                    },
-                    finaly: () => {
-                        this.$_myapp_loadingHide();
-                    }
-                });
+                this.$refs.notes.noteCreate(this.folders.selected.id);
             },
             //删除便签
             noteDeleteDlg() {
+                this.selectedNoteName = this.$refs.notes.selectedNoteName();
+                if(null == this.selectedNoteName) {
+                    this.$refs.tips.tip("请选择便签");
+                    return;
+                }
+
                 this.note.$btnDelete.modal("show");
             },
             noteDelete() {
                 this.note.$btnDelete.modal("hide");
-
-                this.$_myapp_loadingShow();
-                this.gnote.noteDelete({
-                    id: this.note.selected.id,
-                    success: () => {
-                        this.$_myapp_tips(this.note.selected.name + " 删除成功")
-                        this.refresh();
-                    },
-                    error: (error) => {
-                        this.$_myapp_tips(error);
-                    },
-                    neterror: () => {
-                        this.$_myapp_tipsNeterror();
-                    },
-                    finaly: () => {
-                        this.$_myapp_loadingHide();
-                    }
-                });
+                this.$refs.notes.noteDelete();
             },
 
             //选中文件夹事件
@@ -221,24 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 //改变文件夹之后已经选中的便签赋值为空
                 this.note.selected = null;
 
-                //获取该文件夹下面的便签
-                this.$_myapp_initNotes();
-            },
-
-            //选中便签事件
-            onnotechange: function (note) {
-
-                /*TODO 考虑失败
-                //判断是否需要保存之前便签的内容
-                if(this.editor.isChanged()) {
-                    //当前note.selected还未改变
-                    this.saveNote();
-                }
-                */
-
-                this.note.selected = note;
-                //获取该便签内容
-                this.$_myapp_initNoteData();
+                //更新文件夹下面的便签列表
+                this.$refs.notes.getFolderNotes(this.folders.selected.id);
             },
 
             /**
@@ -253,25 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.folders.$btnDelete = $("#delete-folder");
                 this.note.$btnDelete = $("#delete-note");
 
-                this.$_myapp_initEditor()
                 this.$_myapp_initAuth();
-            },
-
-            //初始化文本编辑器
-            $_myapp_initEditor: function () {
-                this.editor = new EditorView({
-                    el: "#codemirror-editor",
-                    changes: (data) => {
-                        //更新选中的便签
-                        if (!this.note.selected) return;
-                        if (!data) return;
-
-                        //去内容的前20个子为标题
-                        const summary = data.substr(0, 20);
-                        this.note.selected.name = summary;
-                        this.note.selected.description = summary;
-                    }
-                });
             },
 
             //初始化授权
@@ -282,103 +164,51 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.$_myapp_initGNote();
                     },
                     error: (error) => {
-                        this.$_myapp_tips(error);
+                        this.$refs.tips.tip(error);
                     }
                 });
             },
 
             //初始化GNode对象
             $_myapp_initGNote: function () {
-                this.$_myapp_loadingShow();
+                this.$refs.loading.show();
 
                 this.gnote.init({
                     success: () => {
                         this.$_myapp_initNodeFolders();
-                        this.$_myapp_loadingHide();
+                        this.$refs.loading.hide();
                     },
                     error: (error) => {
-                        this.$_myapp_loadingHide();
-                        this.$_myapp_tips(error);
+                        this.$refs.loading.hide();
+                        this.$refs.tips.tip(error);
                     },
                     neterror: () => {
-                        this.$_myapp_loadingHide();
-                        this.$_myapp_tipsNeterror();
+                        this.$refs.loading.hide();
+                        this.$refs.tips.neterror();
                     }
                 });
             },
 
             //获取便签文件夹列表
             $_myapp_initNodeFolders: function () {
-                this.$_myapp_loadingShow();
+                this.$refs.loading.show();
 
                 this.gnote.noteFolders({
                     success: (folders) => {
                         this.folders.list = folders;
-
-                        //编辑器清空
-                        this.editor.clear();
-
-                        if (this.folders.selected)
-                            this.$_myapp_initNotes();
                     },
                     error: (error) => {
-                        this.$_myapp_tips(error);
+                        this.$refs.tips.tip(error);
                     },
                     neterror: () => {
-                        this.$_myapp_tipsNeterror();
+                        this.$refs.tips.neterror();
                     },
                     finaly: () => {
-                        this.$_myapp_loadingHide();
+                        this.$refs.loading.hide();
                     }
                 });
             },
 
-            //获取选中便签文件夹下面的便签列表
-            $_myapp_initNotes: function () {
-                this.$_myapp_loadingShow();
-
-                this.gnote.noteFolderNotes({
-                    parent: this.folders.selected.id,
-                    success: (files) => {
-                        this.note.list = files;
-
-                        //编辑器清空
-                        this.editor.clear();
-                    },
-                    error: (error) => {
-                        this.$_myapp_tips(error);
-                    },
-                    neterror: () => {
-                        this.$_myapp_tipsNeterror();
-                    },
-                    finaly: () => {
-                        this.$_myapp_loadingHide();
-                    }
-                });
-            },
-
-            //获取选中便签的内容
-            $_myapp_initNoteData(note) {
-                this.$_myapp_loadingShow();
-
-                this.gnote.getNoteData({
-                    id: this.note.selected.id,
-                    success: (data) => {
-                        //设置编辑器内容
-                        this.editor.clear();
-                        this.editor.setText(data);
-                    },
-                    error: (error) => {
-                        this.$_myapp_tips(error);
-                    },
-                    neterror: () => {
-                        this.$_myapp_tipsNeterror();
-                    },
-                    finaly: () => {
-                        this.$_myapp_loadingHide();
-                    }
-                });
-            },
 
             $_myapp_canDeleteFolder() {
                 //没有选中，不能触发删除
@@ -392,33 +222,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 return true;
             },
 
-            //提示窗口
-            $_myapp_tips: function (tips) {
-                this.tipsMsg = tips;
-                this.showTips = true;
-                setTimeout(() => {
-                    this.tipsMsg = "";
-                    this.showTips = false;
-                }, 3000)
-            },
-            //提示网络不通
-            $_myapp_tipsNeterror() {
-                this.$_myapp_tips("服务器未响应...");
-            },
 
-            //loading状态
-            $_myapp_loadingShow: function () {
-                this.showLoading++;
-            },
-            $_myapp_loadingHide: function () {
-                this.showLoading--;
-            }
         },
         computed: {},
         filters: {},
         components: {
-            'folder-template': {
-                template: "#folder-template",
+            "loading": {
+                template: "#tpl-loading",
+                data: function () {
+                    return {
+                        loadingCount: 0
+                    }
+                },
+                methods: {
+                    show() {
+                        this.loadingCount++;
+                    },
+                    hide() {
+                        this.loadingCount--;
+                    }
+                }
+            },
+
+            "tips": {
+                template: "#tpl-tips",
+                data: function () {
+                    return {
+                        show: false,
+                        msg: ""
+                    }
+                },
+                methods: {
+                    tip(msg) {
+                        this.msg = msg;
+                        this.show = true;
+                        setTimeout(() => {
+                            this.msg = "";
+                            this.show = false;
+                        }, 3000);
+                    },
+                    neterror() {
+                        this.tip("服务器未响应...");
+                    }
+                }
+            },
+
+            "folder-template": {
+                template: "#tpl-folder",
                 data: function () {
                     return {
                         selectedIndex: 0,
@@ -513,43 +363,254 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             },
-            'note-template': {
-                template: "#note-template",
+            "note-template": {
+                template: "#tpl-note",
                 data() {
                     return {
-                        selectedIndex: 0,
-                        noteList: []
+                        editor: null,
+                        selectedIndex: null,
+                        noteList: [],
+                        tips: null,
+                        loading: null,
+                        folderId: null
                     };
                 },
                 props: [
-                    "dataNotes"
+                    "dataNotes", "gnote"
                 ],
+                mounted() {
+                    this.tips = this.$parent.$refs.tips;
+                    this.loading = this.$parent.$refs.loading;
+                    this.$_mynote_initEditor();
+                },
                 methods: {
-                    //绑定便签容器的点击事件避免每一个便签都添加点击事件.
-                    nodeItemClick: function (event) {
-                        //绑定便签容器点击事件不响应
-                        if (event.target == event.currentTarget) {
+                    //获取选中便签文件夹下面的便签列表
+                    getFolderNotes: function (folderId) {
+                        this.loading.show();
+
+                        this.gnote.noteFolderNotes({
+                            parent: folderId,
+                            success: (notes) => {
+                                this.folderId = folderId;
+
+                                this.$_mynote_editorReset();
+
+                                this.noteList = notes;
+
+                                this.$_mynote_selecteFirstItem();
+
+                            },
+                            error: (error) => {
+                                this.tips.tip(error);
+                            },
+                            neterror: () => {
+                                this.tips.neterror();
+                            },
+                            finaly: () => {
+                                this.loading.hide();
+                            }
+                        });
+                    },
+
+                    //保存便签内容
+                    saveNote(option) {
+                        if (null == this.selectedIndex) {
+                            this.tips.tip("请选中便签");
                             return;
                         }
 
-                        //点击的文件夹下标
-                        const index = this.$_mynote_getNoteIndex(event.target);
-                        const note = this.noteList[index];
+                        if (!this.editor.isChanged()) {
+                            this.tips.tip("保存成功");
+                            return;
+                        }
 
+                        this.loading.show();
+                        const note = this.noteList[this.selectedIndex];
+                        this.gnote.noteSave({
+                            id: note.id,
+                            name: note.name,
+                            description: note.description,
+                            data: this.editor.getText(),
+                            success: (note) => {
+                                this.editor.resetChanged();
+                                option.success && option.success(note);
+                                this.tips.tip(note.name + " 保存成功");
+                            },
+                            error: (error) => {
+                                this.tips.tip(error);
+                            },
+                            neterror: () => {
+                                this.tips.neterror();
+                            },
+                            finaly: () => {
+                                this.loading.hide();
+                            }
+                        });
+                    },
+
+                    //获取选中便签的内容
+                    getNoteData() {
+                        if (null == this.selectedIndex)
+                            return;
+
+                        this.loading.show();
+
+                        this.gnote.getNoteData({
+                            id: this.noteList[this.selectedIndex].id,
+                            success: (data) => {
+                                //设置编辑器内容
+                                this.editor.clear();
+                                this.editor.setText(data);
+                            },
+                            error: (error) => {
+                                this.tips.tip(error);
+                            },
+                            neterror: () => {
+                                this.tips.neterror();
+                            },
+                            finaly: () => {
+                                this.loading.hide();
+                            }
+                        });
+                    },
+
+                    //创建便签
+                    noteCreate(folderId) {
+                        this.loading.show();
+                        this.gnote.noteCreate({
+                            parent: folderId,
+                            name: "新建便签",
+                            description: "",
+                            success: (note) => {
+                                this.tips.tip("便签创建成功")
+                                this.getFolderNotes(folderId);
+                            },
+                            error: (error) => {
+                                this.tips.tip(error);
+                            },
+                            neterror: () => {
+                                this.tips.neterror();
+                            },
+                            finaly: () => {
+                                this.loading.hide();
+                            }
+                        });
+                    },
+
+                    //删除便签
+                    noteDelete() {
+                        if(null == this.selectedIndex) {
+                            this.tips.tip("请选择便签");
+                            return;
+                        }
+
+                        this.loading.show();
+                        this.gnote.noteDelete({
+                            id: this.noteList[this.selectedIndex].id,
+                            success: () => {
+                                this.tips.tip(this.noteList[this.selectedIndex].name + " 删除成功");
+
+                                //刷新便签列表
+                                this.getFolderNotes(this.folderId);
+                            },
+                            error: (error) => {
+                                this.tips.tip(error);
+                            },
+                            neterror: () => {
+                                this.tips.neterror();
+                            },
+                            finaly: () => {
+                                this.loading.hide();
+                            }
+                        });
+                    },
+
+                    //获取当前选中便签的名字
+                    selectedNoteName() {
+                        if(null == this.selectedIndex) {
+                            return null;
+                        }
+
+                        return this.noteList[this.selectedIndex].name;
+                    },
+
+                    //绑定便签容器的点击事件避免每一个便签都添加点击事件.
+                    nodeItemClick: function (event) {
+                        if (this.$_mynote_isNoteListDom(event))
+                            return;
+
+                        //点击便签下标
+                        const index = this.$_mynote_getNoteIndex(event.target);
                         if (this.$_mynote_isSelectedNote(index))
                             return;
 
-                        //当前选中的note
-                        this.$_mynote_updateNoteStatus(index);
-
-                        //增加额外的下标
-                        note.selectedIndex = index;
-                        this.$_mynote_updateSelectedNote(note);
+                        if (this.editor.isChanged()) {
+                            //保存便签
+                            this.saveNote({
+                                success: (note) => {
+                                    //更新当前选中的note
+                                    this.$_mynote_changeSelectedNote(index);
+                                },
+                                error: (error) => {
+                                    this.$parent.$tips.tip("便签自动保存失败，请稍后手动保存")
+                                },
+                                neterror: () => {
+                                    this.$parent.$tips.neterror();
+                                }
+                            });
+                        } else {
+                            //更新当前选中的note
+                            this.$_mynote_changeSelectedNote(index);
+                        }
                     },
 
                     /**
                      * 私有方法
                      */
+
+                    //初始化文本编辑器
+                    $_mynote_initEditor() {
+                        this.editor = new EditorView({
+                            el: "#codemirror-editor",
+                            changes: (data) => {
+                                if (null == this.selectedIndex) return;
+                                if (!data) return;
+
+                                //取编辑器数据的前20个字符为标题
+                                const summary = data.substr(0, 20);
+                                this.noteList[this.selectedIndex].name = summary;
+                                this.noteList[this.selectedIndex].description = summary;
+                            }
+                        });
+                    },
+
+                    $_mynote_selecteFirstItem() {
+                        //默认是-1表示没有选中
+                        this.selectedIndex = null;
+
+                        if (0 == this.noteList.length)
+                            return;
+
+                        this.noteList[0].on = true;
+                        this.selectedIndex = 0;
+
+                        //获取数据
+                        this.getNoteData();
+                    },
+
+                    $_mynote_editorReset() {
+                        this.editor.clear();
+                    },
+
+                    //便签容器点击事件不响应
+                    $_mynote_isNoteListDom(event) {
+                        if (event.target == event.currentTarget) {
+                            return true;
+                        }
+
+                        return false;
+                    },
+
                     $_mynote_getNoteIndex(target) {
                         //确定点击事件便签dom
                         for (var dom = target; !dom.classList.contains("note-item"); dom = dom.parentNode) {};
@@ -562,47 +623,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         return index == this.selectedIndex;
                     },
 
-                    //更新当前便签状态
-                    $_mynote_updateNoteStatus(index) {
+                    //更新当前选中的便签
+                    $_mynote_changeSelectedNote(index) {
                         let old = this.noteList[this.selectedIndex];
                         old.on = false;
-                        this.$set(this.noteList, this.selectedIndex, old)
+                        this.$set(this.noteList, this.selectedIndex, old);
 
                         let _new = this.noteList[index];
                         _new.on = true;
                         this.$set(this.noteList, index, _new);
                         this.selectedIndex = index;
-                    },
 
-                    //通知父组件更新数据
-                    $_mynote_updateSelectedNote(note) {
-                        //通知父组件更新当前选中的folder
-                        this.$emit("onnotechange", note);
+                        //获取数据
+                        this.getNoteData();
                     },
-                },
-                watch: {
-                    dataNotes: function (val) {
-                        /**
-                         * 1.拷贝一份副本，不然该watch会因为是同一份副本改变不停的触发
-                         * 2.因为Vue对数组值改变不能通过赋值监测，所以需要调用方法来触发刷新
-                         * https://cn.vuejs.org/v2/guide/list.html#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
-                         */
-                        Object.assign(this.noteList, val);
-                        this.noteList.splice(val.length);
-                        this.noteList.forEach((node, index) => {
-                            if (index == 0) {
-                                this.selectedIndex = 0;
-                                node.on = true;
-                            } else {
-                                node.on = false;
-                            }
-                        });
-
-                        //选中第一项
-                        if (this.noteList.length > 0) {
-                            this.$_mynote_updateSelectedNote(this.noteList[0]);
-                        }
-                    }
                 },
                 filters: {
                     formatTime(date) {

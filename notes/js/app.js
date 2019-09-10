@@ -7,23 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
             gnote: new GNote(),
             gauth: new GAuth(),
 
+            timeNow: new Date().toLocaleString(),
+            textCount: 0,
+
             //便签文件夹列表
             folders: {
-                newName: "",
-                delName: "",
-                list: [],
+                newName: null,
                 selected: null,
                 $btnCreate: null,
                 $btnDelete: null,
             },
 
             //便签列表
-            selectedNoteName: null,
-            note: {
-                deleteName: "",
-                list: [],
+            notes: {
                 selected: null,
-                // $btnCreate: null, 创建便签不需要确认
                 $btnDelete: null,
             }
         },
@@ -42,13 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             //刷新
             refresh() {
-                this.$_myapp_initNodeFolders();
-            },
-
-            //插入创建的新便签
-            refreshNotes(note) {
-                //TODO:细化刷新操作
-                this.refresh();
+                this.$refs.folders.noteFolders();
             },
 
             //创建文件夹
@@ -57,27 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.folders.$btnCreate.modal("show");
             },
             folderCreate() {
+                this.folders.$btnCreate.modal("hide");
                 if (this.folders.newName == "")
                     return;
-                this.folders.$btnCreate.modal("hide");
 
-                this.$refs.loading.show();
-                this.gnote.noteFolderCreate({
-                    name: this.folders.newName,
-                    success: (folder) => {
-                        this.$refs.tips.tip(folder.name + "创建成功")
-                        this.refresh();
-                    },
-                    error: (error) => {
-                        this.$refs.tips.tip(error);
-                    },
-                    neterror: () => {
-                        this.$refs.tips.neterror();
-                    },
-                    finaly: () => {
-                        this.$refs.loading.hide();
-                    }
-                });
+                this.$refs.folders.folderCreate(this.folders.newName);
             },
 
             //删除文件夹
@@ -91,24 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             folderDelete() {
                 this.folders.$btnDelete.modal("hide");
+                if (null == this.folders.selected) {
+                    this.$refs.tips.tip("请选中文件夹");
+                    return;
+                }
 
-                this.$refs.loading.show();
-                this.gnote.noteFolderDelete({
-                    id: this.folders.selected.id,
-                    success: () => {
-                        this.$refs.tips.tip(this.folders.selected.name + "删除成功")
-                        this.refresh();
-                    },
-                    error: (error) => {
-                        this.$refs.tips.tip(error);
-                    },
-                    neterror: () => {
-                        this.$refs.tips.neterror();
-                    },
-                    finaly: () => {
-                        this.$refs.loading.hide();
-                    }
-                });
+                this.$refs.folders.folderDelete();
             },
 
             //创建便签
@@ -117,28 +80,16 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             //删除便签
             noteDeleteDlg() {
-                this.selectedNoteName = this.$refs.notes.selectedNoteName();
-                if(null == this.selectedNoteName) {
+                if (null == this.notes.selected) {
                     this.$refs.tips.tip("请选择便签");
                     return;
                 }
 
-                this.note.$btnDelete.modal("show");
+                this.notes.$btnDelete.modal("show");
             },
             noteDelete() {
-                this.note.$btnDelete.modal("hide");
+                this.notes.$btnDelete.modal("hide");
                 this.$refs.notes.noteDelete();
-            },
-
-            //选中文件夹事件
-            onfolderchange: function (folder) {
-                this.folders.selected = folder;
-
-                //改变文件夹之后已经选中的便签赋值为空
-                this.note.selected = null;
-
-                //更新文件夹下面的便签列表
-                this.$refs.notes.getFolderNotes(this.folders.selected.id);
             },
 
             /**
@@ -147,11 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             //初始化
             $_myapp_init() {
-
                 //初始化模态窗口对象
                 this.folders.$btnCreate = $("#create-folder");
                 this.folders.$btnDelete = $("#delete-folder");
-                this.note.$btnDelete = $("#delete-note");
+                this.notes.$btnDelete = $("#delete-note");
 
                 this.$_myapp_initAuth();
             },
@@ -175,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 this.gnote.init({
                     success: () => {
-                        this.$_myapp_initNodeFolders();
+                        this.$refs.folders.noteFolders();
                         this.$refs.loading.hide();
                     },
                     error: (error) => {
@@ -188,27 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             },
-
-            //获取便签文件夹列表
-            $_myapp_initNodeFolders: function () {
-                this.$refs.loading.show();
-
-                this.gnote.noteFolders({
-                    success: (folders) => {
-                        this.folders.list = folders;
-                    },
-                    error: (error) => {
-                        this.$refs.tips.tip(error);
-                    },
-                    neterror: () => {
-                        this.$refs.tips.neterror();
-                    },
-                    finaly: () => {
-                        this.$refs.loading.hide();
-                    }
-                });
-            },
-
 
             $_myapp_canDeleteFolder() {
                 //没有选中，不能触发删除
@@ -222,10 +151,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 return true;
             },
 
+            //选中文件夹改变
+            onselectedfolderchange(folder) {
+                this.folders.selected = folder;
 
+                //更新便签列表
+                this.$refs.notes.getFolderNotes(folder.id);
+            },
+
+            //选中便签改变
+            onselectednotechange(note) {
+                this.notes.selected = note;
+
+                //更新编辑器内容
+                this.$refs.notes.getNoteData();
+
+                //更新时间
+                this.timeNow = new Date().toLocaleString();
+            },
+
+            ontextcountchange(textCount) {
+                debugger
+                this.textCount = textCount;
+            }
         },
-        computed: {},
-        filters: {},
         components: {
             "loading": {
                 template: "#tpl-loading",
@@ -271,38 +220,149 @@ document.addEventListener('DOMContentLoaded', () => {
                 template: "#tpl-folder",
                 data: function () {
                     return {
-                        selectedIndex: 0,
-
-                        noteFolders: [],
+                        selectedIndex: null,
+                        folderList: [],
+                        tips: null,
+                        loading: null
                     };
                 },
                 props: [
-                    "dataFolders"
+                    "gnote"
                 ],
+                mounted() {
+                    this.tips = this.$parent.$refs.tips;
+                    this.loading = this.$parent.$refs.loading;
+                },
                 methods: {
-                    //绑定文件夹容器的点击事件避免每一个文件夹都添加点击事件.
-                    nodeFolderItemClick: function (event) {
-                        //绑定文件夹容器点击事件不响应
-                        if (event.target == event.currentTarget) {
-                            return;
-                        }
+                    //获取便签文件夹列表
+                    noteFolders: function () {
+                        this.loading.show();
 
-                        //点击的文件夹下标
-                        const index = this.$_myfolder_getFolderIndex(event.target);
-                        const folder = this.noteFolders[index];
+                        this.gnote.noteFolders({
+                            success: (folders) => {
+                                this.folderList = folders;
 
-                        if (this.$_myfolder_isSelectedFolder(index))
-                            return;
-
-                        this.$_myfolder_updateFolderStatus(index);
-
-                        this.$_myfolder_updateSelectedFolder(folder);
+                                if (0 == folders.length) {
+                                    this.selectedIndex = null;
+                                    this.$_myfolder_notifyUpdateSelected(null);
+                                } else {
+                                    this.$_myfolder_selectFirstItem();
+                                    this.$_myfolder_notifyUpdateSelected(folders[0]);
+                                }
+                            },
+                            error: (error) => {
+                                this.tips.tip(error);
+                            },
+                            neterror: () => {
+                                this.tips.neterror();
+                            },
+                            finaly: () => {
+                                this.loading.hide();
+                            }
+                        });
                     },
 
+                    folderCreate(folderName) {
+                        this.loading.show();
+                        this.gnote.noteFolderCreate({
+                            name: folderName,
+                            success: (folder) => {
+                                this.tips.tip(folder.name + "创建成功")
+
+                                //更新文件夹列表
+                                this.noteFolders();
+                            },
+                            error: (error) => {
+                                this.tips.tip(error);
+                            },
+                            neterror: () => {
+                                this.tips.neterror();
+                            },
+                            finaly: () => {
+                                this.loading.hide();
+                            }
+                        });
+                    },
+
+                    folderDelete() {
+                        this.loading.show();
+                        this.gnote.noteFolderDelete({
+                            id: this.folderList[this.selectedIndex].id,
+                            success: () => {
+                                this.tips.tip(this.folderList[this.selectedIndex].name + "删除成功")
+
+                                //更新文件夹列表
+                                this.noteFolders();
+                            },
+                            error: (error) => {
+                                this.tips.tip(error);
+                            },
+                            neterror: () => {
+                                this.tips.neterror();
+                            },
+                            finaly: () => {
+                                this.loading.hide();
+                            }
+                        });
+                    },
+
+                    //绑定文件夹容器的点击事件避免每一个文件夹都添加点击事件.
+                    nodeFolderItemClick: function (event) {
+                        if (this.$_myfolder_isFolderListDom(event))
+                            return;
+
+                        //点击文件夹下标
+                        const index = this.$_myfolder_getFolderIndex(event.target);
+                        if (this.$_myfolder_isSelected(index))
+                            return;
+
+                        const folder = this.folderList[index];
+
+                        //判断editor是否改变
+                        if (this.$parent.$refs.notes.editor.isChanged()) {
+                            //保存便签
+                            this.$parent.$refs.notes.saveNote({
+                                success: (note) => {
+                                    //更新当前选中的folder
+                                    this.$_myfolder_changeSelected(index);
+
+                                    this.$_myfolder_notifyUpdateSelected(folder);
+                                },
+                                error: (error) => {
+                                    this.$parent.$tips.tip("便签自动保存失败，请稍后手动保存")
+                                },
+                                neterror: () => {
+                                    this.$parent.$tips.neterror();
+                                }
+                            });
+                        } else {
+                            //更新当前选中的folder
+                            this.$_myfolder_changeSelected(index);
+
+                            this.$_myfolder_notifyUpdateSelected(folder);
+                        }
+                    },
 
                     /**
                      * 私有方法
                      */
+
+                    $_myfolder_selectFirstItem() {
+                        this.folderList[0].on = true;
+                        this.selectedIndex = 0;
+
+                        //获取该文件夹下面的便签
+                        this.$parent.$refs.notes.getFolderNotes(this.folderList[0].id);
+                    },
+
+                    //文件夹容器点击事件不响应
+                    $_myfolder_isFolderListDom(event) {
+                        if (event.target == event.currentTarget) {
+                            return true;
+                        }
+
+                        return false;
+                    },
 
                     //确定点击的笔记本文件夹项下标
                     $_myfolder_getFolderIndex(target) {
@@ -313,54 +373,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
 
                     //检测是否是当前选中文件夹
-                    $_myfolder_isSelectedFolder(index) {
+                    $_myfolder_isSelected(index) {
                         return index == this.selectedIndex;
                     },
 
                     //更新当前文件夹状态
-                    $_myfolder_updateFolderStatus(index) {
-                        let old = this.noteFolders[this.selectedIndex];
+                    $_myfolder_changeSelected(index) {
+                        let old = this.folderList[this.selectedIndex];
                         old.on = false;
-                        this.$set(this.noteFolders, this.selectedIndex, old)
+                        this.$set(this.folderList, this.selectedIndex, old)
 
-                        let _new = this.noteFolders[index];
+                        let _new = this.folderList[index];
                         _new.on = true;
-                        this.$set(this.noteFolders, index, _new);
+                        this.$set(this.folderList, index, _new);
                         this.selectedIndex = index;
+
+                        //获取该文件夹下面的便签
+                        this.$parent.$refs.notes.getFolderNotes(this.folderList[this.selectedIndex].id);
                     },
 
                     //通知父组件更新数据
-                    $_myfolder_updateSelectedFolder(folder) {
+                    $_myfolder_notifyUpdateSelected(folder) {
                         //通知父组件更新当前选中的folder
-                        this.$emit("onfolderchange", folder);
+                        this.$emit("eventselectedfolderchange", folder);
                     },
-                },
-                computed: {},
-                watch: {
-                    dataFolders: function (val) {
-                        /**
-                         * 1.拷贝一份副本，不然该watch会因为是同一份副本改变不停的触发
-                         * 2.因为Vue对数组值改变不能通过赋值监测，所以需要调用方法来触发刷新
-                         * https://cn.vuejs.org/v2/guide/list.html#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
-                         */
-                        Object.assign(this.noteFolders, val);
-                        this.noteFolders.splice(val.length);
-                        this.noteFolders.forEach((folder, index) => {
-                            if (index == 0) {
-                                this.selectedIndex = 0;
-                                folder.on = true;
-                            } else {
-                                folder.on = false;
-                            }
-
-                            folder.info = "128"
-                        });
-
-                        //选中第一项
-                        if (this.noteFolders.length > 0) {
-                            this.$_myfolder_updateSelectedFolder(this.noteFolders[0]);
-                        }
-                    }
                 }
             },
             "note-template": {
@@ -376,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                 },
                 props: [
-                    "dataNotes", "gnote"
+                    "gnote"
                 ],
                 mounted() {
                     this.tips = this.$parent.$refs.tips;
@@ -391,13 +427,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.gnote.noteFolderNotes({
                             parent: folderId,
                             success: (notes) => {
-                                this.folderId = folderId;
-
                                 this.$_mynote_editorReset();
-
+                                this.folderId = folderId;
                                 this.noteList = notes;
 
-                                this.$_mynote_selecteFirstItem();
+                                if (0 == notes.length) {
+                                    this.selectedIndex = null;
+                                    this.$_mynote_notifyUpdateSelected(null);
+                                } else {
+                                    this.$_mynote_selecteFirstItem();
+                                    this.$_mynote_notifyUpdateSelected(notes[0]);
+                                }
 
                             },
                             error: (error) => {
@@ -499,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     //删除便签
                     noteDelete() {
-                        if(null == this.selectedIndex) {
+                        if (null == this.selectedIndex) {
                             this.tips.tip("请选择便签");
                             return;
                         }
@@ -525,15 +565,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     },
 
-                    //获取当前选中便签的名字
-                    selectedNoteName() {
-                        if(null == this.selectedIndex) {
-                            return null;
-                        }
-
-                        return this.noteList[this.selectedIndex].name;
-                    },
-
                     //绑定便签容器的点击事件避免每一个便签都添加点击事件.
                     nodeItemClick: function (event) {
                         if (this.$_mynote_isNoteListDom(event))
@@ -544,12 +575,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (this.$_mynote_isSelectedNote(index))
                             return;
 
+                        const note = this.noteList[index];
+
+                        //判断editor是否改变
                         if (this.editor.isChanged()) {
                             //保存便签
                             this.saveNote({
                                 success: (note) => {
                                     //更新当前选中的note
-                                    this.$_mynote_changeSelectedNote(index);
+                                    this.$_mynote_changeSelected(index);
+
+                                    this.$_mynote_notifyUpdateSelected(note);
                                 },
                                 error: (error) => {
                                     this.$parent.$tips.tip("便签自动保存失败，请稍后手动保存")
@@ -560,7 +596,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             });
                         } else {
                             //更新当前选中的note
-                            this.$_mynote_changeSelectedNote(index);
+                            this.$_mynote_changeSelected(index);
+
+                            this.$_mynote_notifyUpdateSelected(note);
                         }
                     },
 
@@ -578,19 +616,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                                 //取编辑器数据的前20个字符为标题
                                 const summary = data.substr(0, 20);
-                                this.noteList[this.selectedIndex].name = summary;
-                                this.noteList[this.selectedIndex].description = summary;
+                                let note = this.noteList[this.selectedIndex];
+                                note.name = summary;
+                                note.description = summary;
+                                this.$emit("eventtextcountchange", data.length);
                             }
                         });
                     },
 
                     $_mynote_selecteFirstItem() {
-                        //默认是-1表示没有选中
-                        this.selectedIndex = null;
-
-                        if (0 == this.noteList.length)
-                            return;
-
                         this.noteList[0].on = true;
                         this.selectedIndex = 0;
 
@@ -624,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
 
                     //更新当前选中的便签
-                    $_mynote_changeSelectedNote(index) {
+                    $_mynote_changeSelected(index) {
                         let old = this.noteList[this.selectedIndex];
                         old.on = false;
                         this.$set(this.noteList, this.selectedIndex, old);
@@ -637,6 +671,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         //获取数据
                         this.getNoteData();
                     },
+
+                    //通知父组件更新数据
+                    $_mynote_notifyUpdateSelected(note) {
+                        //通知父组件更新当前选中的note
+                        this.$emit("eventselectednotechange", note);
+                    }
                 },
                 filters: {
                     formatTime(date) {

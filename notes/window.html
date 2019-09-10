@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <div class="wrapper" id="app">
+    <div class="wrapper" id="app" v-cloak>
         <div class="note-left">
             <div class="titlebar">
                 <img class="logo" src="images/note.png" alt="notes">
@@ -54,7 +54,8 @@
                     </div>
 
                     <!-- 文件夹模板 -->
-                    <folder-template :data-folders="folders.list" @onfolderchange="onfolderchange"></folder-template>
+                    <folder-template :gnote="gnote" ref="folders"
+                        v-on:eventselectedfolderchange="onselectedfolderchange"></folder-template>
 
                     <div class="bottom-menu">
                         <div title="新建文件夹" class="create-folder-btn" id="btn-folder-create" @click="folderCreateDlg">
@@ -67,21 +68,22 @@
             <div class="note-left-notes">
 
                 <!-- 便签模板 -->
-                <note-template :gnote="gnote" ref="notes">
+                <note-template :gnote="gnote" ref="notes" v-on:eventselectednotechange="onselectednotechange"
+                    v-on:eventtextcountchange="ontextcountchange">
                 </note-template>
 
             </div>
         </div>
         <div class="note-right">
             <div class="titlebar">
-                <div title="插入图片" class="btn-note btn-insertImage">
+                <div title="插入图片" class="btn-note btn-insertImage hidden">
                     <div class="">
                         <span>
                             <i class="icon-insertImage"></i>
                         </span>
                     </div>
                 </div>
-                <div title="删除便签" class="btn-note btn-moveNote">
+                <div title="删除便签" class="btn-note btn-moveNote hidden">
                     <div class="">
                         <span>
                             <i class="icon-moveNote"></i>
@@ -108,14 +110,14 @@
                     <i class="edge"></i>
                     <div class="edit-mode">纯文本模式</div>
                     <div class="status-bar">
-                        <div class="folder">
-                            <span>全部便签</span>
+                        <div class="folder" v-cloak>
+                            <span v-if="folders.selected">{{ folders.selected.name }}</span>
                             <i></i>
                         </div>
                         <span class="split-line"></span>
-                        <span class="time">今天 11:03 AM</span>
+                        <span class="time">{{ timeNow }}</span>
                         <span class="split-line"></span>
-                        <span class="counter">共 20 字</span>
+                        <span class="counter">共 {{ textCount }} 字</span>
                         <span class="split-line"></span>
                         <span class="favorite"></span>
                     </div>
@@ -170,34 +172,34 @@
                     </div>
                     <div class="modal-body">
                         <p v-if="folders.selected">删除笔记本:{{ folders.selected.name }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-danger" @click="folderDelete">删除</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-danger" @click="folderDelete">删除</button>
+    </div>
+    </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
-        <!-- Modal 删除便签模态窗口 -->
-        <div class="modal fade" id="delete-note" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">删除便签</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p v-if="selectedNoteName">删除便签:{{ selectedNoteName }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-danger" @click="noteDelete">删除</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+    <!-- Modal 删除便签模态窗口 -->
+    <div class="modal fade" id="delete-note" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">删除便签</h4>
+                </div>
+                <div class="modal-body">
+                    <p v-if="notes.selected">删除便签:{{ notes.selected.name }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" @click="noteDelete">删除</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     </div>
 
@@ -218,7 +220,7 @@
 <!-- folder template -->
 <template id="tpl-folder">
     <div class="folder-container" id="folder-container" @click="nodeFolderItemClick">
-        <div class="folder-item" :class="{on: item.on}" v-for="(item,index) in noteFolders" :key="item.id"
+        <div class="folder-item" :class="{on: item.on}" v-for="(item,index) in folderList" :key="item.id"
             :data-id="item.id" :data-index="index">
             <div class="folder-icon all-icon"></div>
             <div class="folder-name">{{ item.name }}</div>
@@ -251,24 +253,6 @@
     -
     - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
   -->
-<!-- <script src="js/lib/underscore.js"></script>
-<script src="js/lib/jquery-dateFormat.min.js"></script>
-<script src="js/lib/backbone.js"></script>
-
-<script src="js/models/note.js"></script>
-<script src="js/models/folder.js"></script>
-<script src="js/collections/notes.js"></script>
-<script src="js/collections/folders.js"></script>
-<script src="js/views/editor.js"></script>
-<script src="js/views/note.js"></script>
-<script src="js/views/notes.js"></script>
-<script src="js/views/folder.js"></script>
-<script src="js/views/folders.js"></script>
-
-<script src="js/service.js"></script>
-<script src="js/views/message.js"></script>
-<script src="js/views/appView.js"></script>
- -->
 
 <script src="js/lib/jquery-3.3.1.min.js"></script>
 <script src="js/lib/bootstrap.min.js"></script>

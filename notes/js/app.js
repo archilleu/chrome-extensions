@@ -92,6 +92,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.$refs.notes.noteDelete();
             },
 
+            //登出
+            logout() {
+                this.$refs.loading.show();
+                this.gauth.revokeAuth({
+                    success: () => {
+                        this.$refs.loading.hide();
+                        this.$refs.tips.tip("登出成功");
+                        setTimeout(() => {
+                            window.location.href = chrome.extension.getURL('login.html');
+                        }, 1000);
+                    },
+                    error: () => {
+                        this.$refs.loading.hide();
+                        this.$refs.tips.tip("服务器忙，登出失败");
+                    }
+                });
+            },
+
             /**
              * 私有方法
              */
@@ -170,8 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.timeNow = new Date().toLocaleString();
             },
 
+            //字数统计
             ontextcountchange(textCount) {
-                debugger
                 this.textCount = textCount;
             }
         },

@@ -145,7 +145,7 @@ body {
 .btn-note .icon-save {
   display: inline-block;
   vertical-align: top;
-  background: url(../images/all_icons.png) no-repeat -181px -123px;
+  background: url(../images/all_icons.png) no-repeat -141px -123px;
   width: 30px;
   height: 36px;
 }
@@ -177,7 +177,7 @@ body {
 .btn-note .icon-share {
   display: inline-block;
   vertical-align: top;
-  background: url(../images/all_icons.png) no-repeat -264px -123px;
+  background: url(../images/all_icons.png) no-repeat -377px -123px;
   width: 30px;
   height: 36px;
 }

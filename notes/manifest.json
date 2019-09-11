@@ -3,7 +3,7 @@
   "name": "notes",
   "short_name": "notes",
   "description": "notes use google driver",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "browser_action": {
     "default_title": "notes",
     "default_icon": {
@@ -33,8 +33,6 @@
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "background": {
     "scripts": [
-      "js/lib/jquery-3.3.1.min.js",
-      "js/gdrive.js",
       "js/background.js"
     ]
   }

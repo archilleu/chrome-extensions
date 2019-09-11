@@ -7,7 +7,7 @@ class GNote {
         this.root = null; //GNode根目录
         this.gdrive = new GDrive();
 
-        this.ROOT_NAME = "GNODE1";
+        this.ROOT_NAME = "GNODE";
         this.DEFAULT_FOLDER_MYNOTES = "我的便签";
     }
 

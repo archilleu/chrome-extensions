@@ -145,7 +145,7 @@ body {
 .btn-note .icon-save {
   display: inline-block;
   vertical-align: top;
-  background: url(../images/all_icons.png) no-repeat -141px -123px;
+  background: url(../images/all_icons.png) no-repeat -341px -123px;
   width: 30px;
   height: 36px;
 }
@@ -365,12 +365,9 @@ body {
   border-right: 1px solid #dcd6ca;
 }
 
-.note-left-notes.note-list {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 50px;
+.note-left-notes .note-list {
+  overflow-y: overlay;
+  height: 100%;
 }
 
 .note-list .note-item {
@@ -579,12 +576,10 @@ body {
 .edit-main .note-editor {
   position: relative;
   margin-left: 50px;
-  /* margin-right: 30px; */
   height: 100%;
 }
 
 /* CodeMirror css 定制 */
-
 .CodeMirror-lines {
   padding: 0;
 }
@@ -619,4 +614,29 @@ body {
   border: 0;
 }
 
-/* CodeMirror css 定制 */
+/*滚动条整体部分,必须要设置*/
+.note-list::-webkit-scrollbar {
+  width: 0;
+  transition:width 2s;
+  -webkit-transition:width 2s;
+}
+
+.note-list:hover::-webkit-scrollbar {
+  width: 5px;
+}
+
+/*滚动条的轨道*/
+.note-list::-webkit-scrollbar-track {
+  background-color: #f1eee5;
+}
+
+/*滚动条的滑块按钮*/
+.note-list::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background-color: #c6bcb3;
+}
+
+/*滚动条的上下两端的按钮*/
+.note-list::-webkit-scrollbar-button {
+  height: 0;
+}

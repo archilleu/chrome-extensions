@@ -1,15 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const auth = new GAuth();
-
-    const $loading = $("#loading");
-
     const google = document.getElementById("google-login");
     google.addEventListener("click", function (event) {
         event.preventDefault();
 
+        const $loading = $("#loading");
         $loading.show();
-        auth.auth({
+        new GAuth().auth({
             success: () => {
                 tip("授权成功");
                 gotoMainWindow();

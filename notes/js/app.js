@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const bg = chrome.extension.getBackgroundPage();
 
     document.myapp = new Vue({
         el: '#app',
@@ -25,12 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         mounted() {
-            //默认网络超时15s
-            axios.defaults.timeout = 15000;
-
             this.$_myapp_init();
         },
-        watch: {},
         methods: {
             //保存便签
             saveNote() {
@@ -99,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     success: () => {
                         this.$refs.loading.hide();
                         this.$refs.tips.tip("登出成功");
+
+                        //为了让提示停留，所以延迟跳转
                         setTimeout(() => {
                             window.location.href = chrome.extension.getURL('login.html');
                         }, 1000);
@@ -116,11 +113,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             //初始化
             $_myapp_init() {
-                //初始化模态窗口对象
+                //模态窗口对象
                 this.folders.$btnCreate = $("#create-folder");
                 this.folders.$btnDelete = $("#delete-folder");
                 this.notes.$btnDelete = $("#delete-note");
 
+                //默认网络超时15s
+                axios.defaults.timeout = 15000;
+
+                //授权
                 this.$_myapp_initAuth();
             },
 
@@ -158,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             $_myapp_canDeleteFolder() {
-                //没有选中，不能触发删除
+                //没有选中，不能删除
                 if (!this.folders.selected)
                     return false;
 
@@ -169,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return true;
             },
 
-            //选中文件夹改变
+            //子模块通知选中文件夹改变
             onselectedfolderchange(folder) {
                 this.folders.selected = folder;
 
@@ -177,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.$refs.notes.getFolderNotes(folder.id);
             },
 
-            //选中便签改变
+            //子模块通知选中便签改变
             onselectednotechange(note) {
                 this.notes.selected = note;
 
@@ -188,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.timeNow = new Date().toLocaleString();
             },
 
-            //字数统计
+            //子模块通知字数统计变化
             ontextcountchange(textCount) {
                 this.textCount = textCount;
             }

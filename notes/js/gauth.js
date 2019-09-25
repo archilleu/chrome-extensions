@@ -19,11 +19,6 @@ class GAuth {
         });
     }
 
-    //监测是否授权
-    checkAuth() {
-        return (null == this.accessToken ? false : true);
-    }
-
     //清除授权缓存
     removeCachedAuth(option) {
 

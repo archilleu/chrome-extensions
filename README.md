@@ -1,6 +1,10 @@
 # chrome-extensions
 chrome note depend on google driver
 
+chrome store
+bin:https://chrome.google.com/webstore/detail/web-recycle-bin/neabikjncmoneefeceheidhfceoomjod
+not:https://chrome.google.com/webstore/detail/notes/jmhclmgkinkiebclagcjigahcpmfcpfk
+
 Reference
 
 https://console.developers.google.com/apis/credentials?project=notes-191304

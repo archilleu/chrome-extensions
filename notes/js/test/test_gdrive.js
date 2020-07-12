@@ -1,5 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
-    debugger;
+import GAuth from '../api/gauth.js'
+import config from '../http/config.js'
+import GDrive from '../api/gdrive.js'
+
+document.addEventListener('DOMContentLoaded', async () => {
 
     const root = "GTEST_" + Date.now();
     const fileName = "file.txt";
@@ -10,215 +13,188 @@ document.addEventListener('DOMContentLoaded', () => {
     let rootId = null;
     let fileId = null;
 
-    const gdrive = new GDrive();
-    const auth = new GAuth();
+    let token = await GAuth.auth()
+    config.setToken(token);
 
-    auth.auth({
-        success: () => {
-            testGDrive();
-        },
-        error: () => {
-            throw Error("auth failed!");
-        }
-    });
+    debugger;
 
-    function testGDrive() {
+    await testCreateFolder();
+    console.log("创建文件夹成功");
 
-        testCreateFolder({
-            success: (folder) => {
-                testCreateFile({
-                    success: (file) => {
-                        //上传
-                        testUploadFileContent({
-                            success: () => {
-                                testUpdateFileMetadata({
-                                    success: () => {
-                                        testDeleteFile({
-                                            success: () => {}
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            },
-        });
-    }
+    await testCreateFile();
+    console.log("创建文件成功");
+
+    await testFileSearch();
+    console.log("搜索文件夹成功");
+
+    await testUploadFileContent();
+    console.log("上传文件成功");
+
+    await testUpdateFileMetadata();
+    console.log("修改文件元数据成功");
+
+    await testDeleteFile();
+    console.log("删除文件成功");
+
+    await testDeleteFolder();
+    console.log("删除文件夹成功");
 
     //测试创建文件夹
-    function testCreateFolder(option) {
-        gdrive.createFolder({
+    async function testCreateFolder() {
+        const folder = await GDrive.folderCreate({
             name: root,
             parents: ["root"],
-            success: (folder) => {
-                rootId = folder.id;
 
-                testFileExist({
-                    parents: ["root"],
-                    name: root,
-                    success: () => {
-                        console.info("文件夹测试通过");
-                        option.success(folder);
-                    }
-                });
-            },
-            error: (error) => {
-                throw new Error(error);
-            },
-            neterror: () => {
-                throw new Error("net error");
-            }
         });
+        rootId = folder.id;
+
+        const isExist = await testFileExist({
+            parents: ["root"],
+            name: root,
+        });
+        if (!isExist) {
+            throw Error("创建文件夹失败")
+        }
+
+        return true;
     }
 
     //测试创建文件
-    function testCreateFile(option) {
-        gdrive.createFileMetadata({
+    async function testCreateFile() {
+        let file = await GDrive.fileMetadataCreate({
             name: fileName,
             parents: [rootId],
             description: fileDesc,
-            success: (file) => {
-                fileId = file.id;
-                testFileExist({
-                    parents: [rootId],
-                    name: fileName,
-                    description: fileDesc,
-                    success: () => {
-                        console.info("文件测试通过");
-                        option.success(file);
-                    }
-                });
-            },
-            error: (error) => {
-                throw new Error(error);
-            },
-            neterror: () => {
-                throw new Error("net error");
-            }
         });
+
+        fileId = file.id;
+        const isExist = await testFileExist({
+            parents: [rootId],
+            name: fileName,
+            description: fileDesc,
+        });
+
+        if (!isExist) {
+            throw Error("创建文件失败")
+        }
+
+        return true;
+    }
+
+    async function testFileSearch() {
+        let res = await GDrive.search({
+            name: fileName,
+            parents: [rootId],
+        });
+
+        if (res.files.length != 1) {
+            throw Error("搜索失败");
+        }
+
+        if (res.files[0].name != fileName) {
+
+            throw Error("搜索失败");
+        }
+
+        res = await GDrive.search({
+            name: root,
+            parents: ["root"],
+        });
+
+        if (res.files.length != 1) {
+            throw Error("搜索失败");
+        }
+
+        if (res.files[0].name != root) {
+
+            throw Error("搜索失败");
+        }
+
+        return true;
     }
 
     //测试上传文件内容
-    function testUploadFileContent(option) {
-        gdrive.uploadFileContent({
+    async function testUploadFileContent() {
+        await GDrive.fileContentUpload({
             id: fileId,
             data: fileData,
-            success: (data) => {
-                gdrive.getFileContent({
-                    id: fileId,
-                    success: (data) => {
-                        if (data != fileData) {
-                            throw new Error("上传文件失败");
-                        }
-                        console.log("文件上传测试成功");
-                        option.success();
-                    },
-                    error: (error) => {
-                        throw new Error(error);
-                    },
-                    neterror: () => {
-                        throw new Error("net error");
-                    }
-                });
-            },
-            error: (error) => {
-                throw new Error(error);
-            },
-            neterror: () => {
-                throw new Error("net error");
-            }
         });
+
+        const data = await GDrive.fileContent({
+            id: fileId
+        });
+        if (data != fileData) {
+            throw new Error("上传文件失败");
+        }
+
+        return true;
     }
 
     //测试修改文件metadata
-    function testUpdateFileMetadata(option) {
-        gdrive.updateFileMetadata({
+    async function testUpdateFileMetadata() {
+        const file = await GDrive.fileMetadataUpdate({
             id: fileId,
             name: newFileName,
             description: newFileDesc,
-            success: (file) => {
-                if (file.name != newFileName)
-                    throw new Error("文件metadata修改失败");
-
-                console.log("文件metadata修改成功");
-                option.success();
-            },
-            error: (error) => {
-                throw new Error(error);
-            },
-            neterror: () => {
-                throw new Error("net error");
-            }
         });
+
+        if (file.name != newFileName)
+            throw new Error("文件metadata修改失败");
+
+        return true;
     }
 
     //测试删除文件
-    function testDeleteFile(option) {
-        gdrive.deleteFile({
+    async function testDeleteFile() {
+        await GDrive.fileDelete({
             id: fileId,
-            success: (file) => {
-                console.log("删除文件成功");
-                testDeleteFolder({
-                    success: (folder) => {
-                        console.log("删除文件夹成功");
-                    }
-                })
-            },
-            error: (error) => {
-                throw new Error(error);
-            },
-            neterror: () => {
-                throw new Error("net error");
-            }
         });
+
+        const isExist = await testFileExist({
+            parents: [rootId],
+            name: newFileName,
+            description: fileDesc,
+        });
+
+        if (isExist) {
+            throw Error("文件删除失败")
+        }
+
+        return true;
     }
 
     //测试删除文件夹
-    function testDeleteFolder(option) {
-        gdrive.deleteFolder({
+    async function testDeleteFolder() {
+        GDrive.folderDelete({
             id: rootId,
-            success: (folder) => {
-                console.log("删除文件夹成功");
-            },
-            error: (error) => {
-                throw new Error(error);
-            },
-            neterror: () => {
-                throw new Error("net error");
-            }
         });
+
+        const isExist = await testFileExist({
+            parents: ["root"],
+            name: root,
+        });
+        if (!isExist) {
+            throw Error("删除文件夹失败")
+        }
+
+        return true;
     }
 
-    //测试获取文件夹列表
-    function testFileExist(option) {
-        gdrive.list({
+    async function testFileExist(option) {
+        const res = await GDrive.list({
             parents: option.parents,
-            success: (files) => {
-                //检测是否存在
-                let found = null;
-                for (const file of files) {
-                    if (option.name == file.name) {
-                        found = file;
-                        break;
-                    }
-                }
-                if (!found)
-                    throw new Error("测试文件不正确")
-
-                if (option.description) {
-                    if (option.description != found.description)
-                        throw new Error("测试文件夹不正确")
-                }
-
-                option.success();
-            },
-            error: (error) => {
-                throw new Error(error);
-            },
-            neterror: () => {
-                throw new Error("net error");
-            }
         });
+        //检测是否存在
+        let found = null;
+        for (const file of res.files) {
+            if (option.name == file.name) {
+                found = file;
+                break;
+            }
+        }
+        if (!found)
+            return false;
+
+        return true;
     }
 });

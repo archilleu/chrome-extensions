@@ -3,7 +3,7 @@
   "name": "notes",
   "short_name": "notes",
   "description": "notes use google driver",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "browser_action": {
     "default_title": "notes",
     "default_icon": {
@@ -34,6 +34,7 @@
   "background": {
     "scripts": [
       "js/background.js"
-    ]
+    ],
+    "persistent": false
   }
 }

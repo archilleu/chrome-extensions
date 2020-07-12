@@ -18,21 +18,21 @@
                 <img class="logo" src="images/note.png" alt="notes">
                 <span class="logo">便签</span>
                 <div class="btn-notes">
-                    <div title="创建便签" class="btn-note btn-create" id="btn-note-create" @click="noteCreate">
+                    <div title="创建便签" class="btn-note btn-create" id="btn-note-create" click="noteCreate">
                         <div class="">
                             <span>
                                 <i class="icon-create"></i>
                             </span>
                         </div>
                     </div>
-                    <div title="保存便签" class="btn-note btn-save" id="btn-note-save" @click="saveNote">
+                    <div title="保存便签" class="btn-note btn-save" id="btn-note-save" click="saveNote">
                         <div class="">
                             <span>
                                 <i class="icon-save"></i>
                             </span>
                         </div>
                     </div>
-                    <div title="刷新" class="btn-note btn-refresh" id="btn-refresh" @click="refresh">
+                    <div title="刷新" class="btn-note btn-refresh" id="btn-refresh" click="refresh">
                         <div class="">
                             <span>
                                 <i class="icon-refresh"></i>
@@ -43,34 +43,15 @@
             </div>
             <div class="note-left-panel">
                 <div class="note-left-floder">
-                    <div class="search-box">
-                        <div class="search-bar">
-                            <div class="text-field-view">
-                                <div class="search-icon"></div>
-                                <input type="text" class="search-input" name="text-field" placeholder="搜索全部便签">
-                                <div class="search-clear"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 文件夹模板 -->
-                    <folder-template :gnote="gnote" ref="folders"
-                        v-on:eventselectedfolderchange="onselectedfolderchange"></folder-template>
-
-                    <div class="bottom-menu">
-                        <div title="新建文件夹" class="create-folder-btn" id="btn-folder-create" @click="folderCreateDlg">
-                        </div>
-                        <div title="删除文件夹" class="delete-folder-btn" id="delete-folder-btn" @click="folderDeleteDlg">
-                        </div>
-                    </div>
+                    <folders ref="folders"></folders>
                 </div>
             </div>
             <div class="note-left-notes">
 
                 <!-- 便签模板 -->
-                <note-template :gnote="gnote" ref="notes" v-on:eventselectednotechange="onselectednotechange"
+                <!-- <note-template :gnote="gnote" ref="notes" v-on:eventselectednotechange="onselectednotechange"
                     v-on:eventtextcountchange="ontextcountchange">
-                </note-template>
+                </note-template> -->
 
             </div>
         </div>
@@ -90,14 +71,14 @@
                         </span>
                     </div>
                 </div>
-                <div title="删除便签" class="btn-note btn-delete" id="btn-note-delete" @click="noteDeleteDlg">
+                <div title="删除便签" class="btn-note btn-delete" id="btn-note-delete" click="noteDeleteDlg">
                     <div class="">
                         <span>
                             <i class="icon-delete"></i>
                         </span>
                     </div>
                 </div>
-                <div title="登出" class="btn-note btn-share" id="btn-logout" @click="logout">
+                <div title="登出" class="btn-note btn-share" id="btn-logout" click="logout">
                     <div class="">
                         <span>
                             <i class="immersive-icon icon-share"></i>
@@ -156,7 +137,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                         <button id="btn-folder-create-ok" type="button" class="btn btn-primary"
-                            @click="folderCreate">创建</button>
+                            click="folderCreate">创建</button>
                     </div>
                 </div>
             </div>
@@ -175,7 +156,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-danger" @click="folderDelete">删除</button>
+        <button type="button" class="btn btn-danger" click="folderDelete">删除</button>
     </div>
     </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -195,7 +176,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" @click="noteDelete">删除</button>
+                    <button type="button" class="btn btn-danger" click="noteDelete">删除</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -219,7 +200,7 @@
 
 <!-- folder template -->
 <template id="tpl-folder">
-    <div class="folder-container" id="folder-container" @click="nodeFolderItemClick">
+    <div class="folder-container" id="folder-container" click="nodeFolderItemClick">
         <div class="folder-item" :class="{on: item.on}" v-for="(item,index) in folderList" :key="item.id"
             :data-id="item.id" :data-index="index">
             <div class="folder-icon all-icon"></div>
@@ -231,7 +212,7 @@
 
 <!-- note template -->
 <template id="tpl-note">
-    <div class="note-list" id="note-list" @click="nodeItemClick">
+    <div class="note-list" id="note-list" click="nodeItemClick">
         <div class="note-item" :class="{on: item.on}" v-for="(item,index) in noteList" :key="item.id" :data-id="item.id"
             :data-index="index">
             <div class="item-status">
@@ -260,14 +241,13 @@
 <script src="js/lib/codemirror.js"></script>
 <script src="js/lib/addon/scroll/simplescrollbars.js"></script>
 <script src="js/editor.js"></script>
-<script src="js/gauth.js"></script>
-<script src="js/gdrive.js"></script>
-<script src="js/gnote.js"></script>
 <script src="js/lib/vue.min.js"></script>
-<script src="js/app.js"></script>
+<script src="js/lib/vuex.js"></script>
+<script type="module" src="js/app.js"></script>
 
 <!-- 测试 -->
-<!-- <script src="js/test/test_gauth.js"></script> -->
-<!-- <script src="js/test/test_gdrive.js"></script> -->
+<!-- <script type="module" src="js/test/test_gauth.js"></script> -->
+<!-- <script src="js/lib/axios.min.js"></script> -->
+<!-- <script type="module" src="js/test/test_gdrive.js"></script> -->
 
 </html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>test loading</title>
+    <meta charset="utf-8">
+    <link href="../../css/tips.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <tips ref="tips"></tips>
+    </div>
+</body>
+
+<!--
+    - JavaScript and HTML must be in separate files: see our Content Security
+    - Policy documentation[1] for details and explanation.
+    -
+    - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+  -->
+
+<script src="../../js/lib/vue.min.js"></script>
+<script src="../compoments/Tips.js"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        mounted() {
+            this.$refs.tips.tip("你好");
+            setTimeout(() => {
+                this.$refs.tips.tip("你好吗?", 10000);
+            }, 3000);
+        }
+    });
+</script>
+
+</html>

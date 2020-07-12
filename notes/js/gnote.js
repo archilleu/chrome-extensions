@@ -1,21 +1,92 @@
 /*
     gnode 文件（夹子)访问
 */
+import GAuth from "./api/gauth.js"
+import GDrive from "./api/gdrive.js"
+import config from "./http/config.js"
+
+export default {
+    data: {
+        rootId: null, //根目录ID
+        ROOT_NAME: "GNODE1", //根目录名字
+        DEFAULT_FOLDER_MYNOTES: "我的便签", //默认便签文件夹名字
+    },
+
+    async init() {
+        const token = await GAuth.auth();
+        config.setToken(token);
+
+        await this._initRootFolder();
+
+        await this._initDefaultFolder();
+    },
+
+    //获取便签文件夹列表
+    async noteFolders() {
+        const res = await GDrive.list({
+            parents: [this.data.rootId],
+            orderBy: "modifiedTime desc",
+        });
+
+        //默认文件夹排在第一位
+        let firstFolder = null;
+        let sortdFolders = new Array();
+        for (let folder of res.files) {
+            if (folder.name === this.data.DEFAULT_FOLDER_MYNOTES) {
+                firstFolder = folder;
+            } else {
+                sortdFolders.unshift(folder)
+            }
+        }
+        sortdFolders.unshift(firstFolder);
+
+        return sortdFolders;
+    },
+
+    //初始化默认根目录
+    async _initRootFolder() {
+        //查找根目录是否存在
+        const res = await GDrive.search({
+            name: this.data.ROOT_NAME,
+            parents: ["root"],
+        });
+
+        //不存在创建根目录
+        if (res.files.length == 0) {
+            const file = await GDrive.folderCreate({
+                name: this.data.ROOT_NAME,
+                parents: ["root"],
+            });
+            this.data.rootId = file.id;
+            return true;
+        }
+
+        this.data.rootId = res.files[0].id;
+        return true;
+    },
+
+    //初始化默认文件夹
+    async _initDefaultFolder() {
+
+        //查找默认文件夹是否存在
+        const res = await GDrive.search({
+            name: this.data.DEFAULT_FOLDER_MYNOTES,
+            parents: [this.data.rootId],
+        });
+
+        //不存在创建默认文件夹
+        if (res.files.length == 0) {
+            await GDrive.folderCreate({
+                name: this.data.DEFAULT_FOLDER_MYNOTES,
+                parents: [this.data.rootId],
+            });
+        }
+
+        return true;
+    },
+}
 
 class GNote {
-    constructor() {
-        this.root = null; //GNode根目录
-        this.gdrive = new GDrive();
-
-        this.ROOT_NAME = "GNODE";
-        this.DEFAULT_FOLDER_MYNOTES = "我的便签";
-    }
-
-    //配置axios请求授权头;
-    setToken(token) {
-        this.gdrive.setToken(token);
-    }
-
     //初始化
     init(option) {
         this._checkHasRootFolder({

@@ -617,8 +617,8 @@ body {
 /*滚动条整体部分,必须要设置*/
 .note-list::-webkit-scrollbar {
   width: 0;
-  transition:width 2s;
-  -webkit-transition:width 2s;
+  transition: width 2s;
+  -webkit-transition: width 2s;
 }
 
 .note-list:hover::-webkit-scrollbar {

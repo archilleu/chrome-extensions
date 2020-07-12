@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>test loading</title>
+    <meta charset="utf-8">
+    <link href="../../css/loading.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <loading ref="loading"></loading>
+    </div>
+</body>
+
+<!--
+    - JavaScript and HTML must be in separate files: see our Content Security
+    - Policy documentation[1] for details and explanation.
+    -
+    - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+  -->
+
+<script src="../../js/lib/vue.min.js"></script>
+<script src="../compoments/Loading.js"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        mounted() {
+            console.log(`count:${this.$refs.loading.show()}`);
+            setTimeout(() => {
+                console.log(`count:${this.$refs.loading.hide()}`);
+            }, 5000);
+        }
+    });
+</script>
+
+</html>

@@ -1,23 +1,21 @@
+import GAuth from "./api/gauth.js"
+
 document.addEventListener('DOMContentLoaded', () => {
 
     new Vue({
         el: "#app",
         methods: {
-            googleLogin() {
+            async googleLogin() {
                 this.$refs.loading.show();
-                new GAuth().auth({
-                    success: () => {
-                        this.$refs.tips.tip("授权成功, 跳转中...");
-                        this.$refs.loading.hide();
-                        setTimeout(() => {
-                            this.gotoMainWindow();
-                        }, 1000);
-                    },
-                    error: (msg) => {
-                        this.$refs.loading.hide();
-                        this.$refs.tips.tip("授权失败");
-                    }
-                });
+                try {
+                    await GAuth.auth();
+                    this.$refs.tips.tip("授权成功, 跳转中...");
+                    this.gotoMainWindow();
+                } catch (e) {
+                    this.$refs.tips.tip(`授权失败:${e}`);
+                }finally {
+                    this.$refs.loading.hide();
+                }
             },
             qqLogin() {
                 this.$refs.tips.tip("QQ登陆尚未开放!")

@@ -43,6 +43,20 @@ export default {
         return sortdFolders;
     },
 
+    //创建便签文件夹
+    async folderCreate(name) {
+        await GDrive.folderCreate({
+            name,
+            parents: [this.data.rootId]
+        });
+    },
+
+    //删除便签文件夹
+    async folderDelete(folderId) {
+        await GDrive.folderDelete({
+            id: folderId
+        });
+    },
     //初始化默认根目录
     async _initRootFolder() {
         //查找根目录是否存在

@@ -4,47 +4,31 @@
 <head>
     <title>notes</title>
     <meta charset="utf-8">
-    <link href="css/lib/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="css/lib/bootstrap.min.css" rel="stylesheet"> -->
     <link href="css/lib/codemirror.css" rel="stylesheet">
     <link href="css/tips.css" rel="stylesheet">
     <link href="css/window.css" rel="stylesheet">
     <link href="js/lib/addon/scroll/simplescrollbars.css" rel="stylesheet">
+
+    <style>
+    </style>
 </head>
 
 <body>
-    <div class="wrapper" id="app" v-cloak>
-        <div class="note-left">
-            <div class="titlebar">
-                <img class="logo" src="images/note.png" alt="notes">
-                <span class="logo">便签</span>
-                <div class="btn-notes">
-                    <div title="创建便签" class="btn-note btn-create" id="btn-note-create" click="noteCreate">
-                        <div class="">
-                            <span>
-                                <i class="icon-create"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <div title="保存便签" class="btn-note btn-save" id="btn-note-save" click="saveNote">
-                        <div class="">
-                            <span>
-                                <i class="icon-save"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <div title="刷新" class="btn-note btn-refresh" id="btn-refresh" click="refresh">
-                        <div class="">
-                            <span>
-                                <i class="icon-refresh"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="note-left-panel">
-                <div class="note-left-floder">
-                    <folders ref="folders"></folders>
-                </div>
+
+    <div class="wrapper" id="app" v-cloak hidden1>
+
+        <!-- loading 动画 -->
+        <loading ref="loading"></loading>
+
+        <!-- 提示 -->
+        <tips ref="tips"></tips>
+
+        <header-bar></header-bar>
+
+        <div class="left note-left">
+            <div class="note-left-floder">
+                <folders class="folder-container" id="folder-container" ref="folders"></folders>
             </div>
             <div class="note-left-notes">
 
@@ -56,36 +40,6 @@
             </div>
         </div>
         <div class="note-right">
-            <div class="titlebar">
-                <div title="插入图片" class="btn-note btn-insertImage hidden">
-                    <div class="">
-                        <span>
-                            <i class="icon-insertImage"></i>
-                        </span>
-                    </div>
-                </div>
-                <div title="删除便签" class="btn-note btn-moveNote hidden">
-                    <div class="">
-                        <span>
-                            <i class="icon-moveNote"></i>
-                        </span>
-                    </div>
-                </div>
-                <div title="删除便签" class="btn-note btn-delete" id="btn-note-delete" click="noteDeleteDlg">
-                    <div class="">
-                        <span>
-                            <i class="icon-delete"></i>
-                        </span>
-                    </div>
-                </div>
-                <div title="登出" class="btn-note btn-share" id="btn-logout" click="logout">
-                    <div class="">
-                        <span>
-                            <i class="immersive-icon icon-share"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
             <div class="edit-wrapper">
                 <div class="edit-status">
                     <i class="edge"></i>

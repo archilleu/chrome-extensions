@@ -1,3 +1,4 @@
+import HeaderBar from "./header_bar.js"
 import GNode from "./gnote.js"
 import folders from "./folders.js"
 import store from './store/index.js'
@@ -51,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         },
         components: {
-            folders
+            folders,
+            HeaderBar,
         },
 
         //vuex

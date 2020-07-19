@@ -45,7 +45,7 @@ export default {
 
     //创建便签文件夹
     async folderCreate(name) {
-        await GDrive.folderCreate({
+        return await GDrive.folderCreate({
             name,
             parents: [this.data.rootId]
         });
@@ -57,6 +57,15 @@ export default {
             id: folderId
         });
     },
+
+    //获取便签文件夹下面的便签
+    async folderNotes(folderId) {
+        const notes = await GDrive.list({
+            parents: [folderId]
+        });
+        debugger
+    },
+
     //初始化默认根目录
     async _initRootFolder() {
         //查找根目录是否存在

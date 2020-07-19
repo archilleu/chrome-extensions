@@ -1,11 +1,19 @@
-import HeaderBar from "./header_bar.js"
+import headerBar from "./header_bar.js"
 import GNode from "./gnote.js"
 import folders from "./folders.js"
+import notes from "./notes.js"
 import store from './store/index.js'
+import loading from "./plugin/loading.js"
+import tips from "./plugin/tips.js"
+import messageBox from "./plugin/messageBox.js"
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    new Vue({
+    Vue.use(loading);
+    Vue.use(tips);
+    Vue.use(messageBox);
+
+    const app = new Vue({
         el: '#app',
         data: {
             timeNow: new Date().toLocaleString(),
@@ -25,8 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 $btnDelete: null,
             }
         },
+
         async mounted() {
-            this.$_myapp_init();
+            await this.$_myapp_init();
         },
         methods: {
 
@@ -37,11 +46,21 @@ document.addEventListener('DOMContentLoaded', () => {
             //初始化
             async $_myapp_init() {
 
-                //初始化node接口
-                await GNode.init();
+                try {
+                    this.$loading.show();
 
-                //获取便签文件夹
-                await this.$refs.folders.noteFolders();
+                    //初始化node接口
+                    await GNode.init();
+
+                    //获取便签文件夹
+                    await this.$refs.folders.noteFolders();
+
+                } catch (e) {
+                    this.$tips.message(JSON.stringify(e));
+                } finally {
+                    this.$loading.hide();
+                }
+
 
                 //模态窗口对象
                 // this.folders.$btnCreate = $("#create-folder");
@@ -53,7 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         components: {
             folders,
-            HeaderBar,
+            notes,
+            headerBar,
         },
 
         //vuex

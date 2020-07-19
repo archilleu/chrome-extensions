@@ -1,28 +1,32 @@
 import GAuth from "./api/gauth.js"
+import loading from "./plugin/loading.js"
+import tips from "./plugin/tips.js"
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    Vue.use(loading);
+    Vue.use(tips);
 
     new Vue({
         el: "#app",
         methods: {
             async googleLogin() {
-                this.$refs.loading.show();
+                this.$loading.show();
                 try {
                     await GAuth.auth();
-                    this.$refs.tips.tip("授权成功, 跳转中...");
                     this.gotoMainWindow();
                 } catch (e) {
-                    this.$refs.tips.tip(`授权失败:${e}`);
-                }finally {
-                    this.$refs.loading.hide();
+                    this.$tips.message(`授权失败:${e}`);
+                } finally {
+                    this.$loading.hide();
                 }
             },
             qqLogin() {
-                this.$refs.tips.tip("QQ登陆尚未开放!")
+                this.$tips.message("QQ登陆尚未开放!")
             },
             gotoMainWindow() {
                 window.location.href = chrome.extension.getURL('window.html');
-            }
+            },
         }
     });
 

@@ -3,7 +3,7 @@ export default {
         return {};
     },
     props: {
-        folder: {
+        note: {
             type: Object,
             required: true
         },
@@ -24,10 +24,13 @@ export default {
     },
 
     template: `
-    <div class="folder-item" :class="{on:isSelectedFolder}" :data-id="folder.id" :data-index="index" @click="handleClick">
-        <div class="folder-icon all-icon"></div>
-        <div class="folder-name">{{ folder.name }}</div>
-        <div class="folder-info">{{ folder.info }}</div>
-    </div>
+        <div class="item-status">
+            <div class="time">{{ note.modifiedTime}}</div>
+            <div title="星标" class="fav"></div>
+            <div class="image-note"></div>
+        </div>
+        <div class="note-title">
+            <span>{{ note.name }}</span>
+        </div>
     `
 }

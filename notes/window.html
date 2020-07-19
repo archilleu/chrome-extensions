@@ -6,23 +6,20 @@
     <meta charset="utf-8">
     <!-- <link href="css/lib/bootstrap.min.css" rel="stylesheet"> -->
     <link href="css/lib/codemirror.css" rel="stylesheet">
-    <link href="css/tips.css" rel="stylesheet">
+    <link href="css/base.css" rel="stylesheet">
     <link href="css/window.css" rel="stylesheet">
     <link href="js/lib/addon/scroll/simplescrollbars.css" rel="stylesheet">
 
     <style>
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
 
     <div class="wrapper" id="app" v-cloak hidden1>
-
-        <!-- loading 动画 -->
-        <loading ref="loading"></loading>
-
-        <!-- 提示 -->
-        <tips ref="tips"></tips>
 
         <header-bar></header-bar>
 
@@ -31,12 +28,7 @@
                 <folders class="folder-container" id="folder-container" ref="folders"></folders>
             </div>
             <div class="note-left-notes">
-
-                <!-- 便签模板 -->
-                <!-- <note-template :gnote="gnote" ref="notes" v-on:eventselectednotechange="onselectednotechange"
-                    v-on:eventtextcountchange="ontextcountchange">
-                </note-template> -->
-
+                <notes class="" id="" ref="notes"></notes>
             </div>
         </div>
         <div class="note-right">
@@ -69,117 +61,11 @@
             </div>
         </div>
 
-        <!-- tips -->
-        <tips ref="tips"> {{ msg } </tips>
 
-        <!-- Loading -->
-        <loading ref="loading"></loading>
-
-        <!-- Modal 创建文件夹模态窗口 -->
-        <div class="modal fade" id="create-folder" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title">标签类别名</h4>
-                    </div>
-                    <div class="modal-body">
-                        <input class="form-control" type="text" v-model="folders.newName">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button id="btn-folder-create-ok" type="button" class="btn btn-primary"
-                            click="folderCreate">创建</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Modal 删除文件夹模态窗口 -->
-        <div class="modal fade" id="delete-folder" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">删除便签文件夹</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p v-if="folders.selected">删除笔记本:{{ folders.selected.name }}</p>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-danger" click="folderDelete">删除</button>
-    </div>
-    </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <!-- Modal 删除便签模态窗口 -->
-    <div class="modal fade" id="delete-note" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">删除便签</h4>
-                </div>
-                <div class="modal-body">
-                    <p v-if="notes.selected">删除便签:{{ notes.selected.name }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" click="noteDelete">删除</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 
     </div>
 
 </body>
-
-<!-- loading template -->
-<template id="tpl-loading">
-    <div id="loading" :class="{show: loadingCount>0}">
-        <img src="images/loading.gif" />
-    </div>
-</template>
-
-<!-- tips template -->
-<template id="tpl-tips">
-    <div id="snackbar" :class="{show: show}">{{ msg }}</div>
-</template>
-
-<!-- folder template -->
-<template id="tpl-folder">
-    <div class="folder-container" id="folder-container" click="nodeFolderItemClick">
-        <div class="folder-item" :class="{on: item.on}" v-for="(item,index) in folderList" :key="item.id"
-            :data-id="item.id" :data-index="index">
-            <div class="folder-icon all-icon"></div>
-            <div class="folder-name">{{ item.name }}</div>
-            <div class="folder-info">{{ item.info }}</div>
-        </div>
-    </div>
-</template>
-
-<!-- note template -->
-<template id="tpl-note">
-    <div class="note-list" id="note-list" click="nodeItemClick">
-        <div class="note-item" :class="{on: item.on}" v-for="(item,index) in noteList" :key="item.id" :data-id="item.id"
-            :data-index="index">
-            <div class="item-status">
-                <div class="time">{{ item.modifiedTime | formatTime }}</div>
-                <div title="星标" class="fav"></div>
-                <div class="image-note"></div>
-            </div>
-            <div class="note-title">
-                <span>{{ item.name }}</span>
-            </div>
-        </div>
-    </div>
-</template>
 
 
 <!--
@@ -197,6 +83,7 @@
 <script src="js/editor.js"></script>
 <script src="js/lib/vue.min.js"></script>
 <script src="js/lib/vuex.js"></script>
+<script src="js/compoments/modalDialog.js"></script>
 <script type="module" src="js/app.js"></script>
 
 <!-- 测试 -->

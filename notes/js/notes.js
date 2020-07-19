@@ -1,15 +1,21 @@
-import folder from "./folder.js"
+import note from "./note.js"
 import GNote from "./gnote.js"
 
 export default {
     data() {
         return {
-            folders: [],
+            notes: [
+
+                {
+                    modifiedTime: null,
+                    name: null
+                }
+            ],
         }
     },
 
     components: {
-        folder
+        note
     },
 
     methods: {
@@ -82,27 +88,9 @@ export default {
     },
 
     template: `
-    <div>
-        <div class="search-box">
-            <div class="search-bar">
-                <div class="text-field-view">
-                    <div class="search-icon"></div>
-                    <input type="text" class="search-input" name="text-field" placeholder="搜索全部便签">
-                    <div class="search-clear"></div>
-                </div>
-            </div>
+        <div class="notes">
+            <note v-for="(note, index) in notes" :key=note.id :note=note :index=note.id>
+            </note>
         </div>
-        <div class="folders">
-            <folder v-for="(folder, index) in folders" :key=folder.id :folder=folder :index=folder.id>
-            </folder>
-        </div>
-        <div class="bottom-menu">
-            <div title="新建文件夹" class="create-folder-btn" id="btn-folder-create" @click="handleCreate">
-            </div>
-            <div title="删除文件夹" class="delete-folder-btn" id="delete-folder-btn" @click="handleDelete">
-            </div>
-        </div>
-        <modal-dialog ref="newFolder" title="新建文件夹" @cancle="cancle" @success="success"></modal-dialog>
-    </div>
     `
 }

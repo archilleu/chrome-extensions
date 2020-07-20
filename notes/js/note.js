@@ -24,13 +24,15 @@ export default {
     },
 
     template: `
-        <div class="item-status">
-            <div class="time">{{ note.modifiedTime}}</div>
-            <div title="星标" class="fav"></div>
-            <div class="image-note"></div>
-        </div>
-        <div class="note-title">
-            <span>{{ note.name }}</span>
+        <div class="note-item">
+            <div class="item-status">
+                <div class="time">{{ note.modifiedTime}}</div>
+                <div title="星标" class="fav"></div>
+                <div class="image-note"></div>
+            </div>
+            <div class="note-title">
+                <span>{{ note.name }}</span>
+            </div>
         </div>
     `
 }

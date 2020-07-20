@@ -4,13 +4,22 @@ import GNote from "./gnote.js"
 export default {
     data() {
         return {
-            notes: [
+            notes: [],
+        }
+    },
 
-                {
-                    modifiedTime: null,
-                    name: null
-                }
-            ],
+    computed: {
+        folderChange() {
+            const folder = this.$store.getters.selectedFolder;
+            return folder;
+        },
+    },
+    watch: {
+        async folderChange(folder) {
+            if (!folder)
+                return [];
+
+            this.notes = await GNote.folderNotes(folder.id);
         }
     },
 
@@ -88,7 +97,7 @@ export default {
     },
 
     template: `
-        <div class="notes">
+        <div class="note-list">
             <note v-for="(note, index) in notes" :key=note.id :note=note :index=note.id>
             </note>
         </div>

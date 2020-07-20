@@ -56,7 +56,7 @@ export default {
             orderBy: option.orderBy ? option.orderBy : "modifiedTime",
             q: query.join(" or ") + " and trashed=false",
             pageToken: option.pageToken ? option.pageToken : null,
-            fields: option.fields ? option.fields : "files(id, name, modifiedTime, description)"
+            fields: option.fields ? option.fields : "nextPageToken,files(id, name, modifiedTime, description)"
         };
 
         const url = "/drive/v3/files";

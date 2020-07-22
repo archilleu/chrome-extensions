@@ -8,7 +8,7 @@ import config from "./http/config.js"
 export default {
     data: {
         rootId: null, //根目录ID
-        ROOT_NAME: "GNODE", //根目录名字
+        ROOT_NAME: "GNODE1", //根目录名字
         DEFAULT_FOLDER_MYNOTES: "我的便签", //默认便签文件夹名字
     },
 
@@ -61,10 +61,9 @@ export default {
     //获取便签文件夹下面的便签
     async folderNotes(folderId) {
         let notes = [];
-        let data = null;
         let pageToken = null;
         do {
-            data = await GDrive.list({
+            const data = await GDrive.list({
                 parents: [folderId],
                 pageToken: pageToken
             });
@@ -73,6 +72,26 @@ export default {
         } while (pageToken != null);
 
         return notes;
+    },
+
+    //获取便签文件文本数据
+    async noteContent(fileId) {
+        const data = await GDrive.fileContent({
+            id: fileId
+        });
+
+        return data;
+    },
+
+    //创建便签文件
+    async noteCreate(folderId) {
+        const name = "未命名便签";
+        const res = await GDrive.fileMetadataCreate({
+            name,
+            parents: [folderId],
+            description: name
+        });
+        return res;
     },
 
     //初始化默认根目录

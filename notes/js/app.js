@@ -1,7 +1,8 @@
-import headerBar from "./header_bar.js"
+import headerBar from "./headerBar.js"
 import GNode from "./gnote.js"
 import folders from "./folders.js"
 import notes from "./notes.js"
+import editor from "./editor.js"
 import store from './store/index.js'
 import loading from "./plugin/loading.js"
 import tips from "./plugin/tips.js"
@@ -47,8 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
             async $_myapp_init() {
 
                 try {
-                    this.$loading.show();
-
                     //初始化node接口
                     await GNode.init();
 
@@ -57,22 +56,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 } catch (e) {
                     this.$tips.message(JSON.stringify(e));
-                } finally {
-                    this.$loading.hide();
                 }
 
-
-                //模态窗口对象
-                // this.folders.$btnCreate = $("#create-folder");
-                // this.folders.$btnDelete = $("#delete-folder");
-                // this.notes.$btnDelete = $("#delete-note");
             },
 
 
         },
+
+        //全局加载loading状态，统一在axios中判定
+        computed: {
+            loading() {
+                return this.$store.getters.loading;
+            }
+        },
+
+        watch: {
+            loading(val) {
+                if (val > 0) {
+                    this.$loading.show();
+                } else {
+                    this.$loading.hide();
+                }
+            }
+        },
+
         components: {
             folders,
             notes,
+            editor,
             headerBar,
         },
 

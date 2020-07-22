@@ -14,19 +14,24 @@ export default {
     },
     methods: {
         handleClick() {
-            this.$store.dispatch("folderChange", this.folder);
+            this.$store.dispatch("noteChange", this.note);
         }
     },
     computed: {
-        isSelectedFolder() {
-            return this.folder == this.$store.getters.selectedFolder;
+        isSelectedNote() {
+            return this.note == this.$store.getters.selectedNote;
+        }
+    },
+    filters: {
+        formatDateTime(time) {
+            return new Date(time).toLocaleString();
         }
     },
 
     template: `
-        <div class="note-item">
+        <div class="note-item" :data-id="note.id" :data-index="index" @click="handleClick" :class="{on: isSelectedNote}">
             <div class="item-status">
-                <div class="time">{{ note.modifiedTime}}</div>
+                <div class="time">{{ note.modifiedTime | formatDateTime }}</div>
                 <div title="星标" class="fav"></div>
                 <div class="image-note"></div>
             </div>

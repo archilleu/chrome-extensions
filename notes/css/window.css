@@ -169,7 +169,7 @@ body {
   position: absolute;
   left: 38%;
   transition: left .2s ease-out;
-  top: 60px;
+  top: 0;
   right: 0;
   bottom: 0;
 }

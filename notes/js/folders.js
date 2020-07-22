@@ -16,6 +16,9 @@ export default {
         //获取便签文件夹列表
         async noteFolders() {
             this.folders = await GNote.noteFolders();
+
+            //选中第一个文件夹(默认文件夹)
+            this.selectedDefaultFolder();
         },
 
         async refresh() {
@@ -33,19 +36,20 @@ export default {
                     return;
                 }
 
-                this.$loading.show();
-
                 const newFolder = await GNote.folderCreate(name);
 
                 this.$tips.message(`${name} 创建成功`);
                 this.folders.push(newFolder);
             } catch (e) {
                 this.$tips.message(JSON.stringify(e));
-            } finally {
-                this.$loading.hide();
             }
 
         },
+
+        selectedDefaultFolder() {
+            this.$store.dispatch("folderChange", this.folders[0]);
+        },
+
         cancle() {},
 
         handleDelete() {
@@ -55,12 +59,11 @@ export default {
                 return;
             }
 
+            //TODO: async/await
             this.$message({
                 message: `删除:${selected.name}`
             }).then(async () => {
                 try {
-                    this.$loading.show();
-
                     await GNote.folderDelete(selected.id);
 
                     for (var i = 0; i < this.folders.length; i++) {
@@ -73,7 +76,6 @@ export default {
                 } catch (e) {
                     this.$tips.message(JSON.stringify(e));
                 } finally {
-                    this.$loading.hide();
                     this.$tips.message("删除成功");
                 }
             }).catch(e => {});
@@ -93,7 +95,7 @@ export default {
             </div>
         </div>
         <div class="folders">
-            <folder v-for="(folder, index) in folders" :key=folder.id :folder=folder :index=folder.id>
+            <folder v-for="(folder, index) in folders" :key=folder.id :folder=folder :index=index>
             </folder>
         </div>
         <div class="bottom-menu">

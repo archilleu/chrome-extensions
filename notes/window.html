@@ -28,21 +28,23 @@
                 <folders class="folder-container" id="folder-container" ref="folders"></folders>
             </div>
             <div class="note-left-notes">
-                <notes class="" id="" ref="notes"></notes>
+                <notes ref="notes"></notes>
             </div>
         </div>
+
         <div class="note-right">
-            <div class="edit-wrapper">
+            <editor ref="editor"></editor>
+            <!-- <div class="edit-wrapper">
                 <div class="edit-status">
                     <i class="edge"></i>
                     <div class="edit-mode">纯文本模式</div>
                     <div class="status-bar">
-                        <div class="folder" v-cloak>
+                        <div class="folder">
                             <span v-if="folders.selected">{{ folders.selected.name }}</span>
                             <i></i>
                         </div>
                         <span class="split-line"></span>
-                        <span class="time">{{ timeNow }}</span>
+                        <span class="time">{{ new Date().toLocaleString()}}</span>
                         <span class="split-line"></span>
                         <span class="counter">共 {{ textCount }} 字</span>
                         <span class="split-line"></span>
@@ -58,11 +60,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
-
-
-
     </div>
 
 </body>
@@ -80,7 +79,7 @@
 <script src="js/lib/axios.min.js"></script>
 <script src="js/lib/codemirror.js"></script>
 <script src="js/lib/addon/scroll/simplescrollbars.js"></script>
-<script src="js/editor.js"></script>
+<!-- <script src="js/editor.js"></script> -->
 <script src="js/lib/vue.min.js"></script>
 <script src="js/lib/vuex.js"></script>
 <script src="js/compoments/modalDialog.js"></script>

@@ -1,4 +1,5 @@
 import config from './config.js'
+import store from '../store/index.js'
 
 export default function $axios(options) {
     return new Promise((resolve, reject) => {
@@ -16,6 +17,7 @@ export default function $axios(options) {
         // request 请求拦截器
         instance.interceptors.request.use(
             config => {
+                store.dispatch('loadingChange', true);
                 return config;
             },
             error => {
@@ -27,9 +29,11 @@ export default function $axios(options) {
         // response 响应拦截器
         instance.interceptors.response.use(
             response => {
+                store.dispatch('loadingChange', false);
                 return response.data;
             },
             err => {
+                store.dispatch('loadingChange', false);
                 let res = {};
                 if (err.response) { //服务器返回
                     res.code = err.response.status;

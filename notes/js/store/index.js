@@ -1,7 +1,13 @@
 const store = new Vuex.Store({
     state: {
+        //当前选中文件夹
         selectedFolder: null,
-        selectedNote: null
+
+        //当前选中文件
+        selectedNote: null,
+
+        //网络加载状态
+        loading: 0,
     },
     getters: {
         selectedFolder: state => {
@@ -11,6 +17,10 @@ const store = new Vuex.Store({
         selectedNote: state => {
             return state.selectedNote;
         },
+
+        loading: state => {
+            return state.loading;
+        },
     },
     mutations: {
         folderChange(state, folder) {
@@ -19,6 +29,10 @@ const store = new Vuex.Store({
 
         noteChange(state, note) {
             state.selectedNote = note;
+        },
+
+        loadingChange(state, boolean) {
+            boolean ? state.loading++ : state.loading--;
         }
     },
     actions: {
@@ -31,7 +45,12 @@ const store = new Vuex.Store({
             commit
         }, note) {
             commit("noteChange", note);
-        }
+        },
+        loadingChange({
+            commit
+        }, boolean) {
+            commit("loadingChange", boolean);
+        },
     },
 });
 

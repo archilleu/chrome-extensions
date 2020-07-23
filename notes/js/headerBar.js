@@ -10,10 +10,12 @@ export default {
     props: {},
     methods: {
         async refresh() {
-            await this.folders.noteFolders();
-        },
-        async saveNote() {
-
+            try {
+                await this.folders.noteFolders();
+                this.$tips.message("刷新成功");
+            } catch (e) {
+                this.$tips.message(JSON.stringify(e));
+            }
         },
         async createNote() {
             const selectedFolder = this.$store.getters.selectedFolder;
@@ -34,6 +36,15 @@ export default {
                 this.$tips.message(JSON.stringify(e));
             }
         },
+
+        async saveNote() {
+            await this.editor.saveNote()
+        },
+
+        async deleteNote() {
+            await this.notes.deleteNote();
+        },
+
         append2Notes(note) {
             note.modifiedTime = new Date();
             this.notes.notes.unshift(note);
@@ -49,6 +60,9 @@ export default {
         },
         notes() {
             return this.$parent.$refs.notes;
+        },
+        editor() {
+            return this.$parent.$refs.editor;
         }
     },
     template: `
@@ -96,7 +110,7 @@ export default {
                         </span>
                     </div>
                 </div>
-                <div title="删除便签" class="btn-note btn-delete" id="btn-note-delete" click="noteDeleteDlg">
+                <div title="删除便签" class="btn-note btn-delete" id="btn-note-delete" @click="deleteNote">
                     <div class="">
                         <span>
                             <i class="icon icon-delete"></i>

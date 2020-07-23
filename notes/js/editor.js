@@ -22,31 +22,50 @@ export default {
             return 0;
         },
 
-        noteChange() {
+        selectedNote() {
             const note = this.$store.getters.selectedNote;
             return note;
         },
     },
 
     watch: {
-        async noteChange(note) {
+        async selectedNote(note) {
             if (!note) {
                 this.data = null;
                 return;
             }
 
-            this.data = await GNote.noteContent(note.id);
+            try {
+                this.data = await GNote.noteContent(note.id);
 
-            //有可能输入是纯数字
-            if (!isNaN(this.data)) {
-                // this.data = this.data.toString();
+                //有可能输入是纯数字
+                if (!isNaN(this.data)) {
+                    this.data = this.data.toString();
+                }
+                this.editor.setValue(this.data);
+            } catch (e) {
+                this.$tips.message(JSON.stringify(e));
             }
-            this.editor.setValue(this.data);
         },
 
         data(val) {
             console.log(val);
         }
+    },
+    methods: {
+        async saveNote() {
+            try {
+                if (!this.selectedNote) {
+                    this.$tips.message("请选择便签");
+                    return;
+                }
+
+                await GNote.noteSave(this.selectedNote.id, this.data);
+                this.$tips.message("保存成功");
+            } catch (e) {
+                this.$tips.message(JSON.stringify(e));
+            }
+        },
     },
     mounted() {
         this.editor = CodeMirror.fromTextArea(document.querySelector("#codemirror-editor"), {

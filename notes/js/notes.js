@@ -20,8 +20,12 @@ export default {
             if (!folder)
                 return [];
 
-            this.notes = await GNote.folderNotes(folder.id);
-            this.selectedDefaultNote();
+            try {
+                this.notes = await GNote.folderNotes(folder.id);
+                this.selectedDefaultNote();
+            } catch (e) {
+                this.$tips.message(JSON.stringify(e));
+            }
         }
     },
 
@@ -35,6 +39,32 @@ export default {
                 this.$store.dispatch("noteChange", this.notes[0]);
             }
         },
+
+        async deleteNote() {
+            const selectedNote = this.$store.getters.selectedNote;
+            if (!selectedNote) {
+                this.$tips.message("请选择便签");
+                return;
+            }
+
+            try {
+                await GNote.noteDelete(selectedNote.id);
+
+                for (let i = 0; i < this.notes.length; i++) {
+                    if (this.notes[i] == selectedNote) {
+                        debugger
+                        this.notes.splice(i, 1);
+                        break;
+                    }
+                }
+
+                if (this.notes.length > 0) {
+                    this.$store.dispatch("noteChange", this.notes[0]);
+                }
+            } catch (e) {
+                this.$tips.message(JSON.stringify(e));
+            }
+        }
     },
 
     template: `

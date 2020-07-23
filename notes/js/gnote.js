@@ -94,6 +94,21 @@ export default {
         return res;
     },
 
+    //保存便签内容
+    async noteSave(noteId, data) {
+        return await GDrive.fileContentUpload({
+            id: noteId,
+            data,
+        });
+    },
+
+    //删除便签
+    async noteDelete(noteId) {
+        return await GDrive.fileDelete({
+            id: noteId
+        });
+    },
+
     //初始化默认根目录
     async _initRootFolder() {
         //查找根目录是否存在

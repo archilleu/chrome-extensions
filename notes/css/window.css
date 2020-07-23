@@ -169,7 +169,7 @@ body {
   position: absolute;
   left: 38%;
   transition: left .2s ease-out;
-  top: 0;
+  top: 60px;
   right: 0;
   bottom: 0;
 }
@@ -435,7 +435,7 @@ body {
 .edit-wrapper {
   max-width: 1080px;
   position: absolute;
-  top: 61px;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;

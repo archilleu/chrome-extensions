@@ -15,10 +15,14 @@ export default {
     methods: {
         //获取便签文件夹列表
         async noteFolders() {
-            this.folders = await GNote.noteFolders();
+            try {
+                this.folders = await GNote.noteFolders();
 
-            //选中第一个文件夹(默认文件夹)
-            this.selectedDefaultFolder();
+                //选中第一个文件夹(默认文件夹)
+                this.selectedDefaultFolder();
+            } catch (e) {
+                this.$tips.message(JSON.stringify(e));
+            }
         },
 
         async refresh() {
@@ -32,7 +36,6 @@ export default {
         async success(name) {
             try {
                 if (!name) {
-                    console.log("文件夹名字不能为空!")
                     return;
                 }
 
@@ -73,10 +76,9 @@ export default {
                     this.folders.splice(i, 1);
 
                     this.$store.dispatch("folderChange", null);
+                    this.$tips.message("删除成功");
                 } catch (e) {
                     this.$tips.message(JSON.stringify(e));
-                } finally {
-                    this.$tips.message("删除成功");
                 }
             }).catch(e => {});
         },

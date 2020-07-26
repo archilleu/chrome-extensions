@@ -3,6 +3,7 @@
  * TODO:部分功能放回notes
  */
 import GNote from "./gnote.js"
+import auth from "./api/gauth.js"
 
 export default {
     name: "header-bar",
@@ -37,12 +38,29 @@ export default {
             }
         },
 
-        async saveNote() {
-            await this.editor.saveNote()
+        saveNote() {
+            const selectedNote = this.$store.getters.selectedNote;
+            if (!selectedNote) {
+                this.$tips.message("请选择便签");
+                return;
+            }
+
+            this.$store.dispatch("saveNote");
         },
 
         async deleteNote() {
             await this.notes.deleteNote();
+        },
+
+        async logout() {
+            try {
+                await this.$message({
+                    message: "确定登出？"
+
+                });
+                await auth.removeCachedAuth();
+                window.location.href = chrome.extension.getURL('login.html');
+            } catch (e) {}
         },
 
         append2Notes(note) {
@@ -117,7 +135,7 @@ export default {
                         </span>
                     </div>
                 </div>
-                <div title="登出" class="btn-note btn-logout" id="btn-logout" click="logout">
+                <div title="登出" class="btn-note btn-logout" id="btn-logout" @click="logout">
                     <div class="">
                         <span>
                             <i class="icon icon-logout"></i>

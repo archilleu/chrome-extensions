@@ -58,7 +58,6 @@ export default {
         handleDelete() {
             const selected = this.$store.getters.selectedFolder;
             if (!selected) {
-                console.log("请选择文件夹");
                 return;
             }
 

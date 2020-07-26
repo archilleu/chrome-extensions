@@ -94,6 +94,16 @@ export default {
         return res;
     },
 
+
+    //保存便签metadata
+    async noteSaveMetadata(note) {
+        const res = await GDrive.fileMetadataUpdate({
+            name: note.name,
+            id: note.id
+        });
+        return res;
+    },
+
     //保存便签内容
     async noteSave(noteId, data) {
         return await GDrive.fileContentUpload({

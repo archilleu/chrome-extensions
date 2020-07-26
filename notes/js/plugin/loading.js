@@ -26,6 +26,10 @@ const Loading = {
         hide() {
             this.count--;
         },
+
+        setCount(val) {
+            this.count = val;
+        }
     },
 
 
@@ -51,6 +55,9 @@ loadingPlugin.install = function (Vue) {
         },
         hide: () => {
             vm.hide();
+        },
+        count: (val) => {
+            vm.setCount(val);
         }
     }
 

@@ -72,11 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         watch: {
             loading(val) {
-                if (val > 0) {
-                    this.$loading.show();
-                } else {
-                    this.$loading.hide();
-                }
+                this.$loading.count(val);
             }
         },
 

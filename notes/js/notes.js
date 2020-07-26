@@ -48,11 +48,14 @@ export default {
             }
 
             try {
+                await this.$message({
+                    message: `删除:${selectedNote.name}`
+                });
+
                 await GNote.noteDelete(selectedNote.id);
 
                 for (let i = 0; i < this.notes.length; i++) {
                     if (this.notes[i] == selectedNote) {
-                        debugger
                         this.notes.splice(i, 1);
                         break;
                     }
@@ -62,6 +65,9 @@ export default {
                     this.$store.dispatch("noteChange", this.notes[0]);
                 }
             } catch (e) {
+                if (e == "cancle")
+                    return;
+
                 this.$tips.message(JSON.stringify(e));
             }
         }

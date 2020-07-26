@@ -6,6 +6,15 @@ const store = new Vuex.Store({
         //当前选中文件
         selectedNote: null,
 
+        //editor内容变化
+        editorChange: null,
+
+        //便签保存操作
+        saveNote: 0,
+
+        //便签内容是否有变化
+        contentChange: false,
+
         //网络加载状态
         loading: 0,
     },
@@ -16,6 +25,17 @@ const store = new Vuex.Store({
 
         selectedNote: state => {
             return state.selectedNote;
+        },
+        editorChange: state => {
+            return state.editorChange;
+        },
+
+        saveNote: state => {
+            return state.saveNote;
+        },
+
+        contentChange: state => {
+            return state.contentChange;
         },
 
         loading: state => {
@@ -31,6 +51,18 @@ const store = new Vuex.Store({
             state.selectedNote = note;
         },
 
+        editorChange(state, data) {
+            state.editorChange = data;
+        },
+
+        saveNote(state) {
+            state.saveNote += 1;
+        },
+
+        contentChange(state, changed) {
+            state.contentChange = changed;
+        },
+
         loadingChange(state, boolean) {
             boolean ? state.loading++ : state.loading--;
         }
@@ -41,11 +73,31 @@ const store = new Vuex.Store({
         }, folder) {
             commit("folderChange", folder);
         },
+
         noteChange({
             commit
         }, note) {
             commit("noteChange", note);
         },
+
+        editorChange({
+            commit
+        }, editorChange) {
+            commit("editorChange", editorChange);
+        },
+
+        saveNote({
+            commit
+        }) {
+            commit("saveNote");
+        },
+
+        contentChange({
+            commit
+        }, boolean) {
+            commit("contentChange", boolean);
+        },
+
         loadingChange({
             commit
         }, boolean) {

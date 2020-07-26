@@ -30,7 +30,7 @@ const Message = {
     template: `
         <div v-if="display" style="display: flex;top: 0;bottom: 0;left: 0;right: 0;
         background-color: #9e9e9e33;position: fixed;z-index: 100;justify-content: center;align-items: center;">
-            <div style="width: 391px;height: 155px;background: #fff;background-clip: padding-box;outline: 0;
+            <div style="width: 391px;background: #fff;background-clip: padding-box;outline: 0;
             -webkit-user-select: text;border: 1px solid transparent;-webkit-border-radius: 8px;border-radius: 8px;
             -webkit-box-shadow: 0 4px 8px rgba(0, 0, 0, .32), 0 8px 40px rgba(0, 0, 0, .4);
             box-shadow: 0 4px 8px rgba(0, 0, 0, .32), 0 8px 40px rgba(0, 0, 0, .4);padding: 24px;z-index: 101;">

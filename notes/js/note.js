@@ -1,5 +1,4 @@
 import GNote from "./gnote.js";
-import editor from "./editor.js";
 
 export default {
     data() {

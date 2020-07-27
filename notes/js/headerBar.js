@@ -18,7 +18,24 @@ export default {
                 this.$tips.message(JSON.stringify(e));
             }
         },
+
         async createNote() {
+            const editorChange = this.$store.getters.editorChange;
+            if (editorChange) {
+                try {
+                    await this.$message({
+                        message: "当前便签内容改变，需要保存吗？"
+
+                    });
+                    await GNote.noteSaveMetadata(editorChange.note);
+                    await GNote.noteSave(editorChange.note.id, editorChange.data);
+                    this.$tips.message("保存成功");
+                } catch (e) {
+                    if ("cancle" != e)
+                    this.$tips.message(JSON.stringify(e));
+                }
+            }
+
             const selectedFolder = this.$store.getters.selectedFolder;
             if (!selectedFolder) {
                 this.$tips.message("请选择便签文件夹");

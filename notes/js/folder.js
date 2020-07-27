@@ -1,3 +1,5 @@
+import GNote from "./gnote.js";
+
 export default {
     data() {
         return {};
@@ -13,7 +15,27 @@ export default {
         },
     },
     methods: {
-        handleClick() {
+        async handleClick() {
+            if (this.isSelectedFolder)
+                return;
+
+            const editorChange = this.$store.getters.editorChange;
+            if (editorChange) {
+                try {
+                    await this.$message({
+                        message: "当前便签内容改变，需要保存吗？"
+
+                    });
+                    await GNote.noteSaveMetadata(editorChange.note);
+                    await GNote.noteSave(editorChange.note.id, editorChange.data);
+                    this.$tips.message("保存成功");
+                } catch (e) {
+                    if ("cancle" == e)
+                        return;
+                    this.$tips.message(JSON.stringify(e));
+                }
+            }
+
             this.$store.dispatch("folderChange", this.folder);
         }
     },

@@ -12,9 +12,6 @@ const store = new Vuex.Store({
         //便签保存操作
         saveNote: 0,
 
-        //便签内容是否有变化
-        contentChange: false,
-
         //网络加载状态
         loading: 0,
     },
@@ -32,10 +29,6 @@ const store = new Vuex.Store({
 
         saveNote: state => {
             return state.saveNote;
-        },
-
-        contentChange: state => {
-            return state.contentChange;
         },
 
         loading: state => {
@@ -57,10 +50,6 @@ const store = new Vuex.Store({
 
         saveNote(state) {
             state.saveNote += 1;
-        },
-
-        contentChange(state, changed) {
-            state.contentChange = changed;
         },
 
         loadingChange(state, boolean) {
@@ -92,11 +81,6 @@ const store = new Vuex.Store({
             commit("saveNote");
         },
 
-        contentChange({
-            commit
-        }, boolean) {
-            commit("contentChange", boolean);
-        },
 
         loadingChange({
             commit

@@ -4,7 +4,7 @@ export default {
     data() {
         return {
             editor: null,
-            data: null,
+            data: "",
             now: new Date().toLocaleString()
         };
     },
@@ -18,7 +18,7 @@ export default {
         },
 
         textCount() {
-            return 0;
+            return this.data.length;
         },
 
         selectedNote() {
@@ -34,7 +34,8 @@ export default {
     watch: {
         async selectedNote(note) {
             if (!note) {
-                this.data = null;
+                this.data = "";
+                this.editor.setValue(this.data);
                 return;
             }
 

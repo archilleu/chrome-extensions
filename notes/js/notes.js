@@ -37,6 +37,8 @@ export default {
         selectedDefaultNote() {
             if (this.notes.length > 0) {
                 this.$store.dispatch("noteChange", this.notes[0]);
+            } else {
+                this.$store.dispatch("noteChange", null);
             }
         },
 

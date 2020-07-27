@@ -61,6 +61,11 @@ export default {
                 return;
             }
 
+            if (selected == this.folders[0]) {
+                this.$tips.message("不能删除默认文件夹");
+                return;
+            }
+
             //TODO: async/await
             this.$message({
                 message: `删除:${selected.name}`
@@ -76,6 +81,7 @@ export default {
 
                     this.$store.dispatch("folderChange", null);
                     this.$tips.message("删除成功");
+                    this.selectedDefaultFolder();
                 } catch (e) {
                     this.$tips.message(JSON.stringify(e));
                 }

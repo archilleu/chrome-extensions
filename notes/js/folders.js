@@ -5,6 +5,7 @@ export default {
     data() {
         return {
             folders: [],
+            search: "",
         }
     },
 
@@ -88,6 +89,15 @@ export default {
             }).catch(e => {});
         },
 
+        handleClear() {
+            this.search = "";
+            this.$store.dispatch("searchKeyword", this.search);
+        },
+
+        async handleSearch() {
+            this.$store.dispatch("searchKeyword", this.search);
+        }
+
     },
 
     template: `
@@ -95,9 +105,9 @@ export default {
         <div class="search-box">
             <div class="search-bar">
                 <div class="text-field-view">
-                    <div class="search-icon"></div>
-                    <input type="text" class="search-input" name="text-field" placeholder="搜索全部便签">
-                    <div class="search-clear"></div>
+                    <div class="search-icon" style="z-index:10; cursor:pointer;" @click="handleSearch"></div>
+                    <input type="text" class="search-input" name="text-field" v-model="search" @keyup.enter="handleSearch" placeholder="搜索全部便签">
+                    <div class="search-clear" style="z-index:10" @click="handleClear"></div>
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@ import config from "./http/config.js"
 export default {
     data: {
         rootId: null, //根目录ID
-        ROOT_NAME: "GNODE1", //根目录名字
+        ROOT_NAME: "GNODE", //根目录名字
         DEFAULT_FOLDER_MYNOTES: "我的便签", //默认便签文件夹名字
     },
 
@@ -74,6 +74,22 @@ export default {
         return notes;
     },
 
+    //获取搜索便签
+    async searchNotes(option) {
+        let notes = [];
+        let pageToken = null;
+        do {
+            const data = await GDrive.search({
+                ...option,
+                pageToken: pageToken
+            });
+            notes = notes.concat(data.files);
+            pageToken = data.nextPageToken;
+        } while (pageToken != null);
+
+        return notes;
+    },
+
     //获取便签文件文本数据
     async noteContent(fileId) {
         const data = await GDrive.fileContent({
@@ -99,7 +115,8 @@ export default {
     async noteSaveMetadata(note) {
         const res = await GDrive.fileMetadataUpdate({
             name: note.name,
-            id: note.id
+            id: note.id,
+            description: note.description,
         });
         return res;
     },
@@ -126,9 +143,10 @@ export default {
             name: this.data.ROOT_NAME,
             parents: ["root"],
         });
+        const files = res.files.filter(f=>f.name==this.data.ROOT_NAME);
 
         //不存在创建根目录
-        if (res.files.length == 0) {
+        if (files.length == 0) {
             const file = await GDrive.folderCreate({
                 name: this.data.ROOT_NAME,
                 parents: ["root"],
@@ -137,7 +155,7 @@ export default {
             return true;
         }
 
-        this.data.rootId = res.files[0].id;
+        this.data.rootId = files[0].id;
         return true;
     },
 

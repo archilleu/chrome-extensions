@@ -13,6 +13,10 @@ export default {
             const folder = this.$store.getters.selectedFolder;
             return folder;
         },
+
+        searchKeyword() {
+            return this.$store.getters.searchKeyword;
+        }
     },
 
     watch: {
@@ -22,6 +26,20 @@ export default {
 
             try {
                 this.notes = await GNote.folderNotes(folder.id);
+                this.selectedDefaultNote();
+            } catch (e) {
+                this.$tips.message(JSON.stringify(e));
+            }
+        },
+
+        async searchKeyword(searchKeyword) {
+            try {
+                const folder = this.$store.getters.selectedFolder;
+                this.notes = await GNote.searchNotes({
+                    parents: [folder.id],
+                    name: searchKeyword,
+                    text: searchKeyword
+                });
                 this.selectedDefaultNote();
             } catch (e) {
                 this.$tips.message(JSON.stringify(e));

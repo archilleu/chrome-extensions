@@ -68,7 +68,9 @@ export default {
 
     watch: {
         editorChange(val) {
-            return this.note.name = val;
+            this.note.description = val;
+            this.note.name = val;
+            return;
         },
 
         //保存文件名变更

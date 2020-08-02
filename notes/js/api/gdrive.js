@@ -67,7 +67,7 @@ export default {
         });
     },
 
-    //按照文件名搜索文件
+    //按照文件名或者内容搜索文件
     search: async (option={})=> {
         //默认获取云端硬盘根目录下面的文件(夹)
         let query = [];
@@ -75,10 +75,16 @@ export default {
         for (const parent of parents) {
             query.push('\"' + parent + '\"' + ' in parents');
         }
+        let where = [];
+        if(option.name) {
+            where.push(`name contains '${option.name}'`);
+        }
+        if(option.text) {
+            where.push(`fullText contains '${option.text}'`);
+        }
         const params = {
             corpora: option.corpora ? option.corpora : "user",
-            orderBy: option.orderBy ? option.orderBy : "modifiedTime",
-            q: query.join(" or ") + ` and trashed=false and name='${option.name}'`,
+            q: `${query.join(' or ')} and trashed=false and (${where.join(' or ')})`,
             pageToken: option.pageToken ? option.pageToken : null,
             fields: option.fields ? option.fields : "nextPageToken,files(id, name, modifiedTime, description)"
         };

@@ -12,6 +12,9 @@ const store = new Vuex.Store({
         //便签保存操作
         saveNote: 0,
 
+        //搜索关键字
+        searchKeyword: "",
+
         //网络加载状态
         loading: 0,
     },
@@ -29,6 +32,10 @@ const store = new Vuex.Store({
 
         saveNote: state => {
             return state.saveNote;
+        },
+
+        searchKeyword: state => {
+            return state.searchKeyword;
         },
 
         loading: state => {
@@ -50,6 +57,10 @@ const store = new Vuex.Store({
 
         saveNote(state) {
             state.saveNote += 1;
+        },
+
+        searchKeyword(state, keyword) {
+            state.searchKeyword = keyword;
         },
 
         loadingChange(state, boolean) {
@@ -81,6 +92,11 @@ const store = new Vuex.Store({
             commit("saveNote");
         },
 
+        searchKeyword({
+            commit
+        }, searchKeyword) {
+            commit("searchKeyword", searchKeyword);
+        },
 
         loadingChange({
             commit

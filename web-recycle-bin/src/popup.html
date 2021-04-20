@@ -12,7 +12,7 @@
     <div id="my-app" v-cloak>
         <div class="item-list">
             <div class="item" :title="item.title" v-for="item in closedTabs" :key="item.id" @click="onLink" :data-id="item.id" :data-index="item.index" :data-url="item.url">
-                <img :src="item.favicon">
+                <img src="./images/default.png" v-real-image="item.favicon">
                 <a>{{ item.title }}</a>
                 <span>{{ item.date | formatTime }}</span>
             </div>

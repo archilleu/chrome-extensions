@@ -11,6 +11,23 @@ document.addEventListener('DOMContentLoaded', () => {
             tabs: tabs,
             closedTabs: tabs.getClosedTabs(0, pageSize),
         },
+        directives: {
+            realImage(el, binding) {
+                let imgUrl = binding.value
+                if(imgUrl) {
+                    setTimeout(()=>{
+                        let img = new Image();
+                        img.src = imgUrl;
+                        img.onload = function () {
+                            if (this.complete == true){
+                                img = null;
+                                el.setAttribute('src', imgUrl)
+                            }
+                        }
+                    },10)
+                }
+            }
+        },
         methods: {
             onLink(ev) {
                 const id = ev.currentTarget.dataset.id;

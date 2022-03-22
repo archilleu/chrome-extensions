@@ -9,27 +9,21 @@
 
 <body>
 
-    <div id="my-app" v-cloak>
-        <div class="item-list">
-            <div class="item" :title="item.title" v-for="item in closedTabs" :key="item.id" @click="onLink" :data-id="item.id" :data-index="item.index" :data-url="item.url">
-                <img src="./images/default.png" v-real-image="item.favicon">
-                <a>{{ item.title }}</a>
-                <span>{{ item.date | formatTime }}</span>
-            </div>
+    <div id="my-app">
+        <div id="item-list">
         </div>
         <div class="toolbar">
-            <span title="prev" class="prev" v-if="curPage>0" @click="onPrev"></span>
-            <span title="next" class="next" v-if="curPage<(pages-1)" @click="onNext"></span>
-            <span title="clear" class="clear" @click="onClear"></span>
-            <div class="count">
-                <span>{{ showCurPage }}</span>
+            <span title="prev" id="prev"></span>
+            <span title="next" id="next"></span>
+            <span title="clear" id="clear"></span>
+            <div id="count">
+                <span id="cur-page">1</span>
                 <span>/</span>
-                <span>{{ pages }}</span>
+                <span id="total-page">1</span>
             </div>
 
         </div>
     </div>
-
 </body>
 <!--
       - JavaScript and HTML must be in separate files: see our Content Security
@@ -38,9 +32,6 @@
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
     -->
 
-<script src="js/vue.min.js"></script>
-<script src="js/tabs.js"></script>
-<script src="js/app.js"></script>
-<!-- <script src="js/test/test_tabs.js"></script> -->
+<script src="popup.js"></script>
 
 </html>

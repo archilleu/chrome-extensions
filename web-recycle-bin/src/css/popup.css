@@ -1,12 +1,8 @@
-[v-cloak] {
-    display: none;
-}
-
 * {
     box-sizing: border-box;
 }
 
-.item-list {
+#item-list {
     width: 450px;
     max-height: 350px;
 }
@@ -37,6 +33,7 @@
     overflow: hidden;
     white-space: nowrap;
     line-height: 18px;
+    text-decoration: none;
 }
 
 .item>span {
@@ -50,9 +47,9 @@
     height: 26px;
 }
 
-.toolbar>.prev,
-.toolbar>.next,
-.toolbar>.clear {
+#prev,
+#next,
+#clear {
     display: inline-block;
     width: 32px;
     height: 26px;
@@ -62,29 +59,29 @@
     background-repeat: no-repeat;
 }
 
-.toolbar>.prev:hover,
-.toolbar>.next:hover,
-.toolbar>.clear:hover {
+#prev:hover,
+#next:hover,
+#clear:hover {
     cursor: pointer;
 }
 
-.toolbar>.prev:active,
-.toolbar>.next:active,
-.toolbar>.clear:active {
+#prev:active,
+#next:active,
+#clear:active {
     position: relative;
     top: 1px;
     box-shadow: 0 0 1px #ccc;
 }
 
-.toolbar>.prev {
+#prev {
     background-image: url(../images/prev.png);
 }
 
-.toolbar>.next {
+#next {
     background-image: url(../images/next.png);
 }
 
-.toolbar>.count {
+#count {
     float: right;
     height: 26px;
     background: #f2f0f0;
@@ -93,7 +90,7 @@
     border-radius: 8px;
 }
 
-.toolbar>.clear {
+#clear {
     float: right;
     background-image: url(../images/clean.png);
 }

@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let totalPage = 0
   let tabs = []
   const home = 1
-  const pageSize = 2
+  const pageSize = 12
 
   const listDom = document.getElementById("item-list");
   const prevDom = document.getElementById("prev")
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return item
   }
 
-  function createDiv() {
+  function createDiv(tab) {
     const div = document.createElement("div");
     div.setAttribute("class", "item");
     div.dataset.id = tab.id;
